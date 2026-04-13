@@ -1,0 +1,42 @@
+.footer {
+  background-color: #0a0a0a;
+  padding: 40px 0 20px;
+  margin-top: 60px;
+  border-top: 1px solid #333;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.columns h3, .columns h4 {
+  color: #7bc6cf;
+  margin-bottom: 15px;
+}
+
+.columns ul {
+  list-style: none;
+  padding: 0;
+}
+
+.columns li {
+  margin-bottom: 8px;
+}
+
+.columns a {
+  color: #f0f0f0;
+  transition: 0.3s;
+}
+.columns a:hover {
+  color: #7bc6cf;
+}
+
+.bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #222;
+  font-size: 14px;
+}

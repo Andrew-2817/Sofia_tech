@@ -1,0 +1,11 @@
+.sliderSection {
+  margin: 40px 0;
+}
+
+.title {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #7bc6cf;
+  border-left: 4px solid #7bc6cf;
+  padding-left: 15px;
+}

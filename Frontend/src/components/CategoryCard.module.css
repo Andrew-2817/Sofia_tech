@@ -1,0 +1,21 @@
+.card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.card:hover {
+  background: #2c2c2c;
+  transform: translateY(-5px);
+}
+
+.icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  font-size: 18px;
+}

@@ -1,0 +1,35 @@
+.banner {
+  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+  padding: 60px 0;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.banner h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.banner button {
+  background: #7bc6cf;
+  padding: 12px 30px;
+  font-size: 18px;
+  border-radius: 30px;
+  font-weight: bold;
+}
+
+.categoriesBlock {
+  margin: 50px 0;
+}
+
+.categoriesBlock h2 {
+  font-size: 28px;
+  color: #7bc6cf;
+  margin-bottom: 20px;
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
