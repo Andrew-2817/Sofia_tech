@@ -1,58 +1,133 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { setSearchQuery, setCategory } from '../store/slices/filtersSlice';
 import AuthModal from './AuthModal';
+import SearchDropdown from './SearchDropdown';
 import styles from './Header.module.css';
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [search, setSearch] = useState('');
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const searchContainerRef = useRef(null);
+  const searchInputRef = useRef(null);
+  const [allProductsList, setAllProductsList] = useState([])
+  
   const cartItemsCount = useSelector(state => state.cart.items.reduce((acc, item) => acc + item.quantity, 0));
   const favoritesCount = useSelector(state => state.favorites.items.length);
   const { isLoggedIn, user } = useSelector(state => state.auth);
-  const [search, setSearch] = useState('');
+  const allProducts = useSelector(state => state.products.items);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    dispatch(setSearchQuery(search));
-    navigate('/catalog');
+  // Поиск товаров
+  useEffect(() => {
+    if (search.trim().length > 0) {
+      const results = allProducts.filter(product =>
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.category.toLowerCase().includes(search.toLowerCase()) ||
+        product.manufacturer.toLowerCase().includes(search.toLowerCase())
+      );
+      setSearchResults(results.slice(0, 8));
+    } else {
+      setSearchResults(allProducts.slice(0, 8));
+    }
+  }, [search, allProducts]);
+
+  // Показывать окно при фокусе всегда, если есть результаты или если поле не пустое
+  const handleFocus = () => {
+    setShowSearchResults(true);
   };
 
-//   const categories = ['Холодильники', 'Микроволновки', 'Телевизоры', 'Стиральные машины', 'Пылесосы'];
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      dispatch(setSearchQuery(search));
+      navigate('/catalog');
+      setShowSearchResults(false);
+    }
+  };
+
+  const handleProductClick = (product) => {
+    navigate(`/product/${product.id}`);
+    setShowSearchResults(false);
+    setSearch('');
+  };
+
+  const handleClearSearch = () => {
+    setSearch('');
+    setShowSearchResults(false);
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  const categories = ['Холодильники', 'Микроволновки', 'Телевизоры', 'Стиральные машины', 'Пылесосы'];
 
   return (
     <>
       <header className={styles.header}>
         <div className="container">
           <div className={styles.topRow}>
-            <Link to="/" className={styles.logo}>TechStore</Link>
-            <form onSubmit={handleSearch} className={styles.searchForm}>
-              <button type="button" className={styles.catalogBtn} onClick={() => navigate('/catalog')}>Каталог</button>
-              <input
-                type="text"
-                placeholder="Поиск товаров..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className={styles.searchInput}
+            <Link to="/" className={styles.logo}>❄️ TechStore</Link>
+            
+            <div className={styles.searchContainer} ref={searchContainerRef}>
+              <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+                <button type="button" className={styles.catalogBtn} onClick={() => navigate('/catalog')}>
+                  Каталог
+                </button>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Поиск товаров..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className={styles.searchInput}
+                  onFocus={handleFocus}
+                />
+                {search && (
+                  <button type="button" className={styles.clearBtn} onClick={handleClearSearch}>
+                    ✕
+                  </button>
+                )}
+                <button type="submit" className={styles.searchSubmit}>
+                  🔍
+                </button>
+              </form>
+              
+              {/* Выпадающее окно с результатами поиска - показываем при фокусе */}
+              <SearchDropdown
+                searchTerm={search}
+                results={searchResults}
+                isOpen={showSearchResults}
+                onClose={() => setShowSearchResults(false)}
+                onProductClick={handleProductClick}
               />
-              <button type="submit" className={styles.searchSubmit}>🔍</button>
-            </form>
+            </div>
+            
             <div className={styles.actions}>
-              <Link to="/favorites" className={styles.actionBtn}>❤️ {favoritesCount > 0 && <span>{favoritesCount}</span>}</Link>
-              <Link to="/cart" className={styles.actionBtn}>🛒 {cartItemsCount > 0 && <span>{cartItemsCount}</span>}</Link>
+              <Link to="/favorites" className={styles.actionBtn}>
+                ❤️ {favoritesCount > 0 && <span>{favoritesCount}</span>}
+              </Link>
+              <Link to="/cart" className={styles.actionBtn}>
+                🛒 {cartItemsCount > 0 && <span>{cartItemsCount}</span>}
+              </Link>
               {isLoggedIn ? (
                 <div className={styles.userMenu}>
-                  <span>{user?.name || 'Профиль'}</span>
+                  <span>👤 {user?.name || 'Профиль'}</span>
                   <button onClick={() => dispatch(logout())}>Выйти</button>
                 </div>
               ) : (
-                <button onClick={() => setShowAuthModal(true)} className={styles.actionBtn}>Войти</button>
+                <button onClick={() => setShowAuthModal(true)} className={styles.loginBtn}>
+                  Войти
+                </button>
               )}
             </div>
           </div>
-          {/* <nav className={styles.categoriesNav}>
+          
+          <nav className={styles.categoriesNav}>
             {categories.map(cat => (
               <button
                 key={cat}
@@ -65,7 +140,7 @@ const Header = () => {
                 {cat}
               </button>
             ))}
-          </nav> */}
+          </nav>
         </div>
       </header>
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />

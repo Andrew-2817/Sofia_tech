@@ -1,57 +1,429 @@
 .sidebar {
-  background: #1a1a1a;
-  padding: 20px;
-  border-radius: 12px;
-  width: 260px;
+  background: linear-gradient(135deg, #1a1a1a, #151515);
+  border-radius: 16px;
+  padding: 25px;
+  border: 1px solid rgba(123, 198, 207, 0.1);
+  transition: all 0.3s ease;
+  animation: slideInLeft 0.5s ease;
 }
 
-.sidebar h3 {
-  margin-bottom: 15px;
+.sidebar:hover {
+  border-color: rgba(123, 198, 207, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(123, 198, 207, 0.2);
+}
+
+.header h3 {
   color: #7bc6cf;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
 }
 
 .resetBtn {
-  background: #7bc6cf;
-  color: #121212;
+  background: rgba(123, 198, 207, 0.1);
+  color: #7bc6cf;
+  border: none;
   padding: 6px 12px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  width: 100%;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resetBtn:hover {
+  background: rgba(123, 198, 207, 0.2);
+  transform: translateY(-2px);
 }
 
 .filterGroup {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+  animation: fadeInUp 0.5s ease;
 }
 
-.filterGroup h4 {
-  margin-bottom: 10px;
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
   font-size: 16px;
+  color: #f0f0f0;
+  font-weight: 500;
 }
 
-.filterGroup label {
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  position: relative;
+  padding-left: 30px;
+  user-select: none;
+  color: #ccc;
+  transition: all 0.3s ease;
+}
+
+.checkboxLabel:hover {
+  color: #7bc6cf;
+  transform: translateX(5px);
+}
+
+.checkboxLabel input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.checkboxLabel:hover input ~ .checkmark {
+  background-color: #3a3a3a;
+}
+
+.checkboxLabel input:checked ~ .checkmark {
+  background-color: #7bc6cf;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkboxLabel input:checked ~ .checkmark:after {
   display: block;
-  margin-bottom: 6px;
+}
+
+.checkboxLabel .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid #121212;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .priceInputs {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
-}
-.priceInputs input {
-  width: 80px;
-  padding: 6px;
-  background: #2c2c2c;
-  border: none;
-  color: #f0f0f0;
-  border-radius: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 
-select {
+.priceField {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f0f0;
+  color: #222;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.priceField:focus-within {
+  box-shadow: 0 0 0 2px #7bc6cf;
+}
+
+.priceField span {
+  color: #888;
+  font-size: 14px;
+}
+
+.priceField input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #444;
+  outline: none;
+  font-size: 14px;
+}
+
+.priceSeparator {
+  color: #7bc6cf;
+  font-weight: bold;
+}
+
+.priceRange {
+  position: relative;
+  height: 30px;
+}
+
+.priceRange input[type="range"] {
+  position: absolute;
   width: 100%;
-  padding: 8px;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+}
+
+.priceRange input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #7bc6cf;
+  cursor: pointer;
+  box-shadow: 0 0 6px #7bc6cf;
+}
+
+.priceRange input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: #2c2c2c;
+  border-radius: 2px;
+}
+.priceField input[type="number"]::-webkit-inner-spin-button,
+.priceField input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.select {
+  width: 100%;
+  padding: 10px;
   background: #2c2c2c;
   color: #f0f0f0;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select:hover {
+  background: #3a3a3a;
+  transform: translateY(-1px);
+}
+
+.colorOptions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.colorBtn {
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 13px;
+  color: #121212;
+  font-weight: 500;
+}
+.colorBtn:nth-child(1){
+  color: #e1e1e1;
+}
+
+.colorBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.colorBtn.active {
+  border-color: #7bc6cf;
+  box-shadow: 0 0 0 2px rgba(123, 198, 207, 0.5);
+  transform: scale(1.05);
+}
+
+/* Стили для кастомного селекта */
+.customSelect {
+  position: relative;
+  width: 100%;
+}
+
+.selectTrigger {
+  background: linear-gradient(135deg, #f0f0f0, #d4f7f6);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 8px 16px;
+  color: #222;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.selectTrigger:hover {
+  /* border-color: rgba(123, 198, 207, 0.3); */
+  transform: translateY(-2px);
+}
+
+.selectTrigger.open {
+  border-color: #7bc6cf;
+  /* background: #2c2c2c; */
+  box-shadow: 0 4px 12px rgba(123, 198, 207, 0.2);
+}
+
+.selectedValue {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #222;
+  font-size: 14px;
+}
+
+.selectedIcon {
+  font-size: 18px;
+}
+
+.selectArrow {
+  color: #7bc6cf;
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+.selectArrow.rotated {
+  transform: rotate(180deg);
+}
+
+.selectDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2c2c2c, #252525);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 10;
+  animation: dropdownSlide 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(123, 198, 207, 0.2);
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selectOption {
+  padding: 10px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  color: #f0f0f0;
+  position: relative;
+}
+
+.selectOption:hover {
+  background: rgba(123, 198, 207, 0.1);
+  padding-left: 20px;
+}
+
+.selectOption.selected {
+  background: rgba(123, 198, 207, 0.15);
+  color: #7bc6cf;
+}
+
+.optionIcon {
+  font-size: 16px;
+}
+
+.checkMark {
+  margin-left: auto;
+  color: #7bc6cf;
+  font-weight: bold;
+}
+
+.activeFilters {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.activeFilters h4 {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.activeFilterTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filterTag {
+  background: rgba(123, 198, 207, 0.15);
+  color: #7bc6cf;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filterTag:hover {
+  background: rgba(123, 198, 207, 0.3);
+  transform: translateY(-2px);
+}
+
+
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .sidebar {
+    position: static;
+    margin-bottom: 20px;
+  }
+  
+  .colorOptions {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

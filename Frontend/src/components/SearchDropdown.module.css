@@ -1,0 +1,377 @@
+.dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #1e1e1e, #1a1a1a);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(123, 198, 207, 0.1);
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Заголовок */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(37, 37, 37, 0.95);
+  border-bottom: 1px solid rgba(123, 198, 207, 0.1);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.searchIcon {
+  font-size: 18px;
+}
+
+.resultsCount {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.resultsCount strong {
+  color: #7bc6cf;
+  font-weight: 600;
+}
+
+.closeBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #aaa;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: rgba(123, 198, 207, 0.2);
+  color: #7bc6cf;
+  transform: rotate(90deg);
+}
+
+/* Список результатов */
+.resultsList {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.resultItem {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  animation: fadeInUp 0.3s ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resultItem:hover {
+  background: rgba(123, 198, 207, 0.08);
+  transform: translateX(5px);
+}
+
+/* Обёртка для изображения */
+.imageWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.productImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.resultItem:hover .productImage {
+  transform: scale(1.05);
+}
+
+.newBadge {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  background: linear-gradient(135deg, #7bc6cf, #5da5ae);
+  color: #121212;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+}
+
+.popularBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 14px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Информация о товаре */
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.productHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category {
+  font-size: 11px;
+  color: #7bc6cf;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  background: rgba(123, 198, 207, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.manufacturer {
+  font-size: 12px;
+  color: #888;
+}
+
+.productName {
+  font-size: 15px;
+  font-weight: 500;
+  color: #f0f0f0;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.productSpecs {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.spec {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.specIcon {
+  font-size: 12px;
+}
+
+.productFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #7bc6cf;
+}
+
+.quickViewBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quickViewBtn:hover {
+  background: rgba(123, 198, 207, 0.15);
+  color: #7bc6cf;
+  border-color: rgba(123, 198, 207, 0.3);
+}
+
+/* Футер */
+.footer {
+  padding: 16px 20px;
+  background: rgba(37, 37, 37, 0.95);
+  border-top: 1px solid rgba(123, 198, 207, 0.1);
+}
+
+.showAllBtn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #7bc6cf, #5da5ae);
+  color: #121212;
+  border: none;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.showAllBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 198, 207, 0.3);
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.showAllBtn:hover .arrow {
+  transform: translateX(5px);
+}
+
+/* Пустое состояние */
+.emptyState {
+  text-align: center;
+  padding: 60px 40px;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.emptyState h3 {
+  color: #f0f0f0;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.emptyState p {
+  color: #888;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.emptyState p strong {
+  color: #7bc6cf;
+}
+
+.emptyState small {
+  color: #666;
+  font-size: 12px;
+}
+
+/* Кастомизация скролла */
+.resultsList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.resultsList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.resultsList::-webkit-scrollbar-thumb {
+  background: #7bc6cf;
+  border-radius: 3px;
+}
+
+.resultsList::-webkit-scrollbar-thumb:hover {
+  background: #5da5ae;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .dropdown {
+    position: fixed;
+    top: auto;
+    left: 10px;
+    right: 10px;
+    margin-top: 5px;
+    max-height: 80vh;
+  }
+  
+  .resultItem {
+    padding: 12px;
+  }
+  
+  .productImage {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .productName {
+    font-size: 13px;
+  }
+  
+  .price {
+    font-size: 16px;
+  }
+  
+  .productSpecs {
+    display: none;
+  }
+  
+  .quickViewBtn {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .productHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .emptyState {
+    padding: 40px 20px;
+  }
+  
+  .emptyIcon {
+    font-size: 48px;
+  }
+}

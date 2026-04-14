@@ -29,18 +29,24 @@
 .searchForm {
   flex: 1;
   display: flex;
-  padding: 1px 3px;
-  background-color: #f0f0f0;
+  padding: 3px;
+  background: linear-gradient(135deg, #f0f0f0, #d1fbf9);
   align-items: center;
   max-width: 600px;
   position: relative;
   transition: all 0.3s ease;
   border-radius: 15px;
 }
+.searchContainer {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+}
 
 .searchForm:focus-within {
   transform: translateY(-1px);
 }
+
 
 .catalogBtn {
   background-color: #7bc6cf;
@@ -66,9 +72,10 @@
   flex: 1;
   padding: 10px 12px;
   border: none;
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #f0f0f0, #d1fbf9);
   color: #2c2c2c;
   font-size: 14px;
+  border-radius: 15px;
   transition: all 0.3s ease;
   outline: none;
 }

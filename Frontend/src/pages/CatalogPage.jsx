@@ -12,12 +12,22 @@ const CatalogPage = () => {
   const [searchParams] = useSearchParams();
   const { items: allProducts } = useSelector(state => state.products);
   const { searchQuery, category, manufacturer, priceRange, weight, color } = useSelector(state => state.filters);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Синхронизация URL с фильтрами при загрузке
   useEffect(() => {
     const catParam = searchParams.get('category');
     if (catParam) dispatch(setCategory(catParam));
   }, [searchParams, dispatch]);
+
+  // Эффект загрузки при изменении фильтров
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery, category, manufacturer, priceRange, weight, color]);
 
   const filteredProducts = allProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -34,7 +44,9 @@ const CatalogPage = () => {
   return (
     <div className="container">
       <div className={styles.catalogLayout}>
-        <FilterSidebar />
+        <div className={styles.filterWrapper}>
+          <FilterSidebar />
+        </div>
         <div className={styles.content}>
           <div className={styles.searchBar}>
             <input
@@ -45,17 +57,33 @@ const CatalogPage = () => {
             />
           </div>
           <div className={styles.tabs}>
-            <button className={category === 'all' ? styles.active : ''} onClick={() => dispatch(setCategory('all'))}>Все</button>
+            <button className={category === 'all' ? styles.active : ''} onClick={() => dispatch(setCategory('all'))}>
+              Все
+            </button>
             {categories.map(cat => (
-              <button key={cat.id} className={category === cat.name ? styles.active : ''} onClick={() => dispatch(setCategory(cat.name))}>
+              <button 
+                key={cat.id} 
+                className={category === cat.name ? styles.active : ''} 
+                onClick={() => dispatch(setCategory(cat.name))}
+              >
                 {cat.name}
               </button>
             ))}
           </div>
-          <div className={styles.productsGrid}>
-            {filteredProducts.map(product => <ProductCard key={product.id} product={product} />)}
+          <div className={`${styles.productsGrid} ${isLoading ? styles.loading : ''}`}>
+            {filteredProducts.map((product, index) => (
+              <div 
+                key={product.id} 
+                className={styles.productItem}
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
           </div>
-          {filteredProducts.length === 0 && <p className={styles.noResults}>Товары не найдены</p>}
+          {filteredProducts.length === 0 && !isLoading && (
+            <p className={styles.noResults}>Товары не найдены</p>
+          )}
         </div>
       </div>
     </div>
