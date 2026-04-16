@@ -6,21 +6,12 @@
   align-items: flex-start;
 }
 
-/* Закреплённая обёртка для фильтров */
-.filterWrapper {
-  position: sticky;
-  top: 100px;
-  align-self: flex-start;
-  width: 280px;
-  animation: slideInLeft 0.5s ease;
-}
-
 .content {
   flex: 1;
   min-width: 0;
 }
 
-/* Стили поиска */
+/* Поиск */
 .searchBar {
   margin-bottom: 30px;
   animation: fadeInDown 0.5s ease;
@@ -29,83 +20,124 @@
 .searchBar input {
   width: 100%;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #f0f0f0, #d1fbf9);
+  background: linear-gradient(135deg, #2c2c2c, #252525);
   border: 2px solid transparent;
   border-radius: 12px;
-  color: #333;
+  color: #f0f0f0;
   font-size: 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
 
 .searchBar input:focus {
+  border-color: #7bc6cf;
+  background: #2c2c2c;
   box-shadow: 0 0 0 3px rgba(123, 198, 207, 0.1);
   transform: translateY(-2px);
 }
 
-.searchBar input::placeholder {
-  color: #888;
-  transition: opacity 0.3s ease;
-}
-
-.searchBar input:focus::placeholder {
-  opacity: 0.5;
-}
-
-/* Стили табов */
+/* Табы категорий 2 уровня */
 .tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 35px;
+  margin-bottom: 20px;
   padding-bottom: 5px;
   border-bottom: 2px solid rgba(51, 51, 51, 0.5);
   animation: fadeInUp 0.5s ease;
 }
 
-.tabs button {
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: transparent;
-  padding: 10px 24px;
+  padding: 10px 20px;
   border-radius: 40px;
   color: #f0f0f0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
-  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.tabs button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.tabIcon {
+  font-size: 18px;
+}
+
+.tab:hover {
   background: rgba(123, 198, 207, 0.1);
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  border-radius: 40px;
+  border-color: rgba(123, 198, 207, 0.3);
+  transform: translateY(-2px);
 }
 
-.tabs button:hover::before {
-  transform: translateX(0);
-}
-
-.tabs button.active {
+.tab.active {
   background: linear-gradient(135deg, #7bc6cf, #5da5ae);
   color: #121212;
+  border-color: transparent;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(123, 198, 207, 0.3);
 }
 
-.tabs button:hover:not(.active) {
-  transform: translateY(-1px);
-  color: #7bc6cf;
+/* Подтабы категорий 3 уровня */
+.subTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 30px;
+  padding: 12px 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
 }
 
-/* Сетка товаров с анимацией */
+.subTab {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  color: #ccc;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.subTab:hover {
+  background: rgba(123, 198, 207, 0.15);
+  color: #7bc6cf;
+  transform: translateY(-1px);
+}
+
+.subTab.active {
+  background: rgba(123, 198, 207, 0.2);
+  color: #7bc6cf;
+  border: 1px solid rgba(123, 198, 207, 0.3);
+}
+
+/* Заголовок результатов */
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.resultsTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin: 0;
+}
+
+.resultsCount {
+  color: #888;
+  font-size: 14px;
+}
+
+/* Сетка товаров */
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -136,17 +168,6 @@
   }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -169,22 +190,256 @@
   }
 }
 
+/* Нет результатов */
 .noResults {
   text-align: center;
+  padding: 60px 40px;
+  background: #1a1a1a;
+  border-radius: 16px;
+  margin-top: 20px;
+}
+
+.noResultsIcon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.noResults h3 {
+  color: #f0f0f0;
+  margin-bottom: 8px;
   font-size: 20px;
-  margin-top: 50px;
+}
+
+.noResults p {
   color: #888;
-  animation: fadeInUp 0.5s ease;
+  margin-bottom: 24px;
+}
+
+.resetFiltersBtn {
+  background: linear-gradient(135deg, #7bc6cf, #5da5ae);
+  color: #121212;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resetFiltersBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 198, 207, 0.3);
+}
+
+/* Добавьте в конец файла */
+
+/* Хлебные крошки */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+
+.breadcrumbLink {
+  background: none;
+  border: none;
+  color: #7bc6cf;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.breadcrumbLink:hover {
+  background: rgba(123, 198, 207, 0.1);
+  transform: translateX(-2px);
+}
+
+.breadcrumbSeparator {
+  color: #666;
+  font-size: 14px;
+}
+
+.breadcrumbCurrent {
+  color: #f0f0f0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Подтабы */
+.subTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+  padding: 12px 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.subTab {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  color: #ccc;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.subTab:hover {
+  background: rgba(123, 198, 207, 0.15);
+  color: #7bc6cf;
+  transform: translateY(-2px);
+}
+
+.subTab.active {
+  background: linear-gradient(135deg, #7bc6cf, #5da5ae);
+  color: #121212;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 198, 207, 0.3);
+}
+
+/* Баннер категории */
+.categoryBanner {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+
+.bannerBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bannerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.7));
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 1;
+  padding: 50px 60px;
+  display: flex;
+  align-items: center;
+  min-height: 280px;
+}
+
+.bannerText {
+  max-width: 60%;
+}
+
+.bannerTitle {
+  font-size: 42px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.bannerDescription {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.bannerStats {
+  display: flex;
+  gap: 32px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: #7bc6cf;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
+}
+
+/* Адаптивность для баннера */
+@media (max-width: 1024px) {
+  .bannerContent {
+    padding: 40px;
+  }
+  
+  .bannerText {
+    max-width: 70%;
+  }
+  
+  .bannerTitle {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .categoryBanner {
+    margin-bottom: 24px;
+  }
+  
+  .bannerContent {
+    padding: 30px 24px;
+    min-height: auto;
+  }
+  
+  .bannerText {
+    max-width: 100%;
+  }
+  
+  .bannerTitle {
+    font-size: 24px;
+  }
+  
+  .bannerDescription {
+    font-size: 14px;
+  }
+  
+  .bannerStats {
+    gap: 20px;
+  }
+  
+  .statValue {
+    font-size: 20px;
+  }
+  
+  .statLabel {
+    font-size: 10px;
+  }
 }
 
 /* Адаптивность */
 @media (max-width: 1024px) {
   .catalogLayout {
     gap: 20px;
-  }
-  
-  .filterWrapper {
-    width: 260px;
   }
   
   .productsGrid {
@@ -198,18 +453,30 @@
     flex-direction: column;
   }
   
-  .filterWrapper {
-    position: static;
-    width: 100%;
+  .tabs {
+    gap: 8px;
   }
   
-  .tabs button {
-    padding: 8px 18px;
-    font-size: 14px;
+  .tab {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .subTabs {
+    gap: 6px;
+  }
+  
+  .subTab {
+    padding: 6px 12px;
+    font-size: 12px;
   }
   
   .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
+  }
+  
+  .resultsTitle {
+    font-size: 18px;
   }
 }

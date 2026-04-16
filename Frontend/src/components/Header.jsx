@@ -1,9 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { setSearchQuery, setCategory } from '../store/slices/filtersSlice';
 import AuthModal from './AuthModal';
+import CartModal from './CartModal';
+import FavoritesModal from './FavoritesModal';
 import SearchDropdown from './SearchDropdown';
+import CatalogMenu from './CatalogMenu';
 import styles from './Header.module.css';
 
 const Header = () => {
@@ -11,10 +14,12 @@ const Header = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [showCatalogMenu, setShowCatalogMenu] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [showCartModal, setShowCartModal] = useState(false);
+  const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const searchContainerRef = useRef(null);
   const searchInputRef = useRef(null);
-  const [allProductsList, setAllProductsList] = useState([])
   
   const cartItemsCount = useSelector(state => state.cart.items.reduce((acc, item) => acc + item.quantity, 0));
   const favoritesCount = useSelector(state => state.favorites.items.length);
@@ -32,11 +37,10 @@ const Header = () => {
       );
       setSearchResults(results.slice(0, 8));
     } else {
-      setSearchResults(allProducts.slice(0, 8));
+      setSearchResults(allProducts);
     }
   }, [search, allProducts]);
 
-  // Показывать окно при фокусе всегда, если есть результаты или если поле не пустое
   const handleFocus = () => {
     setShowSearchResults(true);
   };
@@ -75,8 +79,12 @@ const Header = () => {
             
             <div className={styles.searchContainer} ref={searchContainerRef}>
               <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-                <button type="button" className={styles.catalogBtn} onClick={() => navigate('/catalog')}>
-                  Каталог
+                <button 
+                  type="button" 
+                  className={styles.catalogBtn} 
+                  onClick={() => setShowCatalogMenu(true)}
+                >
+                  ☰ Каталог
                 </button>
                 <input
                   ref={searchInputRef}
@@ -97,7 +105,6 @@ const Header = () => {
                 </button>
               </form>
               
-              {/* Выпадающее окно с результатами поиска - показываем при фокусе */}
               <SearchDropdown
                 searchTerm={search}
                 results={searchResults}
@@ -108,10 +115,10 @@ const Header = () => {
             </div>
             
             <div className={styles.actions}>
-              <Link to="/favorites" className={styles.actionBtn}>
+              <Link to="#" className={styles.actionBtn} onClick={() => setShowFavoritesModal(true)}>
                 ❤️ {favoritesCount > 0 && <span>{favoritesCount}</span>}
               </Link>
-              <Link to="/cart" className={styles.actionBtn}>
+              <Link to="#" className={styles.actionBtn} onClick={() => setShowCartModal(true)}>
                 🛒 {cartItemsCount > 0 && <span>{cartItemsCount}</span>}
               </Link>
               {isLoggedIn ? (
@@ -127,7 +134,7 @@ const Header = () => {
             </div>
           </div>
           
-          <nav className={styles.categoriesNav}>
+          {/* <nav className={styles.categoriesNav}>
             {categories.map(cat => (
               <button
                 key={cat}
@@ -140,9 +147,16 @@ const Header = () => {
                 {cat}
               </button>
             ))}
-          </nav>
+          </nav> */}
         </div>
       </header>
+      
+      <CatalogMenu 
+        isOpen={showCatalogMenu} 
+        onClose={() => setShowCatalogMenu(false)} 
+      />
+      <CartModal isOpen={showCartModal} onClose={() => setShowCartModal(false)} />
+      <FavoritesModal isOpen={showFavoritesModal} onClose={() => setShowFavoritesModal(false)} /> 
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </>
   );

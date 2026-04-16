@@ -1,0 +1,459 @@
+/* Оверлей */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Контейнер меню */
+.menuContainer {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1280px;
+  background: linear-gradient(135deg, #1e1e1e, #1a1a1a);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(123, 198, 207, 0.2);
+  overflow: hidden;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Заголовок */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #252525, #1e1e1e);
+  border-bottom: 1px solid rgba(123, 198, 207, 0.1);
+}
+
+.header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #7bc6cf;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  font-size: 24px;
+}
+
+.closeBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #aaa;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: rgba(123, 198, 207, 0.2);
+  color: #7bc6cf;
+  transform: rotate(90deg);
+}
+
+/* Контент - 2 колонки */
+.content {
+  display: flex;
+  min-height: 500px;
+  max-height: 70vh;
+}
+
+/* Левая колонка (категории 1 уровня) */
+.level1Column {
+  width: 280px;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.level1List {
+  padding: 8px;
+}
+
+.level1Item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.level1Item:hover {
+  background: rgba(123, 198, 207, 0.1);
+  transform: translateX(5px);
+}
+
+.level1Item.active {
+  background: linear-gradient(135deg, rgba(123, 198, 207, 0.15), rgba(93, 165, 174, 0.1));
+  border-left: 3px solid #7bc6cf;
+}
+
+.level1Icon {
+  font-size: 28px;
+  width: 40px;
+  text-align: center;
+}
+
+.level1Info {
+  flex: 1;
+}
+
+.level1Name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #f0f0f0;
+  margin-bottom: 4px;
+}
+
+.level1Count {
+  font-size: 11px;
+  color: #888;
+}
+
+.level1Arrow {
+  color: #7bc6cf;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.level1Item:hover .level1Arrow {
+  opacity: 1;
+}
+
+/* Правая колонка */
+.rightColumn {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+
+.rightHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(123, 198, 207, 0.2);
+}
+
+.rightHeader h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #7bc6cf;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.showAllBtn {
+  background: rgba(123, 198, 207, 0.1);
+  border: none;
+  color: #7bc6cf;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.showAllBtn:hover {
+  background: rgba(123, 198, 207, 0.2);
+  transform: translateX(-2px);
+}
+
+/* Сетка категорий 2 уровня */
+.level2Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* Карточка категории 2 уровня */
+.level2Card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.level2Card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+  border-color: rgba(123, 198, 207, 0.2);
+}
+
+/* Заголовок категории 2 уровня */
+.level2Title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.level2Title:hover {
+  padding-left: 5px;
+}
+
+.level2TitleIcon {
+  font-size: 20px;
+}
+
+.level2TitleName {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f0f0;
+}
+
+.level2TitleArrow {
+  color: #7bc6cf;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.level2Title:hover .level2TitleArrow {
+  opacity: 1;
+}
+
+/* Список категорий 3 уровня */
+.level3List {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.level3Item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.level3Item:hover {
+  background: rgba(123, 198, 207, 0.1);
+  transform: translateX(5px);
+}
+
+.level3Bullet {
+  color: #7bc6cf;
+  font-size: 12px;
+}
+
+.level3Name {
+  font-size: 13px;
+  color: #bbb;
+  transition: color 0.3s ease;
+  line-height: 1.4;
+}
+
+.level3Item:hover .level3Name {
+  color: #7bc6cf;
+}
+
+/* Пустое состояние */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.emptyState p {
+  color: #888;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.emptyState small {
+  color: #666;
+  font-size: 13px;
+}
+
+/* Баннер внизу */
+.bottomBanner {
+  background: linear-gradient(135deg, #252525, #1e1e1e);
+  border-top: 1px solid rgba(123, 198, 207, 0.1);
+  padding: 16px 24px;
+}
+
+.bannerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(123, 198, 207, 0.05), rgba(93, 165, 174, 0.02));
+  border-radius: 12px;
+  padding: 12px 20px;
+}
+
+.bannerText {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #f0f0f0;
+  font-size: 14px;
+}
+
+.bannerIcon {
+  font-size: 20px;
+}
+
+.bannerBtn {
+  background: rgba(123, 198, 207, 0.1);
+  border: 1px solid rgba(123, 198, 207, 0.3);
+  color: #7bc6cf;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bannerBtn:hover {
+  background: #7bc6cf;
+  color: #121212;
+  transform: translateY(-2px);
+}
+
+/* Кастомизация скролла */
+.level1Column::-webkit-scrollbar,
+.rightColumn::-webkit-scrollbar {
+  width: 4px;
+}
+
+.level1Column::-webkit-scrollbar-track,
+.rightColumn::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.level1Column::-webkit-scrollbar-thumb,
+.rightColumn::-webkit-scrollbar-thumb {
+  background: #7bc6cf;
+  border-radius: 2px;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .menuContainer {
+    width: 95%;
+    top: 70px;
+  }
+  
+  .level1Column {
+    width: 240px;
+  }
+  
+  .level2Grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+  
+  .level1Column {
+    width: 100%;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .rightColumn {
+    max-height: 400px;
+  }
+  
+  .level2Grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .bottomBanner {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .rightColumn {
+    padding: 16px;
+  }
+  
+  .level2Card {
+    padding: 12px;
+  }
+  
+  .level2TitleName {
+    font-size: 14px;
+  }
+  
+  .level3Name {
+    font-size: 12px;
+  }
+}

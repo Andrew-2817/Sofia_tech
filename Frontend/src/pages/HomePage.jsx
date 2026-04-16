@@ -2,10 +2,12 @@ import { useSelector } from 'react-redux';
 import Slider from '../components/Slider';
 import CategoryCard from '../components/CategoryCard';
 import { categories } from '../data/mockData';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './HomePage.module.css';
 
 const HomePage = () => {
   const products = useSelector(state => state.products.items);
+  const navigate = useNavigate();
   const popular = products.filter(p => p.isPopular);
   const news = products.filter(p => p.isNew);
 
@@ -19,10 +21,20 @@ const HomePage = () => {
       </div>
       <div className="container">
         <div className={styles.categoriesBlock}>
-        <h2>Категории</h2>
-        <div className={styles.categoriesGrid}>
-            {categories.map(cat => <CategoryCard key={cat.id} category={cat} />)}
-        </div>
+          <div className={styles.sectionHeader}>
+            <h2>Категории</h2>
+            <button 
+              className={styles.viewAllBtn}
+              onClick={() => navigate('/catalog')}
+            >
+              Все категории →
+            </button>
+          </div>
+          <div className={styles.categoriesGrid}>
+            {categories.map(cat => (
+              <CategoryCard key={cat.id} category={cat} />
+            ))}
+          </div>
         </div>
         <Slider title="Популярные товары" products={popular} />
         <Slider title="Новинки" products={news} />

@@ -47,6 +47,23 @@
   transform: translateY(-1px);
 }
 
+.loginBtn {
+  background: linear-gradient(135deg, #7bc6cf, #5da5ae);
+  color: #121212;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.loginBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 198, 207, 0.4);
+}
+
 
 .catalogBtn {
   background-color: #7bc6cf;

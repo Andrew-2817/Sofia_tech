@@ -1,31 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleManufacturer, setPriceRange, setWeight, setColor, resetFilters } from '../store/slices/filtersSlice';
-import { manufacturers, colors } from '../data/mockData';
+import { toggleManufacturer, setPriceRange, setColor, setLoadCapacity, setEnergyClass, resetFilters } from '../store/slices/filtersSlice';
 import styles from './FilterSidebar.module.css';
-import { useState, useRef, useEffect } from 'react';
 
 const FilterSidebar = () => {
   const dispatch = useDispatch();
-  const { manufacturer, priceRange, weight, color } = useSelector(state => state.filters);
-  const [isWeightOpen, setIsWeightOpen] = useState(false);
-const weightRef = useRef(null);
+  const { manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
 
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (weightRef.current && !weightRef.current.contains(event.target)) {
-      setIsWeightOpen(false);
-    }
-  };
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => document.removeEventListener('mousedown', handleClickOutside);
-}, []);
-
-const weightOptions = [
-  { value: '', label: 'Любой вес', icon: '🔄' },
-  { value: 'до 10 кг', label: 'до 10 кг', icon: '📦' },
-  { value: '10-20 кг', label: '10-20 кг', icon: '📦' },
-  { value: 'более 20 кг', label: 'более 20 кг', icon: '🏋️' },
-];ы
+  // Производители из товаров
+  const manufacturers = ['Schulthess', 'Kuppersbusch', 'Elica', 'Nivona'];
+  
+  // Цвета
+  const colors = ['Черный', 'Белый', 'Нержавеющая сталь', 'Серебристый', 'Титан', 'Антрацит'];
 
   return (
     <aside className={styles.sidebar}>
@@ -36,6 +21,7 @@ const weightOptions = [
         </button>
       </div>
 
+      {/* Производитель */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
           <span>🏭</span> Производитель
@@ -55,6 +41,7 @@ const weightOptions = [
         </div>
       </div>
 
+      {/* Цена */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
           <span>💰</span> Цена
@@ -69,14 +56,14 @@ const weightOptions = [
               placeholder="0"
             />
           </div>
-          {/* <span className={styles.priceSeparator}>—</span> */}
+          <span className={styles.priceSeparator}>—</span>
           <div className={styles.priceField}>
             <span>до</span>
             <input 
               type="number" 
               value={priceRange[1]} 
               onChange={(e) => dispatch(setPriceRange([priceRange[0], +e.target.value]))}
-              placeholder="150000"
+              placeholder="500000"
             />
           </div>
         </div>
@@ -84,58 +71,23 @@ const weightOptions = [
           <input 
             type="range" 
             min="0" 
-            max="150000" 
+            max="500000" 
+            step="5000"
             value={priceRange[0]} 
             onChange={(e) => dispatch(setPriceRange([+e.target.value, priceRange[1]]))}
           />
           <input 
             type="range" 
             min="0" 
-            max="150000" 
+            max="500000" 
+            step="5000"
             value={priceRange[1]} 
             onChange={(e) => dispatch(setPriceRange([priceRange[0], +e.target.value]))}
           />
         </div>
       </div>
 
-        <div className={styles.filterGroup} ref={weightRef}>
-          <h4 className={styles.groupTitle}>
-            <span>⚖️</span> Вес
-          </h4>
-          <div className={styles.customSelect}>
-            <div 
-              className={`${styles.selectTrigger} ${isWeightOpen ? styles.open : ''}`}
-              onClick={() => setIsWeightOpen(!isWeightOpen)}
-            >
-              <div className={styles.selectedValue}>
-                <span className={styles.selectedIcon}>
-                  {weightOptions.find(opt => opt.value === weight)?.icon || '⚖️'}
-                </span>
-                <span>{weightOptions.find(opt => opt.value === weight)?.label || 'Выберите вес'}</span>
-              </div>
-              <span className={`${styles.selectArrow} ${isWeightOpen ? styles.rotated : ''}`}>▼</span>
-            </div>
-            {isWeightOpen && (
-              <div className={styles.selectDropdown}>
-                {weightOptions.map(option => (
-                  <div
-                    key={option.value}
-                    className={`${styles.selectOption} ${weight === option.value ? styles.selected : ''}`}
-                    onClick={() => {
-                      dispatch(setWeight(option.value));
-                      setIsWeightOpen(false);
-                    }}
-                  >
-                    <span className={styles.optionIcon}>{option.icon}</span>
-                    <span>{option.label}</span>
-                    {weight === option.value && <span className={styles.checkMark}>✓</span>}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
+      {/* Цвет */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
           <span>🎨</span> Цвет
@@ -146,7 +98,14 @@ const weightOptions = [
               key={c}
               className={`${styles.colorBtn} ${color === c ? styles.active : ''}`}
               onClick={() => dispatch(setColor(color === c ? '' : c))}
-              style={{ backgroundColor: c === 'черный' ? '#1a1a1a' : c === 'белый' ? '#f0f0f0' : c === 'серебристый' ? '#c0c0c0' : c === 'нержавейка' ? '#b8b8b8' : '#ffd700' }}
+              style={{ 
+                backgroundColor: c === 'Черный' ? '#2a2a2a' : 
+                               c === 'Белый' ? '#f5f5f5' : 
+                               c === 'Нержавеющая сталь' ? '#c0c0c0' :
+                               c === 'Серебристый' ? '#e0e0e0' :
+                               c === 'Титан' ? '#b8b8b8' : '#4a4a4a',
+                color: c === 'Белый' ? '#333' : '#f0f0f0'
+              }}
             >
               {c}
             </button>
@@ -154,35 +113,156 @@ const weightOptions = [
         </div>
       </div>
 
-      <div className={styles.activeFilters}>
-        {(manufacturer.length > 0 || weight || color || priceRange[0] > 0 || priceRange[1] < 150000) && (
-          <>
-            <h4>Активные фильтры:</h4>
-            <div className={styles.activeFilterTags}>
-              {manufacturer.map(m => (
-                <span key={m} className={styles.filterTag} onClick={() => dispatch(toggleManufacturer(m))}>
-                  {m} ✕
-                </span>
-              ))}
-              {weight && (
-                <span className={styles.filterTag} onClick={() => dispatch(setWeight(''))}>
-                  {weight} ✕
-                </span>
-              )}
-              {color && (
-                <span className={styles.filterTag} onClick={() => dispatch(setColor(''))}>
-                  {color} ✕
-                </span>
-              )}
-              {(priceRange[0] > 0 || priceRange[1] < 150000) && (
-                <span className={styles.filterTag} onClick={() => dispatch(setPriceRange([0, 150000]))}>
-                  {priceRange[0]}₽ - {priceRange[1]}₽ ✕
-                </span>
-              )}
-            </div>
-          </>
-        )}
+      {/* Загрузка (для стиральных машин) */}
+      <div className={styles.filterGroup}>
+        <h4 className={styles.groupTitle}>
+          <span>⚖️</span> Загрузка
+        </h4>
+        <div className={styles.radioGroup}>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="loadCapacity"
+              value=""
+              checked={loadCapacity === ''}
+              onChange={() => dispatch(setLoadCapacity(''))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>Любая</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="loadCapacity"
+              value="до 6 кг"
+              checked={loadCapacity === 'до 6 кг'}
+              onChange={() => dispatch(setLoadCapacity('до 6 кг'))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>📦 до 6 кг</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="loadCapacity"
+              value="6-8 кг"
+              checked={loadCapacity === '6-8 кг'}
+              onChange={() => dispatch(setLoadCapacity('6-8 кг'))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>📦 6-8 кг</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="loadCapacity"
+              value="более 8 кг"
+              checked={loadCapacity === 'более 8 кг'}
+              onChange={() => dispatch(setLoadCapacity('более 8 кг'))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>📦 более 8 кг</span>
+          </label>
+        </div>
       </div>
+
+      {/* Класс энергоэффективности */}
+      <div className={styles.filterGroup}>
+        <h4 className={styles.groupTitle}>
+          <span>⚡</span> Энергоэффективность
+        </h4>
+        <div className={styles.radioGroup}>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="energyClass"
+              value=""
+              checked={energyClass === ''}
+              onChange={() => dispatch(setEnergyClass(''))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>Любой</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="energyClass"
+              value="A+++"
+              checked={energyClass === 'A+++'}
+              onChange={() => dispatch(setEnergyClass('A+++'))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>A+++</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="energyClass"
+              value="A++"
+              checked={energyClass === 'A++'}
+              onChange={() => dispatch(setEnergyClass('A++'))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>A++</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="energyClass"
+              value="A+"
+              checked={energyClass === 'A+'}
+              onChange={() => dispatch(setEnergyClass('A+'))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>A+</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name="energyClass"
+              value="A"
+              checked={energyClass === 'A'}
+              onChange={() => dispatch(setEnergyClass('A'))}
+            />
+            <span className={styles.radioCustom}></span>
+            <span>A</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Активные фильтры */}
+      {(manufacturer.length > 0 || color || loadCapacity || energyClass || priceRange[0] > 0 || priceRange[1] < 500000) && (
+        <div className={styles.activeFilters}>
+          <h4>Активные фильтры:</h4>
+          <div className={styles.activeFilterTags}>
+            {manufacturer.map(m => (
+              <span key={m} className={styles.filterTag} onClick={() => dispatch(toggleManufacturer(m))}>
+                {m} ✕
+              </span>
+            ))}
+            {color && (
+              <span className={styles.filterTag} onClick={() => dispatch(setColor(''))}>
+                {color} ✕
+              </span>
+            )}
+            {loadCapacity && (
+              <span className={styles.filterTag} onClick={() => dispatch(setLoadCapacity(''))}>
+                {loadCapacity} ✕
+              </span>
+            )}
+            {energyClass && (
+              <span className={styles.filterTag} onClick={() => dispatch(setEnergyClass(''))}>
+                Класс {energyClass} ✕
+              </span>
+            )}
+            {(priceRange[0] > 0 || priceRange[1] < 500000) && (
+              <span className={styles.filterTag} onClick={() => dispatch(setPriceRange([0, 500000]))}>
+                {priceRange[0].toLocaleString()}₽ - {priceRange[1].toLocaleString()}₽ ✕
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </aside>
   );
 };

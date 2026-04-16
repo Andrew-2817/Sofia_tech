@@ -107,6 +107,7 @@
 /* Обёртка для изображения */
 .imageWrapper {
   position: relative;
+  max-width: 60%;
   flex-shrink: 0;
 }
 

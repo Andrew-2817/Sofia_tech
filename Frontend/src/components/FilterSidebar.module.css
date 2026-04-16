@@ -4,6 +4,7 @@
   padding: 25px;
   border: 1px solid rgba(123, 198, 207, 0.1);
   transition: all 0.3s ease;
+  width: 30%;
   animation: slideInLeft 0.5s ease;
 }
 
@@ -390,6 +391,93 @@
 .filterTag:hover {
   background: rgba(123, 198, 207, 0.3);
   transform: translateY(-2px);
+}
+
+/* Добавьте в конец файла */
+
+/* Радиокнопки */
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.radioLabel:hover {
+  background: rgba(123, 198, 207, 0.08);
+  transform: translateX(5px);
+}
+
+.radioLabel input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radioCustom {
+  position: relative;
+  height: 18px;
+  width: 18px;
+  background-color: #2c2c2c;
+  border: 2px solid #7bc6cf;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.radioCustom::after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7bc6cf;
+}
+
+.radioLabel input:checked ~ .radioCustom::after {
+  display: block;
+}
+
+.radioLabel input:checked ~ .radioCustom {
+  background: rgba(123, 198, 207, 0.1);
+  animation: pulse 0.3s ease;
+}
+
+.radioLabel span:last-child {
+  flex: 1;
+  color: #f0f0f0;
+  font-size: 14px;
+}
+
+.radioLabel input:checked ~ span:last-child {
+  color: #7bc6cf;
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 

@@ -6,9 +6,10 @@ const filtersSlice = createSlice({
     searchQuery: '',
     category: 'all',
     manufacturer: [],
-    priceRange: [0, 150000],
-    weight: '',
+    priceRange: [0, 500000],
     color: '',
+    loadCapacity: '',
+    energyClass: '',
   },
   reducers: {
     setSearchQuery: (state, action) => {
@@ -28,22 +29,40 @@ const filtersSlice = createSlice({
     setPriceRange: (state, action) => {
       state.priceRange = action.payload;
     },
-    setWeight: (state, action) => {
-      state.weight = action.payload;
-    },
     setColor: (state, action) => {
       state.color = action.payload;
+    },
+    setLoadCapacity: (state, action) => {
+      state.loadCapacity = action.payload;
+    },
+    setEnergyClass: (state, action) => {
+      state.energyClass = action.payload;
+    },
+    setFilters: (state, action) => {
+      return { ...state, ...action.payload };
     },
     resetFilters: (state) => {
       state.searchQuery = '';
       state.category = 'all';
       state.manufacturer = [];
-      state.priceRange = [0, 150000];
-      state.weight = '';
+      state.priceRange = [0, 500000];
       state.color = '';
+      state.loadCapacity = '';
+      state.energyClass = '';
     },
   },
 });
 
-export const { setSearchQuery, setCategory, toggleManufacturer, setPriceRange, setWeight, setColor, resetFilters } = filtersSlice.actions;
+export const { 
+  setSearchQuery, 
+  setCategory, 
+  toggleManufacturer, 
+  setPriceRange, 
+  setColor, 
+  setLoadCapacity,
+  setEnergyClass,
+  setFilters,
+  resetFilters 
+} = filtersSlice.actions;
+
 export default filtersSlice.reducer;
