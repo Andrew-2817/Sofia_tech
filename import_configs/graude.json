@@ -1,0 +1,20 @@
+{
+  "brand": "GRAUDE",
+  "file_pattern": "Прайс GRAUDE_18112025.xlsx",
+  "sheet_name": null,
+  "dynamic_sheets": true,
+  "skip_rows": 1,
+  "column_mapping": {
+    "sku": "Артикул",
+    "name": "Наименование",
+    "price": "РРЦ, руб",
+    "description": "Описание",
+    "ean": "Штрих-код"
+  },
+  "price_multiplier": 1,
+  "is_price_in_kopecks": false,
+  "has_variants": false,
+  "extra_fields": {
+    "brand": "GRAUDE"
+  }
+}

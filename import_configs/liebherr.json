@@ -1,0 +1,23 @@
+{
+  "brand": "Liebherr",
+  "file_pattern": "Liebherr price с 04.2026 (Homeier) NEW.xlsx",
+  "sheet_name": "Price 2026",
+  "skip_rows": 0,
+  "column_mapping": {
+    "sku": "Model",
+    "price": "РРЦ",
+    "price_promo": "Промо РРЦ",
+    "status": "Status",
+    "guarantee": "Гарантия 2026",
+    "factory": "Factory",
+    "ean": "EAN",
+    "start_production": "Старт производства 2026"
+  },
+  "price_multiplier": 1,
+  "is_price_in_kopecks": false,
+  "has_variants": false,
+  "build_description_from_fields": ["sku", "factory", "guarantee", "status"],
+  "extra_fields": {
+    "brand": "Liebherr"
+  }
+}

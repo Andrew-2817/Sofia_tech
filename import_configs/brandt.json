@@ -1,0 +1,22 @@
+{
+  "brand": "Brandt",
+  "file_pattern": "20251020 Прайс-лист Brandt.xlsx",
+  "sheet_name": "Лист1",
+  "skip_rows": 0,
+  "column_mapping": {
+    "sku": "Модель",
+    "name": "Наименовние",
+    "price": "РРЦ, руб",
+    "price_promo": "РРЦ, руб.1",
+    "description": "Характеристики",
+    "design": "Дизайн",
+    "comment": "Комментарий",
+    "ean": "EAN"
+  },
+  "price_multiplier": 1,
+  "is_price_in_kopecks": false,
+  "has_variants": false,
+  "extra_fields": {
+    "brand": "Brandt"
+  }
+}

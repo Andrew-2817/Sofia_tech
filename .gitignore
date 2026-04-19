@@ -1,0 +1,27 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+/media/
+/staticfiles/
+
+# Виртуальное окружение
+venv/
+env/
+.env
+.venv
+
+# Секреты
+secret_key.txt
+*.secret
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Папки с данными (если Excel-файлы большие или конфиденциальные – решай сам, оставить или нет)
+# data/
+# import_configs/

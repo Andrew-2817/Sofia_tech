@@ -1,0 +1,28 @@
+{
+  "brand": "Signature Kitchen Suite",
+  "file_pattern": "Прайс-лист SKS_15042026.xlsx",
+  "sheet_name": "SKS",
+  "skip_rows": 1,
+  "column_mapping": {
+    "sku": "Артикул",
+    "name": "Наименование товара",
+    "price": "РРЦ Рубли",
+    "description": "Описание",
+    "category_l1": "Группа I уровня",
+    "category_l2": "Группа II уровень",
+    "color": "Цвет прибора",
+    "width": "Ширина (м) упаковки",
+    "height": "Высота (м) упаковки",
+    "depth": "Глубина (м) упаковки",
+    "weight_net": "Вес нетто (кг)",
+    "weight_gross": "Вес брутто (кг)",
+    "ean": "Код EAN",
+    "comment": "Комментарий"
+  },
+  "price_multiplier": 1,
+  "is_price_in_kopecks": false,
+  "has_variants": false,
+  "extra_fields": {
+    "brand": "Signature Kitchen Suite"
+  }
+}
