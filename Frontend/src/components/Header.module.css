@@ -116,6 +116,36 @@
   align-items: center;
   justify-content: center;
 }
+
+.searchSubmit img {
+  width: 20px;
+  height: 20px;
+  /* filter: brightness(0) invert(1); */
+  transition: transform 0.3s ease;
+}
+.searchSubmit:hover img {
+  transform: scale(1.1);
+}
+
+.searchSubmit:active {
+  transform: translateX(0);
+}
+
+.actionBtn img {
+  width: 25px;
+  height: 25px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.actionBtn:hover img {
+  transform: scale(1.1);
+}
+
+.actionBtn:active {
+  transform: translateX(0);
+}
+
+
 .searchSubmit:hover {
   /* background-color: #5da5ae; */
   transform: translateX(2px);
@@ -237,6 +267,15 @@
 }
 .userMenu button:active {
   transform: scale(0.98);
+}
+.profileLink {
+  text-decoration: none;
+  color: #f0f0f0;
+  transition: color 0.3s ease;
+}
+
+.profileLink:hover {
+  color: #7bc6cf;
 }
 
 /* Адаптивность для мобильных устройств */

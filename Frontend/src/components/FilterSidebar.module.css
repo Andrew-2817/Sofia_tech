@@ -34,6 +34,10 @@
   color: #7bc6cf;
   border: none;
   padding: 6px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 0 5px;
   border-radius: 8px;
   font-size: 13px;
   cursor: pointer;
@@ -52,7 +56,8 @@
 
 .groupTitle {
   display: flex;
-  align-items: center;
+  align-items: end;
+
   gap: 8px;
   margin-bottom: 15px;
   font-size: 16px;
@@ -446,6 +451,26 @@
   height: 8px;
   border-radius: 50%;
   background: #7bc6cf;
+}
+
+.resetBtn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.resetBtn:hover img {
+  transform: scale(1.1);
+}
+
+.groupTitle img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.groupTitle:hover img {
+  transform: scale(1.1);
 }
 
 .radioLabel input:checked ~ .radioCustom::after {

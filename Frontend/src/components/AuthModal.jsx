@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { login } from '../store/slices/authSlice';
 import styles from './AuthModal.module.css';
+import crossIcon from '../assets/cross.svg'
+import regIcon from '../assets/reg.svg'
+import singInIcon from '../assets/sign-in.svg'
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('login'); // 'login' или 'register'
@@ -117,7 +120,7 @@ const AuthModal = ({ isOpen, onClose }) => {
   return (
     <div className={`${styles.overlay} ${isVisible ? styles.visible : ''}`} onClick={handleOverlayClick}>
       <div className={`${styles.modal} ${isVisible ? styles.modalEnter : styles.modalExit}`}>
-        <button className={styles.closeBtn} onClick={handleClose}>×</button>
+        <button className={styles.closeBtn} onClick={handleClose}><img src={crossIcon} alt="" /></button>
         
         <div className={styles.header}>
           <h2>Добро пожаловать</h2>
@@ -129,14 +132,14 @@ const AuthModal = ({ isOpen, onClose }) => {
             className={`${styles.tab} ${activeTab === 'login' ? styles.active : ''}`}
             onClick={() => setActiveTab('login')}
           >
-            <span>🔐</span>
+            <img src={singInIcon} alt="" />
             Вход
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'register' ? styles.active : ''}`}
             onClick={() => setActiveTab('register')}
           >
-            <span>📝</span>
+            <img src={regIcon} alt="" />
             Регистрация
           </button>
         </div>
@@ -145,7 +148,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           {activeTab === 'register' && (
             <div className={styles.inputGroup}>
               <label>
-                <span>👤</span>
+                {/* <span>👤</span> */}
                 Имя
               </label>
               <input
@@ -162,7 +165,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
           <div className={styles.inputGroup}>
             <label>
-              <span>📧</span>
+              {/* <span>📧</span> */}
               Email
             </label>
             <input
@@ -178,7 +181,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
           <div className={styles.inputGroup}>
             <label>
-              <span>🔒</span>
+              {/* <span>🔒</span> */}
               Пароль
             </label>
             <input
@@ -195,7 +198,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           {activeTab === 'register' && (
             <div className={styles.inputGroup}>
               <label>
-                <span>✓</span>
+                {/* <span>✓</span> */}
                 Подтвердите пароль
               </label>
               <input

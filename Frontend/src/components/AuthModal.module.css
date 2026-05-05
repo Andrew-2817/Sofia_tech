@@ -1,19 +1,18 @@
-/* Оверлей с усиленным blur эффектом */
+/* Оверлей */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
@@ -22,22 +21,18 @@
   pointer-events: auto;
 }
 
-/* Модальное окно - эффект льда */
+/* Модальное окно */
 .modal {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 32px;
+  background: linear-gradient(135deg, #1e1e1e, #1a1a1a);
+  border-radius: 24px;
   width: 90%;
-  max-width: 480px;
+  max-width: 450px;
   position: relative;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   transform: scale(0.9) translateY(-30px);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  border: 1px solid rgba(123, 198, 207, 0.2);
 }
 
 .modalEnter {
@@ -48,25 +43,16 @@
   transform: scale(0.9) translateY(-30px);
 }
 
-/* Ледяной эффект при наведении */
-.modal:hover {
-  box-shadow: 
-    0 12px 48px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
 /* Кнопка закрытия */
 .closeBtn {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  /* background: rgba(255, 255, 255, 0.05); */
+  border: none;
   font-size: 24px;
   cursor: pointer;
-  color: white;
+  color: #aaa;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -75,37 +61,46 @@
   justify-content: center;
   transition: all 0.3s ease;
   z-index: 1;
-  font-weight: 300;
 }
 
+.closeBtn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.closeBtn:hover img {
+  transform: scale(1.1);
+}
+
+
 .closeBtn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg) scale(1.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(123, 198, 207, 0.2);
+  color: #7bc6cf;
+  transform: rotate(90deg);
 }
 
 /* Заголовок */
 .header {
   text-align: center;
-  padding: 20px 30px 15px;
-  background: linear-gradient(135deg, rgba(214, 251, 255, 0.3), rgba(95, 207, 222, 0.5));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px 30px 20px;
+  background: linear-gradient(135deg, rgba(123, 198, 207, 0.1), rgba(93, 165, 174, 0.05));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .header h2 {
-  font-size: 32px;
+  font-size: 28px;
   margin-bottom: 8px;
   font-weight: 600;
-  background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.8));
+  background: linear-gradient(135deg, #f0f0f0, #7bc6cf);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header p {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Табы */
@@ -119,7 +114,7 @@
 .tab {
   flex: 1;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 16px;
@@ -127,7 +122,7 @@
   cursor: pointer;
   color: rgba(255, 255, 255, 0.7);
   transition: all 0.3s ease;
-  border-radius: 16px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,17 +133,32 @@
   font-size: 18px;
 }
 
+.tab img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.tab:hover img {
+  transform: scale(1.1);
+}
+
 .tab:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
+  background: rgba(123, 198, 207, 0.1);
+  color: #7bc6cf;
   transform: translateY(-2px);
+  border-color: rgba(123, 198, 207, 0.3);
 }
 
 .tab.active {
-  background: rgba(123, 198, 207, 0.3);
-  color: white;
-  border-color: rgba(123, 198, 207, 0.5);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #7bc6cf, #5da5ae);
+  color: #121212;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 198, 207, 0.3);
+}
+.tab.active img {
+  filter: brightness(0) invert(0);
 }
 
 /* Форма */
@@ -178,19 +188,19 @@ form {
 .inputGroup input {
   width: 100%;
   padding: 14px 18px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   font-size: 15px;
   transition: all 0.3s ease;
-  color: white;
+  color: #f0f0f0;
   outline: none;
 }
 
 .inputGroup input:focus {
-  border-color: rgba(123, 198, 207, 0.8);
-  background: rgba(255, 255, 255, 0.12);
+  border-color: #7bc6cf;
+  background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 0 3px rgba(123, 198, 207, 0.1);
 }
 
@@ -200,7 +210,7 @@ form {
 }
 
 .inputGroup input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .errorMessage {
@@ -214,11 +224,10 @@ form {
 .submitBtn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, rgba(214, 251, 255, 0.3), rgba(129, 240, 255, 0.7));
-  backdrop-filter: blur(10px);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #7bc6cf, #5da5ae);
+  color: #121212;
+  border: none;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -241,8 +250,7 @@ form {
 
 .submitBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(135deg, rgba(123, 198, 207, 1), rgba(93, 165, 174, 1));
+  box-shadow: 0 6px 20px rgba(123, 198, 207, 0.4);
 }
 
 .submitBtn:hover::before {
@@ -258,7 +266,7 @@ form {
   padding: 20px 30px 30px;
   text-align: center;
   background: transparent;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .footer p {
@@ -275,46 +283,39 @@ form {
   margin-left: 8px;
   transition: all 0.3s ease;
   font-size: 14px;
-  text-decoration: underline;
-  text-decoration-color: transparent;
 }
 
 .switchBtn:hover {
-  color: white;
-  text-decoration-color: rgba(255, 255, 255, 0.5);
+  color: #5da5ae;
+  text-decoration: underline;
 }
 
-/* Снежинки (декоративные элементы) */
-.modal::before,
-.modal::after {
-  content: '❄️';
-  position: absolute;
-  font-size: 20px;
-  opacity: 0.3;
-  pointer-events: none;
-  animation: float 6s ease-in-out infinite;
-}
-
-.modal::before {
-  top: 20px;
-  left: 20px;
-  animation-delay: 0s;
-}
-
-.modal::after {
-  bottom: 20px;
-  right: 20px;
-  animation-delay: 3s;
-}
-
-/* Добавим ещё плавающие снежинки через псевдоэлементы */
-@keyframes float {
+/* Анимация для полей ввода при ошибке */
+@keyframes shake {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateX(0);
   }
-  50% {
-    transform: translateY(-10px) rotate(180deg);
+  25% {
+    transform: translateX(-5px);
   }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.inputGroup input.error {
+  animation: shake 0.3s ease;
+}
+
+/* Стили для автозаполнения */
+.inputGroup input:-webkit-autofill,
+.inputGroup input:-webkit-autofill:hover,
+.inputGroup input:-webkit-autofill:focus,
+.inputGroup input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: #f0f0f0;
+  transition: background-color 5000s ease-in-out 0s;
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Адаптивность */
@@ -325,11 +326,11 @@ form {
   }
   
   .header {
-    padding: 30px 20px 20px;
+    padding: 30px 20px 15px;
   }
   
   .header h2 {
-    font-size: 28px;
+    font-size: 24px;
   }
   
   .tabs {
@@ -353,32 +354,4 @@ form {
     padding: 12px 16px;
     font-size: 14px;
   }
-}
-
-/* Анимация для полей ввода при ошибке */
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
-}
-
-.inputGroup input.error {
-  animation: shake 0.3s ease;
-}
-
-/* Стили для автозаполнения (чтобы не ломался стиль) */
-.inputGroup input:-webkit-autofill,
-.inputGroup input:-webkit-autofill:hover,
-.inputGroup input:-webkit-autofill:focus,
-.inputGroup input:-webkit-autofill:active {
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: white;
-  transition: background-color 5000s ease-in-out 0s;
-  background-color: rgba(255, 255, 255, 0.08) !important;
 }

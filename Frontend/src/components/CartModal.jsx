@@ -2,6 +2,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { removeFromCart, incrementQuantity, decrementQuantity, clearCart } from '../store/slices/cartSlice';
 import styles from './CartModal.module.css';
+import basketIcon from '../assets/basket.svg'
+import crossIcon from '../assets/cross.svg'
+import transhIcon from "../assets/trash.svg"
 
 const CartModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -24,16 +27,16 @@ const CartModal = ({ isOpen, onClose }) => {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>
-            <span className={styles.headerIcon}>🛒</span>
-            Корзина
+            <span className={styles.headerIcon}><img src={basketIcon} alt="" /></span>
+            <p>Корзина</p>
             <span className={styles.itemCount}>{totalItems}</span>
           </h2>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose}><img src={crossIcon} alt="" /></button>
         </div>
         
         {cartItems.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>🛒</div>
+            {/* <div className={styles.emptyIcon}>🛒</div> */}
             <h3>Корзина пуста</h3>
             <p>Добавьте товары в корзину, чтобы продолжить</p>
             <button className={styles.continueBtn} onClick={onClose}>
@@ -71,7 +74,7 @@ const CartModal = ({ isOpen, onClose }) => {
                       className={styles.removeBtn}
                       onClick={() => dispatch(removeFromCart(item.id))}
                     >
-                      🗑️
+                      <img src={transhIcon} alt="" />
                     </button>
                   </div>
                   <div className={styles.itemTotal}>

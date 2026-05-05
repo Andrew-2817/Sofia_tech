@@ -2,6 +2,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleManufacturer, setPriceRange, setColor, setLoadCapacity, setEnergyClass, resetFilters } from '../store/slices/filtersSlice';
 import styles from './FilterSidebar.module.css';
 
+import transhIcon from "../assets/trash.svg"
+import colorIcon from "../assets/colors.svg"
+import moneyIcon from "../assets/money.svg"
+
 const FilterSidebar = () => {
   const dispatch = useDispatch();
   const { manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
@@ -17,7 +21,7 @@ const FilterSidebar = () => {
       <div className={styles.header}>
         <h3>Фильтры</h3>
         <button onClick={() => dispatch(resetFilters())} className={styles.resetBtn}>
-          🗑️ Сбросить все
+          <img src={transhIcon} alt="" /> <p>Сбросить все</p>
         </button>
       </div>
 
@@ -44,7 +48,7 @@ const FilterSidebar = () => {
       {/* Цена */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
-          <span>💰</span> Цена
+          <img src={moneyIcon} alt="" /> <p>Цена</p>
         </h4>
         <div className={styles.priceInputs}>
           <div className={styles.priceField}>
@@ -90,7 +94,7 @@ const FilterSidebar = () => {
       {/* Цвет */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
-          <span>🎨</span> Цвет
+          <img src={colorIcon} alt="" /> <p>Цвет</p>
         </h4>
         <div className={styles.colorOptions}>
           {colors.map(c => (

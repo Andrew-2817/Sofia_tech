@@ -73,7 +73,7 @@
 }
 
 .closeBtn {
-  background: rgba(255, 255, 255, 0.05);
+  /* background: rgba(255, 255, 255, 0.05); */
   border: none;
   color: #aaa;
   width: 36px;
@@ -88,9 +88,23 @@
 }
 
 .closeBtn:hover {
-  background: rgba(123, 198, 207, 0.2);
+  /* background: rgba(123, 198, 207, 0.2); */
   color: #7bc6cf;
   transform: rotate(90deg);
+}
+
+.closeBtn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.closeBtn:hover img {
+  transform: scale(1.1);
+}
+
+.closeBtn:active {
+  transform: translateX(0);
 }
 
 /* Контент - 2 колонки */
@@ -99,18 +113,34 @@
   min-height: 500px;
   max-height: 70vh;
 }
-
-/* Левая колонка (категории 1 уровня) */
+/* Левая колонка (категории 1 уровня) - добавляем эффект градиента */
 .level1Column {
   width: 280px;
-  background: rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   overflow-y: auto;
   flex-shrink: 0;
+  position: relative;
+}
+
+.level1Column::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #7bc6cf, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.level1Column:hover::before {
+  opacity: 1;
 }
 
 .level1List {
-  padding: 8px;
+  padding: 12px 8px;
 }
 
 .level1Item {
@@ -118,31 +148,77 @@
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  overflow: hidden;
+}
+
+/* Градиентный эффект при наведении */
+.level1Item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(123, 198, 207, 0.05), rgba(93, 165, 174, 0.02));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.level1Item:hover::before {
+  opacity: 1;
+}
+
+/* Эффект бегущей волны при наведении */
+.level1Item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(123, 198, 207, 0.15), transparent);
+  transition: left 0.5s ease;
+  z-index: 0;
+}
+
+.level1Item:hover::after {
+  left: 100%;
 }
 
 .level1Item:hover {
-  background: rgba(123, 198, 207, 0.1);
   transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .level1Item.active {
-  background: linear-gradient(135deg, rgba(123, 198, 207, 0.15), rgba(93, 165, 174, 0.1));
+  background: linear-gradient(135deg, rgba(123, 198, 207, 0.15), rgba(93, 165, 174, 0.08));
   border-left: 3px solid #7bc6cf;
+  box-shadow: 0 2px 8px rgba(123, 198, 207, 0.1);
 }
 
 .level1Icon {
   font-size: 28px;
   width: 40px;
   text-align: center;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.level1Item:hover .level1Icon {
+  transform: scale(1.1);
 }
 
 .level1Info {
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .level1Name {
@@ -150,24 +226,37 @@
   font-weight: 500;
   color: #f0f0f0;
   margin-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.level1Item:hover .level1Name {
+  color: #7bc6cf;
 }
 
 .level1Count {
   font-size: 11px;
   color: #888;
+  transition: color 0.3s ease;
+}
+
+.level1Item:hover .level1Count {
+  color: #aaa;
 }
 
 .level1Arrow {
   color: #7bc6cf;
   font-size: 18px;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .level1Item:hover .level1Arrow {
   opacity: 1;
+  transform: translateX(0);
 }
-
 /* Правая колонка */
 .rightColumn {
   flex: 1;
@@ -218,55 +307,129 @@
 
 /* Карточка категории 2 уровня */
 .level2Card {
-  background: rgba(255, 255, 255, 0.03);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
   border-radius: 16px;
-  padding: 16px;
-  transition: all 0.3s ease;
+  padding: 20px 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Голубоватый градиент при наведении */
+.level2Card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 0%, rgba(123, 198, 207, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.level2Card:hover::before {
+  opacity: 1;
+}
+
+/* Эффект рамки при наведении */
+.level2Card::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #7bc6cf, transparent, #5da5ae);
+  border-radius: 18px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.level2Card:hover::after {
+  opacity: 0.3;
 }
 
 .level2Card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-2px);
-  border-color: rgba(123, 198, 207, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  transform: translateY(-4px);
+  border-color: rgba(123, 198, 207, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 /* Заголовок категории 2 уровня */
 .level2Title {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+}
+
+.level2Title::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #7bc6cf, transparent);
+  transition: width 0.3s ease;
+}
+
+.level2Title:hover::before {
+  width: 100%;
 }
 
 .level2Title:hover {
-  padding-left: 5px;
+  padding-left: 8px;
 }
 
 .level2TitleIcon {
-  font-size: 20px;
+  font-size: 28px;
+  transition: transform 0.3s ease;
+}
+
+.level2Title:hover .level2TitleIcon {
+  transform: scale(1.1);
 }
 
 .level2TitleName {
   flex: 1;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: #f0f0f0;
+  transition: color 0.3s ease;
+}
+
+.level2Title:hover .level2TitleName {
+  color: #7bc6cf;
 }
 
 .level2TitleArrow {
   color: #7bc6cf;
-  font-size: 14px;
+  font-size: 20px;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  background: rgba(123, 198, 207, 0.1);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .level2Title:hover .level2TitleArrow {
   opacity: 1;
+  transform: translateX(0);
 }
 
 /* Список категорий 3 уровня */
@@ -279,32 +442,89 @@
 .level3Item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 8px;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Эффект подсветки для пунктов 3 уровня */
+.level3Item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(123, 198, 207, 0.1), transparent);
+  transition: left 0.4s ease;
+}
+
+.level3Item:hover::before {
+  left: 100%;
 }
 
 .level3Item:hover {
-  background: rgba(123, 198, 207, 0.1);
-  transform: translateX(5px);
+  background: rgba(123, 198, 207, 0.08);
+  transform: translateX(6px);
+  padding-left: 16px;
 }
 
 .level3Bullet {
   color: #7bc6cf;
-  font-size: 12px;
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.level3Item:hover .level3Bullet {
+  transform: scale(1.2);
 }
 
 .level3Name {
   font-size: 13px;
-  color: #bbb;
-  transition: color 0.3s ease;
+  color: #ccc;
+  transition: all 0.3s ease;
   line-height: 1.4;
 }
 
 .level3Item:hover .level3Name {
   color: #7bc6cf;
+  font-weight: 500;
+}
+
+/* Добавляем счетчик товаров для категории 3 уровня (опционально) */
+.level3Count {
+  margin-left: auto;
+  font-size: 10px;
+  color: #666;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.level3Item:hover .level3Count {
+  background: rgba(123, 198, 207, 0.15);
+  color: #7bc6cf;
+}
+
+/* Иконка-украшение для карточек */
+.level2Card .cardDecoration {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 40px;
+  opacity: 0.05;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.level2Card:hover .cardDecoration {
+  opacity: 0.1;
+  transform: scale(1.1);
 }
 
 /* Пустое состояние */
@@ -360,7 +580,13 @@
 }
 
 .bannerIcon {
-  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.bannerBtn:hover{
+  transform: scale(1.1);
 }
 
 .bannerBtn {

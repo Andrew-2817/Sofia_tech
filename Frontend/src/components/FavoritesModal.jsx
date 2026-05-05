@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { toggleFavorite } from '../store/slices/favoritesSlice';
 import { addToCart } from '../store/slices/cartSlice';
 import styles from './FavoritesModal.module.css';
+import heartIcon from '../assets/heart.svg'
+import basketIcon from '../assets/basket.svg'
+import crossIcon from '../assets/cross.svg'
+import transhIcon from "../assets/trash.svg"
 
 const FavoritesModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -18,16 +22,16 @@ const FavoritesModal = ({ isOpen, onClose }) => {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>
-            <span className={styles.headerIcon}>❤️</span>
+            <span className={styles.headerIcon}><img src={heartIcon} alt="" /></span>
             Избранное
             <span className={styles.itemCount}>{favoriteProducts.length}</span>
           </h2>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose}><img src={crossIcon} alt="" /></button>
         </div>
         
         {favoriteProducts.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>❤️</div>
+            <div className={styles.emptyIcon}></div>
             <h3>Избранное пусто</h3>
             <p>Добавляйте товары в избранное, чтобы не потерять их</p>
             <button className={styles.continueBtn} onClick={onClose}>
@@ -67,13 +71,13 @@ const FavoritesModal = ({ isOpen, onClose }) => {
                         onClose();
                       }}
                     >
-                      🛒 В корзину
+                      <img src={basketIcon} alt="" /> <p>В корзину</p>
                     </button>
                     <button 
                       className={styles.removeBtn}
                       onClick={() => dispatch(toggleFavorite(product.id))}
                     >
-                      🗑️ Удалить
+                      <img src={transhIcon} alt="" /> <p>Удалить</p>
                     </button>
                   </div>
                 </div>

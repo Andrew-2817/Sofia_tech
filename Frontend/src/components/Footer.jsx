@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.css';
+import phoneImg from "../assets/phone.svg"
+import mailIcon from "../assets/mail.svg"
 
 const Footer = () => {
   const categories = ['Холодильники', 'Микроволновки', 'Телевизоры', 'Стиральные машины', 'Пылесосы'];
@@ -20,9 +22,9 @@ const Footer = () => {
           </div>
           <div>
             <h4>Контакты</h4>
-            <p>📞 +7 (999) 123-45-67</p>
-            <p>✉️ info@techstore.ru</p>
-            <p>📍 Москва, ул. Техническая, 1</p>
+            <div className={styles.contacts_block}><img src={phoneImg} alt="" /><p>+7 (999) 123-45-67</p></div>
+            <div className={styles.contacts_block}><img src={mailIcon} alt="" /><p>info@techstore.ru</p></div>
+            {/* <p>📍 Москва, ул. Техническая, 1</p> */}
           </div>
         </div>
         <div className={styles.bottom}>

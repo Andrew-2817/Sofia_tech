@@ -59,7 +59,25 @@
 
 .headerIcon {
   font-size: 24px;
+  display: flex;
+  align-items: center;
 }
+
+
+.headerIcon img {
+  width: 25px;
+  height: 25px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.headerIcon:hover img {
+  transform: scale(1.1);
+}
+
+.headerIcon:active {
+  transform: translateX(0);
+}
+
 
 .itemCount {
   background: #7bc6cf;
@@ -71,7 +89,7 @@
 }
 
 .closeBtn {
-  background: rgba(255, 255, 255, 0.05);
+  /* background: rgba(255, 255, 255, 0.05); */
   border: none;
   color: #aaa;
   width: 36px;
@@ -83,9 +101,23 @@
 }
 
 .closeBtn:hover {
-  background: rgba(123, 198, 207, 0.2);
+  /* background: rgba(123, 198, 207, 0.2); */
   color: #7bc6cf;
   transform: rotate(90deg);
+}
+
+.closeBtn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.closeBtn:hover img {
+  transform: scale(1.1);
+}
+
+.closeBtn:active {
+  transform: translateX(0);
 }
 
 /* Пустое состояние */
@@ -206,12 +238,25 @@
 .removeBtn {
   background: rgba(255, 255, 255, 0.05);
   border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: #ff6b6b;
   width: 32px;
   height: 32px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.removeBtn img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.removeBtn:hover img {
+  transform: scale(1.1);
 }
 
 .removeBtn:hover {

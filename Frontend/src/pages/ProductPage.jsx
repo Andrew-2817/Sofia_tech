@@ -5,6 +5,9 @@ import { addToCart } from '../store/slices/cartSlice';
 import { toggleFavorite } from '../store/slices/favoritesSlice';
 import Slider from '../components/Slider';
 import styles from './ProductPage.module.css';
+import heartIcon from '../assets/heart.svg'
+import basketIcon from '../assets/basket.svg'
+import fullfilledHeartIcon from "../assets/solid-heart.svg"
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -139,7 +142,7 @@ const ProductPage = () => {
           {/* Правая колонка - информация */}
           <div className={styles.infoSection}>
             <div className={styles.category}>
-              <span className={styles.categoryIcon}>{getCategoryIcon()}</span>
+              {/* <span className={styles.categoryIcon}>{getCategoryIcon()}</span> */}
               <span>{product.categoryName || product.category}</span>
             </div>
             
@@ -203,13 +206,23 @@ const ProductPage = () => {
                 className={styles.cartBtn} 
                 onClick={handleAddToCart}
               >
-                🛒 Добавить в корзину
+                <img src={basketIcon} alt="" /> <p>Добавить в корзину</p>
               </button>
               <button 
                 className={`${styles.favBtn} ${isFavorite ? styles.active : ''}`}
                 onClick={() => dispatch(toggleFavorite(product.id))}
               >
-                {isFavorite ? '❤️ В избранном' : '🤍 В избранное'}
+                {isFavorite ? (
+                  <span>
+                    <img src={fullfilledHeartIcon} alt="" />
+                    <span>В избранном</span>
+                  </span>
+                ) : (
+                  <span>
+                    <img src={heartIcon} alt="" />
+                    <span>В избранное</span>
+                  </span>
+                )}
               </button>
             </div>
 
@@ -235,7 +248,7 @@ const ProductPage = () => {
 
         {/* Полные характеристики */}
         <div className={styles.fullSpecs}>
-          <h2 className={styles.specsTitle}>📋 Полные характеристики</h2>
+          <h2 className={styles.specsTitle}>Полные характеристики</h2>
           <div className={styles.specsGrid}>
             {specs.map((spec, idx) => (
               <div key={idx} className={styles.specRow}>

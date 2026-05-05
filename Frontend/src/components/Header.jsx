@@ -6,8 +6,12 @@ import AuthModal from './AuthModal';
 import CartModal from './CartModal';
 import FavoritesModal from './FavoritesModal';
 import SearchDropdown from './SearchDropdown';
+import { logout } from '../store/slices/authSlice';
 import CatalogMenu from './CatalogMenu';
 import styles from './Header.module.css';
+import searchIcon from '../assets/search.svg'
+import heartIcon from '../assets/heart.svg'
+import basketIcon from '../assets/basket.svg'
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -30,9 +34,10 @@ const Header = () => {
   // Поиск товаров
   useEffect(() => {
     if (search.trim().length > 0) {
+      // console.log(allProducts);
+      
       const results = allProducts.filter(product =>
         product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.category.toLowerCase().includes(search.toLowerCase()) ||
         product.manufacturer.toLowerCase().includes(search.toLowerCase())
       );
       setSearchResults(results.slice(0, 8));
@@ -75,7 +80,7 @@ const Header = () => {
       <header className={styles.header}>
         <div className="container">
           <div className={styles.topRow}>
-            <Link to="/" className={styles.logo}>❄️ TechStore</Link>
+            <Link to="/" className={styles.logo}>profit</Link>
             
             <div className={styles.searchContainer} ref={searchContainerRef}>
               <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
@@ -101,7 +106,7 @@ const Header = () => {
                   </button>
                 )}
                 <button type="submit" className={styles.searchSubmit}>
-                  🔍
+                  <img src={searchIcon} alt="" />
                 </button>
               </form>
               
@@ -116,14 +121,16 @@ const Header = () => {
             
             <div className={styles.actions}>
               <Link to="#" className={styles.actionBtn} onClick={() => setShowFavoritesModal(true)}>
-                ❤️ {favoritesCount > 0 && <span>{favoritesCount}</span>}
+                <img src={heartIcon} alt="" /> {favoritesCount > 0 && <span>{favoritesCount}</span>}
               </Link>
               <Link to="#" className={styles.actionBtn} onClick={() => setShowCartModal(true)}>
-                🛒 {cartItemsCount > 0 && <span>{cartItemsCount}</span>}
+                <img src={basketIcon} alt="" /> {cartItemsCount > 0 && <span>{cartItemsCount}</span>}
               </Link>
               {isLoggedIn ? (
                 <div className={styles.userMenu}>
-                  <span>👤 {user?.name || 'Профиль'}</span>
+                  <Link to="/profile" className={styles.profileLink}>
+                    <span>👤 {user?.name || 'Профиль'}</span>
+                  </Link>
                   <button onClick={() => dispatch(logout())}>Выйти</button>
                 </div>
               ) : (

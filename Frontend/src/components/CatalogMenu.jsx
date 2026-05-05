@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { categories } from '../data/mockData';
 import styles from './CatalogMenu.module.css';
+import crossIcon from '../assets/cross.svg'
+import fireIcon from "../assets/fire.svg"
 
 const CatalogMenu = ({ isOpen, onClose }) => {
   const [activeLevel1, setActiveLevel1] = useState(null);
@@ -77,11 +79,11 @@ const CatalogMenu = ({ isOpen, onClose }) => {
       <div className={styles.menuContainer} ref={menuRef}>
         <div className={styles.header}>
           <h2>
-            <span className={styles.headerIcon}>📂</span>
+            <span className={styles.headerIcon}></span>
             Каталог товаров
           </h2>
           <button className={styles.closeBtn} onClick={onClose}>
-            ✕
+            <img src={crossIcon} alt="" />
           </button>
         </div>
 
@@ -95,13 +97,13 @@ const CatalogMenu = ({ isOpen, onClose }) => {
                   className={`${styles.level1Item} ${activeLevel1 === category.id ? styles.active : ''}`}
                   onClick={() => handleLevel1Click(category)}
                 >
-                  <div className={styles.level1Icon}>
+                  {/* <div className={styles.level1Icon}>
                     {category.id === 1 && '🏠'}
                     {category.id === 2 && '🔧'}
                     {category.id === 3 && '⚡'}
                     {category.id === 4 && '🔌'}
                     {category.id === 5 && '🍳'}
-                  </div>
+                  </div> */}
                   <div className={styles.level1Info}>
                     <div className={styles.level1Name}>{category.name}</div>
                     <div className={styles.level1Count}>
@@ -133,7 +135,7 @@ const CatalogMenu = ({ isOpen, onClose }) => {
                     className={styles.level2Title}
                     onClick={() => handleNavigateToLevel2(level2, activeCategory)}
                   >
-                    <span className={styles.level2TitleIcon}>📁</span>
+                    <span className={styles.level2TitleIcon}></span>
                     <span className={styles.level2TitleName}>{level2.name}</span>
                     <span className={styles.level2TitleArrow}>→</span>
                   </div>
@@ -158,7 +160,7 @@ const CatalogMenu = ({ isOpen, onClose }) => {
 
             {level2Categories.length === 0 && (
               <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>📁</div>
+                <div className={styles.emptyIcon}></div>
                 <p>Нет подкатегорий</p>
                 <small>Выберите другую категорию слева</small>
               </div>
@@ -170,7 +172,7 @@ const CatalogMenu = ({ isOpen, onClose }) => {
         <div className={styles.bottomBanner}>
           <div className={styles.bannerContent}>
             <div className={styles.bannerText}>
-              <span className={styles.bannerIcon}>🔥</span>
+              <img className={styles.bannerIcon} src={fireIcon} alt="" />
               <span>Акционные товары и новинки</span>
             </div>
             <button 

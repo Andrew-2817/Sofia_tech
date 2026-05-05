@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setSearchQuery } from '../store/slices/filtersSlice';
 import styles from './SearchDropdown.module.css';
+import searchIcon from '../assets/search.svg'
+import crossIcon from '../assets/cross.svg'
 
 const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }) => {
   const dropdownRef = useRef(null);
@@ -64,13 +66,13 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
     <div className={styles.dropdown} ref={dropdownRef}>
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <span className={styles.searchIcon}>🔍</span>
+          <span className={styles.searchIcon}><img src={searchIcon} alt="" /></span>
           <span className={styles.resultsCount}>
             Найдено товаров: <strong>{results.length}</strong>
           </span>
         </div>
         <button className={styles.closeBtn} onClick={onClose}>
-          ✕
+          <img src={crossIcon} alt="" />
         </button>
       </div>
 
