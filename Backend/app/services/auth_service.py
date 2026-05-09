@@ -23,13 +23,15 @@ class AuthService:
         db.commit()
         db.refresh(user)
         
-        token = create_access_token({"user_id": user.id, "email": user.email})
+        token = create_access_token({"sub": user.email, "user_id": user.id})
         
         return {
-            "success": True,
-            "message": "Регистрация успешна",
             "access_token": token,
-            "user": {"id": user.id, "name": user.name, "email": user.email}
+            "user": {
+                "id": user.id, 
+                "name": user.name, 
+                "email": user.email
+            }
         }
     
     @staticmethod
@@ -48,10 +50,13 @@ class AuthService:
                 detail="Аккаунт деактивирован"
             )
         
-        token = create_access_token({"user_id": user.id, "email": user.email})
+        token = create_access_token({"sub": user.email, "user_id": user.id})
         
         return {
-            "success": True,
             "access_token": token,
-            "user": {"id": user.id, "name": user.name, "email": user.email}
+            "user": {
+                "id": user.id, 
+                "name": user.name, 
+                "email": user.email
+            }
         }

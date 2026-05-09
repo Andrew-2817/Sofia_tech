@@ -3,9 +3,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
+# Добавьте параметры для решения проблем с кодировкой
 engine = create_engine(
     settings.DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
+    pool_pre_ping=True,
+    pool_size=10,
+    max_overflow=20,
+    connect_args={
+        "client_encoding": "utf8",  # Явно указываем UTF-8
+    }
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
