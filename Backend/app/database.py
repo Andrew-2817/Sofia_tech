@@ -10,7 +10,7 @@ engine = create_engine(
     pool_size=10,
     max_overflow=20,
     connect_args={
-        "client_encoding": "utf8",  # Явно указываем UTF-8
+        "client_encoding": "utf8",  
     }
 )
 
