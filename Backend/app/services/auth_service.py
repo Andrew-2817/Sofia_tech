@@ -13,7 +13,7 @@ class AuthService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Пользователь с таким email уже существует"
             )
-        
+
         user = User(
             name=user_data.name,
             email=user_data.email,
@@ -22,41 +22,43 @@ class AuthService:
         db.add(user)
         db.commit()
         db.refresh(user)
-        
-        token = create_access_token({"sub": user.email, "user_id": user.id})
-        
+
+        # ВАЖНО: преобразуем UUID в строку для JWT
+        token = create_access_token({"sub": user.email, "user_id": str(user.id)})
+
         return {
             "access_token": token,
             "user": {
-                "id": user.id, 
-                "name": user.name, 
+                "id": str(user.id),  # UUID в строку
+                "name": user.name,
                 "email": user.email
             }
         }
-    
+
     @staticmethod
     def login(db: Session, email: str, password: str) -> dict:
         user = db.query(User).filter(User.email == email).first()
-        
+
         if not user or not verify_password(password, user.password_hash):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Неверный email или пароль"
             )
-        
+
         if not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Аккаунт деактивирован"
             )
-        
-        token = create_access_token({"sub": user.email, "user_id": user.id})
-        
+
+        # ВАЖНО: преобразуем UUID в строку для JWT
+        token = create_access_token({"sub": user.email, "user_id": str(user.id)})
+
         return {
             "access_token": token,
             "user": {
-                "id": user.id, 
-                "name": user.name, 
+                "id": str(user.id),  # UUID в строку
+                "name": user.name,
                 "email": user.email
             }
         }
