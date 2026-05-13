@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { login } from '../store/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { register, loginUser, clearError } from '../store/slices/authSlice';
 import styles from './AuthModal.module.css';
 import crossIcon from '../assets/cross.svg'
 import regIcon from '../assets/reg.svg'
 import singInIcon from '../assets/sign-in.svg'
 
 const AuthModal = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' или 'register'
+  const [activeTab, setActiveTab] = useState('login');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,15 +16,15 @@ const AuthModal = ({ isOpen, onClose }) => {
   });
   const [errors, setErrors] = useState({});
   const [isVisible, setIsVisible] = useState(false);
+  
   const dispatch = useDispatch();
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { loading, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
       document.body.style.overflow = 'hidden';
+      dispatch(clearError());
     } else {
       setIsVisible(false);
       document.body.style.overflow = 'unset';
@@ -32,7 +32,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, dispatch]);
 
   if (!isOpen && !isVisible) return null;
 
@@ -41,12 +41,14 @@ const AuthModal = ({ isOpen, onClose }) => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Очищаем ошибку для этого поля
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
         [e.target.name]: ''
       });
+    }
+    if (error) {
+      dispatch(clearError());
     }
   };
 
@@ -72,18 +74,27 @@ const AuthModal = ({ isOpen, onClose }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const validationErrors = activeTab === 'login' ? validateLogin() : validateRegister();
     
     if (Object.keys(validationErrors).length === 0) {
+      let result;
       if (activeTab === 'login') {
-        dispatch(login({ name: formData.name || formData.email.split('@')[0], email: formData.email }));
-        onClose();
-        resetForm();
+        result = await dispatch(loginUser({
+          email: formData.email,
+          password: formData.password
+        }));
       } else {
-        // Здесь можно добавить регистрацию
-        dispatch(login({ name: formData.name, email: formData.email }));
+        result = await dispatch(register({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        }));
+      }
+      
+      if (result.meta.requestStatus === 'fulfilled') {
         onClose();
         resetForm();
       }
@@ -101,6 +112,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     });
     setErrors({});
     setActiveTab('login');
+    dispatch(clearError());
   };
 
   const handleClose = () => {
@@ -130,19 +142,31 @@ const AuthModal = ({ isOpen, onClose }) => {
         <div className={styles.tabs}>
           <button
             className={`${styles.tab} ${activeTab === 'login' ? styles.active : ''}`}
-            onClick={() => setActiveTab('login')}
+            onClick={() => {
+              setActiveTab('login');
+              dispatch(clearError());
+            }}
           >
             <img src={singInIcon} alt="" />
             Вход
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'register' ? styles.active : ''}`}
-            onClick={() => setActiveTab('register')}
+            onClick={() => {
+              setActiveTab('register');
+              dispatch(clearError());
+            }}
           >
             <img src={regIcon} alt="" />
             Регистрация
           </button>
         </div>
+
+        {error && (
+          <div className={styles.errorBanner}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           {activeTab === 'register' && (
@@ -213,8 +237,8 @@ const AuthModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          <button type="submit" className={styles.submitBtn}>
-            {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
+          <button type="submit" className={styles.submitBtn} disabled={loading}>
+            {loading ? 'Загрузка...' : (activeTab === 'login' ? 'Войти' : 'Зарегистрироваться')}
           </button>
         </form>
 
@@ -224,7 +248,10 @@ const AuthModal = ({ isOpen, onClose }) => {
             <button
               type="button"
               className={styles.switchBtn}
-              onClick={() => setActiveTab(activeTab === 'login' ? 'register' : 'login')}
+              onClick={() => {
+                setActiveTab(activeTab === 'login' ? 'register' : 'login');
+                dispatch(clearError());
+              }}
             >
               {activeTab === 'login' ? 'Зарегистрироваться' : 'Войти'}
             </button>
