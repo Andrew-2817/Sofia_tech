@@ -1,10 +1,17 @@
-﻿from fastapi import FastAPI, Depends
+﻿from pathlib import Path
+
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
+from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
-from .routers import auth, products_homeier, orders, products_brandt, products_all
+from .routers import auth, products_homeier, orders, products_brandt, products_all, categories, users
 from .config import settings
 from .models import User, Category, Brand, Order, HomeierProduct
+
+
+# UPLOAD_DIR = Path("uploads/products")
+# UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Создаем таблицы в БД
 Base.metadata.create_all(bind=engine)
@@ -41,12 +48,17 @@ else:
         allow_headers=["Authorization", "Content-Type"],
     )
 
+
+app.mount("/uploads/products", StaticFiles(directory="static/uploads/products"), name="product_images")
+
 # Подключаем роутеры
 app.include_router(auth.router)
 app.include_router(products_homeier.router)
 app.include_router(orders.router)
 app.include_router(products_brandt.router)
 app.include_router(products_all.router)
+app.include_router(categories.router)
+app.include_router(users.router)
 
 @app.get("/health")
 def health_check():

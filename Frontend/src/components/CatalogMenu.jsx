@@ -4,11 +4,15 @@ import { categories } from '../data/mockData';
 import styles from './CatalogMenu.module.css';
 import crossIcon from '../assets/cross.svg'
 import fireIcon from "../assets/fire.svg"
+import { useSelector } from 'react-redux';
 
 const CatalogMenu = ({ isOpen, onClose }) => {
   const [activeLevel1, setActiveLevel1] = useState(null);
+  const { tree: categories, loading } = useSelector(state => state.categories);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+
+  const level1Categories = categories.filter(cat => cat.level === 1);
 
   // Закрытие по клику вне
   useEffect(() => {
@@ -71,9 +75,21 @@ const CatalogMenu = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const activeCategory = categories.find(c => c.id === activeLevel1) || categories[0];
-  const level2Categories = activeCategory?.children || [];
+  if (loading) {
+    return (
+      <div className={styles.overlay}>
+        <div className={styles.menuContainer}>
+          <div className={styles.loadingState}>
+            <div className={styles.spinner}></div>
+            <p>Загрузка категорий...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
+  const activeCategory = level1Categories.find(c => c.id === activeLevel1) || level1Categories[0];
+  const level2Categories = activeCategory?.children || [];
   return (
     <div className={styles.overlay}>
       <div className={styles.menuContainer} ref={menuRef}>

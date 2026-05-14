@@ -10,7 +10,7 @@ from PIL import Image
 import io
 
 # Пути
-BASE_DIR = Path('/home/raul/projects/sofa2/Sofia_tech')
+BASE_DIR = Path('C:/vs code/Sofia_tech')
 EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_4.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
@@ -18,9 +18,9 @@ UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
 # Добавляем путь для импорта
 sys.path.insert(0, str(BASE_DIR))
 
-from Backend.app.database import SessionLocal
-from Backend.app.models.product_homeier import HomeierProduct
-from Backend.app.models.brand import Brand
+from ...database import SessionLocal
+from ...models.product_homeier import HomeierProduct
+from ...models.brand import Brand
 import pandas as pd
 
 def clean_price(price_str):
@@ -166,7 +166,8 @@ def load_products_to_db(photo_mapping):
             if photo_num in photo_mapping:
                 photo_path = photo_mapping[photo_num]['path']
                 print(f"  📷 {sku}: фото {photo_mapping[photo_num]['file_name']}")
-
+            
+            print("<<<<<<<<<<<", row, row.get('category_id'))
             # Данные товара
             product_data = {
                 'sku': sku,

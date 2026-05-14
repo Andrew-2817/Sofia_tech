@@ -1,8 +1,13 @@
-﻿from sqlalchemy.orm import Session
+﻿# services/auth_service.py
+from sqlalchemy.orm import Session
 from ..models.user import User
 from ..models.schemas import UserRegister
-from ..utils.security import hash_password, verify_password, create_access_token
-from fastapi import HTTPException, status
+from ..utils.security import hash_password, verify_password, create_access_token, decode_access_token, get_current_user_from_token
+from fastapi import HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from ..database import get_db
+
+security = HTTPBearer()
 
 class AuthService:
     @staticmethod
@@ -23,13 +28,12 @@ class AuthService:
         db.commit()
         db.refresh(user)
 
-        # ВАЖНО: преобразуем UUID в строку для JWT
         token = create_access_token({"sub": user.email, "user_id": str(user.id)})
 
         return {
             "access_token": token,
             "user": {
-                "id": str(user.id),  # UUID в строку
+                "id": str(user.id),
                 "name": user.name,
                 "email": user.email
             }
@@ -51,14 +55,25 @@ class AuthService:
                 detail="Аккаунт деактивирован"
             )
 
-        # ВАЖНО: преобразуем UUID в строку для JWT
         token = create_access_token({"sub": user.email, "user_id": str(user.id)})
 
         return {
             "access_token": token,
             "user": {
-                "id": str(user.id),  # UUID в строку
+                "id": str(user.id),
                 "name": user.name,
                 "email": user.email
             }
         }
+
+    @staticmethod
+    def get_current_user(
+        credentials: HTTPAuthorizationCredentials = Depends(security),
+        db: Session = Depends(get_db)
+    ) -> User:
+        """
+        Получение текущего пользователя из JWT токена
+        """
+        token = credentials.credentials
+        user = get_current_user_from_token(token, db)  # Используем новую функцию
+        return user

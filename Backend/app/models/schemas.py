@@ -4,6 +4,29 @@ from typing import Optional, List, Dict, Any
 from uuid import UUID
 import re
 
+from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional, List
+
+class CategoryBase(BaseModel):
+    id: int
+    name: str
+    slug: str
+    level: int
+    sort_order: int
+    parent_id: Optional[int] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class CategoryResponse(CategoryBase):
+    pass
+
+class CategoryWithChildren(CategoryBase):
+    children: List['CategoryWithChildren'] = []
+    
+CategoryWithChildren.model_rebuild()
 
 class UserRegister(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
@@ -71,14 +94,21 @@ class UserLogin(BaseModel):
         return v
 
 class UserResponse(BaseModel):
-    id: int
+    id: str
     name: str
     email: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
     is_active: bool
+    is_admin: bool
     created_at: datetime
+    updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
 
 
 # ==================== Схемы для товаров Homeier ====================

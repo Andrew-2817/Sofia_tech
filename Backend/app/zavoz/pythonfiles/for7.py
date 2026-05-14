@@ -10,7 +10,7 @@ from PIL import Image
 import io
 
 # Пути
-BASE_DIR = Path('/home/raul/projects/sofa2/Sofia_tech')
+BASE_DIR = Path('C:/vs code/Sofia_tech')
 EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_7.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
@@ -18,10 +18,10 @@ UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
 # Добавляем путь для импорта
 sys.path.insert(0, str(BASE_DIR))
 
-from Backend.app.database import SessionLocal
-from Backend.app.models.product_brandt import BrandtProduct
-from Backend.app.models.brand import Brand
-from Backend.app.models.category import Category
+from ...database import SessionLocal
+from ...models.product_brandt import BrandtProduct
+from ...models.brand import Brand
+from ...models.category import Category
 import pandas as pd
 
 def clean_price(price_str):

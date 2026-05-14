@@ -4,16 +4,19 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
 import { setSearchQuery, setFilters } from '../store/slices/filtersSlice';
-import { categories } from '../data/mockData';
+import { fetchAllProducts } from '../store/slices/productsSlice'; // Импортируем thunk
 import styles from './CatalogPage.module.css';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { items: allProducts } = useSelector(state => state.products);
+  const { items: allProducts, loading: productsLoading } = useSelector(state => state.products);
   const { searchQuery, manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
-  
+  const { tree: categories, loading: categoriesLoading } = useSelector(state => state.categories);
+  // console.log(allProducts.filter(e => e.id === 137));
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [activeLevel1, setActiveLevel1] = useState(null);
   const [activeLevel2, setActiveLevel2] = useState(null);
   const [activeLevel3, setActiveLevel3] = useState(null);
@@ -61,13 +64,37 @@ const CatalogPage = () => {
     },
   };
 
-  // Функция для проверки принадлежности товара к категории
-  const isProductInCategory = (productCategoryId, targetCategoryId) => {
-    const productIdStr = String(productCategoryId);
-    const targetIdStr = String(targetCategoryId);
-    return productIdStr.slice(0, 2) === targetIdStr.slice(0, 2);
-  };
+// Функция для проверки принадлежности товара к категории
+const isProductInCategory = (productCategoryId, targetCategoryId, categoriesTree) => {
+  // Находим категорию товара в дереве
+  const productCategory = findCategoryById(categoriesTree, productCategoryId);
+  if (!productCategory) return false;
+  
+  // Если целевая категория - это сама категория товара
+  if (productCategoryId === targetCategoryId) return true;
+  
+  // Проверяем, является ли целевая категория родительской для категории товара
+  let currentCategory = productCategory;
+  while (currentCategory) {
+    if (currentCategory.parent_id === targetCategoryId) return true;
+    // Поднимаемся вверх по иерархии
+    currentCategory = findCategoryById(categoriesTree, currentCategory.parent_id);
+  }
+  
+  return false;
+};
 
+// Вспомогательная функция для поиска категории по id
+const findCategoryById = (categories, id) => {
+  for (const cat of categories) {
+    if (cat.id === id) return cat;
+    if (cat.children) {
+      const found = findCategoryById(cat.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
   // Обновление баннера при смене категории
   const updateBanner = (category) => {
     if (!category) return;
@@ -84,8 +111,15 @@ const CatalogPage = () => {
     }
   };
 
+    useEffect(() => {
+    if (allProducts.length === 0 && !productsLoading) {
+      dispatch(fetchAllProducts());
+    }
+  }, [dispatch, allProducts.length, productsLoading]);
+
   // Парсим URL при загрузке
   useEffect(() => {
+    if (categories.length === 0) return;
     const params = new URLSearchParams(location.search);
     const level1Slug = params.get('level1');
     const level2Slug = params.get('category');
@@ -139,39 +173,43 @@ const CatalogPage = () => {
         }
       }
     }
-  }, [location.search]);
+  }, [location.search, categories]);
 
   // Фильтрация товаров
-  const filteredProducts = allProducts.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+const filteredProducts = allProducts.filter(product => {
+  const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+  
+  let matchesCategory = true;
+  console.log(activeLevel3);
+  
+  if (activeLevel3) {
+    matchesCategory = isProductInCategory(product.categoryId, activeLevel3, categories);
+    console.log(matchesCategory);
     
-    let matchesCategory = true;
-    if (activeLevel3) {
-      matchesCategory = product.categoryId === activeLevel3;
-    } else if (activeLevel2) {
-      matchesCategory = isProductInCategory(product.categoryId, activeLevel2);
-    } else if (activeLevel1) {
-      const childIds = level2CategoriesForTabs.map(cat => cat.id);
-      matchesCategory = childIds.some(id => isProductInCategory(product.categoryId, id));
-    }
-    
-    const matchesManufacturer = manufacturer.length === 0 || manufacturer.includes(product.manufacturer);
-    const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-    const matchesColor = color === '' || product.color === color;
-    const matchesLoadCapacity = loadCapacity === '' || 
-      (loadCapacity === 'до 6 кг' && product.loadCapacity <= 6) ||
-      (loadCapacity === '6-8 кг' && product.loadCapacity > 6 && product.loadCapacity <= 8) ||
-      (loadCapacity === 'более 8 кг' && product.loadCapacity > 8);
-    const matchesEnergyClass = energyClass === '' || product.energyClass === energyClass;
-    
-    return matchesSearch && matchesCategory && matchesManufacturer && matchesPrice && 
-           matchesColor && matchesLoadCapacity && matchesEnergyClass;
-  });
+  } else if (activeLevel2) {
+    matchesCategory = isProductInCategory(product.categoryId, activeLevel2, categories);
+  } else if (activeLevel1) {
+    matchesCategory = isProductInCategory(product.categoryId, activeLevel1, categories);
+  }
+  
+  const matchesManufacturer = manufacturer.length === 0 || manufacturer.includes(product.brand);
+  const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+  const matchesColor = color === '' || product.color === color;
+  
+  // ВРЕМЕННО ОТКЛЮЧАЮ
+  const matchesLoadCapacity = true;
+  const matchesEnergyClass = true;
+  
+  return matchesSearch && matchesCategory && matchesManufacturer && matchesPrice && matchesColor;
+});
+console.log(filteredProducts);
+
 
   // Эффект загрузки
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300);
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 2000);
     return () => clearTimeout(timer);
   }, [searchQuery, manufacturer, priceRange, color, loadCapacity, energyClass, activeLevel3, activeLevel2, activeLevel1]);
 
@@ -225,6 +263,22 @@ const CatalogPage = () => {
     }
     navigate(`/catalog?level1=${level1Category?.slug}`);
   };
+  console.log('=== DEBUG INFO ===');
+console.log('categories loading:', categoriesLoading);
+console.log('categories length:', categories.length);
+console.log('allProducts loading:', productsLoading);
+console.log('allProducts length:', allProducts.length);
+console.log('location.search:', location.search);
+console.log('=================');
+console.log('level2CategoriesForTabs:', level2CategoriesForTabs);
+console.log('activeLevel1:', activeLevel1);
+console.log('activeLevel2:', activeLevel2);
+console.log("level3", level3Categories);
+
+  if (isPageLoading) {
+    return <LoadingSpinner text="Загрузка каталога..." />;
+  }
+
 
   return (
     <div className="container">

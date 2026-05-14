@@ -1,41 +1,106 @@
+// FilterSidebar.jsx
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleManufacturer, setPriceRange, setColor, setLoadCapacity, setEnergyClass, resetFilters } from '../store/slices/filtersSlice';
+import { useState, useEffect } from 'react';
+import { 
+  toggleManufacturer, 
+  setPriceRange, 
+  setColor, 
+  resetFilters,
+  setBrand,
+  setInStock
+} from '../store/slices/filtersSlice';
 import styles from './FilterSidebar.module.css';
 
-import transhIcon from "../assets/trash.svg"
-import colorIcon from "../assets/colors.svg"
-import moneyIcon from "../assets/money.svg"
+import trashIcon from "../assets/trash.svg";
+import colorIcon from "../assets/colors.svg";
+import moneyIcon from "../assets/money.svg";
 
 const FilterSidebar = () => {
   const dispatch = useDispatch();
-  const { manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
-
-  // Производители из товаров
-  const manufacturers = ['Schulthess', 'Kuppersbusch', 'Elica', 'Nivona'];
+  const { 
+    manufacturer, 
+    priceRange, 
+    color, 
+    brand,
+    inStock 
+  } = useSelector(state => state.filters);
   
-  // Цвета
-  const colors = ['Черный', 'Белый', 'Нержавеющая сталь', 'Серебристый', 'Титан', 'Антрацит'];
+  const { items: products } = useSelector(state => state.products);
+
+  // Динамическое получение производителей из товаров
+  const [manufacturers, setManufacturers] = useState([]);
+  
+  // Общие цвета (из реальных товаров)
+  const [colors, setColors] = useState([]);
+
+  // Получаем уникальных производителей и цвета из товаров
+  useEffect(() => {
+    if (products && products.length > 0) {
+      // Уникальные производители
+      const uniqueManufacturers = [...new Set(
+        products
+          .map(p => p.brandName)
+          .filter(Boolean)
+      )];
+      setManufacturers(uniqueManufacturers);
+      
+      // Уникальные цвета (только у Homeier есть цвет, у Brandt может не быть)
+      const uniqueColors = [...new Set(
+        products
+          .map(p => p.color)
+          .filter(c => c && c !== 'null' && c !== 'undefined')
+      )];
+      setColors(uniqueColors);
+    }
+  }, [products]);
+
+  // Максимальная цена из товаров
+  const maxProductPrice = products.length > 0 
+    ? Math.max(...products.map(p => p.price || 0))
+    : 500000;
+  
+  const minProductPrice = products.length > 0 
+    ? Math.min(...products.map(p => p.price || 0))
+    : 0;
+
+  // Обработчик изменения цены
+  const handlePriceChange = (index, value) => {
+    let newValue = parseInt(value) || 0;
+    if (index === 0) {
+      // Минимальная цена не может быть больше максимальной
+      if (newValue > priceRange[1]) {
+        newValue = priceRange[1];
+      }
+      dispatch(setPriceRange([newValue, priceRange[1]]));
+    } else {
+      // Максимальная цена не может быть меньше минимальной
+      if (newValue < priceRange[0]) {
+        newValue = priceRange[0];
+      }
+      dispatch(setPriceRange([priceRange[0], newValue]));
+    }
+  };
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
         <h3>Фильтры</h3>
         <button onClick={() => dispatch(resetFilters())} className={styles.resetBtn}>
-          <img src={transhIcon} alt="" /> <p>Сбросить все</p>
+          <img src={trashIcon} alt="" /> <p>Сбросить все</p>
         </button>
       </div>
 
-      {/* Производитель */}
+      {/* Бренд / Производитель */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
-          <span>🏭</span> Производитель
+          <span>🏭</span> Бренд
         </h4>
         <div className={styles.checkboxGroup}>
           {manufacturers.map(m => (
             <label key={m} className={styles.checkboxLabel}>
               <input 
                 type="checkbox" 
-                checked={manufacturer.includes(m)} 
+                checked={manufacturer.includes(m.toLowerCase())} 
                 onChange={() => dispatch(toggleManufacturer(m))}
               />
               <span className={styles.checkmark}></span>
@@ -45,10 +110,10 @@ const FilterSidebar = () => {
         </div>
       </div>
 
-      {/* Цена */}
+      {/* Цена (общая для всех) */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
-          <img src={moneyIcon} alt="" /> <p>Цена</p>
+          <img src={moneyIcon} alt="" /> <p>Цена, ₽</p>
         </h4>
         <div className={styles.priceInputs}>
           <div className={styles.priceField}>
@@ -56,8 +121,10 @@ const FilterSidebar = () => {
             <input 
               type="number" 
               value={priceRange[0]} 
-              onChange={(e) => dispatch(setPriceRange([+e.target.value, priceRange[1]]))}
-              placeholder="0"
+              onChange={(e) => handlePriceChange(0, e.target.value)}
+              min={minProductPrice}
+              max={priceRange[1]}
+              step={1000}
             />
           </div>
           <span className={styles.priceSeparator}>—</span>
@@ -66,176 +133,105 @@ const FilterSidebar = () => {
             <input 
               type="number" 
               value={priceRange[1]} 
-              onChange={(e) => dispatch(setPriceRange([priceRange[0], +e.target.value]))}
-              placeholder="500000"
+              onChange={(e) => handlePriceChange(1, e.target.value)}
+              min={priceRange[0]}
+              max={maxProductPrice}
+              step={1000}
             />
           </div>
         </div>
-        <div className={styles.priceRange}>
+        <div className={styles.priceRangeSlider}>
           <input 
             type="range" 
-            min="0" 
-            max="500000" 
-            step="5000"
+            min={minProductPrice} 
+            max={maxProductPrice} 
+            step={1000}
             value={priceRange[0]} 
-            onChange={(e) => dispatch(setPriceRange([+e.target.value, priceRange[1]]))}
+            onChange={(e) => handlePriceChange(0, e.target.value)}
           />
           <input 
             type="range" 
-            min="0" 
-            max="500000" 
-            step="5000"
+            min={minProductPrice} 
+            max={maxProductPrice} 
+            step={1000}
             value={priceRange[1]} 
-            onChange={(e) => dispatch(setPriceRange([priceRange[0], +e.target.value]))}
+            onChange={(e) => handlePriceChange(1, e.target.value)}
           />
         </div>
+        <div className={styles.priceHint}>
+          <span>от {priceRange[0].toLocaleString()} ₽</span>
+          <span>до {priceRange[1].toLocaleString()} ₽</span>
+        </div>
       </div>
 
-      {/* Цвет */}
-      <div className={styles.filterGroup}>
-        <h4 className={styles.groupTitle}>
-          <img src={colorIcon} alt="" /> <p>Цвет</p>
-        </h4>
-        <div className={styles.colorOptions}>
-          {colors.map(c => (
+      {/* Цвет (есть не у всех, показываем если есть) */}
+      {colors.length > 0 && (
+        <div className={styles.filterGroup}>
+          <h4 className={styles.groupTitle}>
+            <img src={colorIcon} alt="" /> <p>Цвет</p>
+          </h4>
+          <div className={styles.colorOptions}>
             <button
-              key={c}
-              className={`${styles.colorBtn} ${color === c ? styles.active : ''}`}
-              onClick={() => dispatch(setColor(color === c ? '' : c))}
-              style={{ 
-                backgroundColor: c === 'Черный' ? '#2a2a2a' : 
-                               c === 'Белый' ? '#f5f5f5' : 
-                               c === 'Нержавеющая сталь' ? '#c0c0c0' :
-                               c === 'Серебристый' ? '#e0e0e0' :
-                               c === 'Титан' ? '#b8b8b8' : '#4a4a4a',
-                color: c === 'Белый' ? '#333' : '#f0f0f0'
-              }}
+              className={`${styles.colorBtn} ${color === '' ? styles.active : ''}`}
+              onClick={() => dispatch(setColor(''))}
             >
-              {c}
+              Все
             </button>
-          ))}
+            {colors.map(c => (
+              <button
+                key={c}
+                className={`${styles.colorBtn} ${color === c ? styles.active : ''}`}
+                onClick={() => dispatch(setColor(color === c ? '' : c))}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Загрузка (для стиральных машин) */}
+      {/* Наличие (общий фильтр) */}
       <div className={styles.filterGroup}>
         <h4 className={styles.groupTitle}>
-          <span>⚖️</span> Загрузка
+          <span>📦</span> Наличие
         </h4>
         <div className={styles.radioGroup}>
           <label className={styles.radioLabel}>
             <input
               type="radio"
-              name="loadCapacity"
-              value=""
-              checked={loadCapacity === ''}
-              onChange={() => dispatch(setLoadCapacity(''))}
+              name="inStock"
+              checked={inStock === null}
+              onChange={() => dispatch(setInStock(null))}
             />
             <span className={styles.radioCustom}></span>
-            <span>Любая</span>
+            <span>Все товары</span>
           </label>
           <label className={styles.radioLabel}>
             <input
               type="radio"
-              name="loadCapacity"
-              value="до 6 кг"
-              checked={loadCapacity === 'до 6 кг'}
-              onChange={() => dispatch(setLoadCapacity('до 6 кг'))}
+              name="inStock"
+              checked={inStock === true}
+              onChange={() => dispatch(setInStock(true))}
             />
             <span className={styles.radioCustom}></span>
-            <span>📦 до 6 кг</span>
+            <span>✅ В наличии</span>
           </label>
           <label className={styles.radioLabel}>
             <input
               type="radio"
-              name="loadCapacity"
-              value="6-8 кг"
-              checked={loadCapacity === '6-8 кг'}
-              onChange={() => dispatch(setLoadCapacity('6-8 кг'))}
+              name="inStock"
+              checked={inStock === false}
+              onChange={() => dispatch(setInStock(false))}
             />
             <span className={styles.radioCustom}></span>
-            <span>📦 6-8 кг</span>
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="loadCapacity"
-              value="более 8 кг"
-              checked={loadCapacity === 'более 8 кг'}
-              onChange={() => dispatch(setLoadCapacity('более 8 кг'))}
-            />
-            <span className={styles.radioCustom}></span>
-            <span>📦 более 8 кг</span>
-          </label>
-        </div>
-      </div>
-
-      {/* Класс энергоэффективности */}
-      <div className={styles.filterGroup}>
-        <h4 className={styles.groupTitle}>
-          <span>⚡</span> Энергоэффективность
-        </h4>
-        <div className={styles.radioGroup}>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="energyClass"
-              value=""
-              checked={energyClass === ''}
-              onChange={() => dispatch(setEnergyClass(''))}
-            />
-            <span className={styles.radioCustom}></span>
-            <span>Любой</span>
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="energyClass"
-              value="A+++"
-              checked={energyClass === 'A+++'}
-              onChange={() => dispatch(setEnergyClass('A+++'))}
-            />
-            <span className={styles.radioCustom}></span>
-            <span>A+++</span>
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="energyClass"
-              value="A++"
-              checked={energyClass === 'A++'}
-              onChange={() => dispatch(setEnergyClass('A++'))}
-            />
-            <span className={styles.radioCustom}></span>
-            <span>A++</span>
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="energyClass"
-              value="A+"
-              checked={energyClass === 'A+'}
-              onChange={() => dispatch(setEnergyClass('A+'))}
-            />
-            <span className={styles.radioCustom}></span>
-            <span>A+</span>
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="energyClass"
-              value="A"
-              checked={energyClass === 'A'}
-              onChange={() => dispatch(setEnergyClass('A'))}
-            />
-            <span className={styles.radioCustom}></span>
-            <span>A</span>
+            <span>📅 Под заказ</span>
           </label>
         </div>
       </div>
 
       {/* Активные фильтры */}
-      {(manufacturer.length > 0 || color || loadCapacity || energyClass || priceRange[0] > 0 || priceRange[1] < 500000) && (
+      {(manufacturer.length > 0 || color || brand || inStock !== null || 
+        priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice) && (
         <div className={styles.activeFilters}>
           <h4>Активные фильтры:</h4>
           <div className={styles.activeFilterTags}>
@@ -246,22 +242,22 @@ const FilterSidebar = () => {
             ))}
             {color && (
               <span className={styles.filterTag} onClick={() => dispatch(setColor(''))}>
-                {color} ✕
+                Цвет: {color} ✕
               </span>
             )}
-            {loadCapacity && (
-              <span className={styles.filterTag} onClick={() => dispatch(setLoadCapacity(''))}>
-                {loadCapacity} ✕
+            {brand && (
+              <span className={styles.filterTag} onClick={() => dispatch(setBrand(null))}>
+                Бренд: {brand} ✕
               </span>
             )}
-            {energyClass && (
-              <span className={styles.filterTag} onClick={() => dispatch(setEnergyClass(''))}>
-                Класс {energyClass} ✕
+            {inStock !== null && (
+              <span className={styles.filterTag} onClick={() => dispatch(setInStock(null))}>
+                {inStock ? 'В наличии' : 'Под заказ'} ✕
               </span>
             )}
-            {(priceRange[0] > 0 || priceRange[1] < 500000) && (
-              <span className={styles.filterTag} onClick={() => dispatch(setPriceRange([0, 500000]))}>
-                {priceRange[0].toLocaleString()}₽ - {priceRange[1].toLocaleString()}₽ ✕
+            {(priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice) && (
+              <span className={styles.filterTag} onClick={() => dispatch(setPriceRange([minProductPrice, maxProductPrice]))}>
+                {priceRange[0].toLocaleString()}₽ — {priceRange[1].toLocaleString()}₽ ✕
               </span>
             )}
           </div>

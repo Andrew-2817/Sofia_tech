@@ -1,3 +1,4 @@
+// store/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -27,7 +28,46 @@ const loadUserFromStorage = () => {
   };
 };
 
-// Асинхронные действия
+// ========== НОВЫЕ THUNK ==========
+
+// Получение профиля пользователя
+export const fetchUserProfile = createAsyncThunk(
+  'auth/fetchProfile',
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await axios.get(`${API_URL}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Ошибка загрузки профиля');
+    }
+  }
+);
+
+// Обновление профиля пользователя
+export const updateUserProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await axios.put(`${API_URL}/user/profile`, userData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      return response.data.user;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Ошибка обновления профиля');
+    }
+  }
+);
+
+// Регистрация
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
@@ -44,6 +84,7 @@ export const register = createAsyncThunk(
   }
 );
 
+// Логин
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (userData, { rejectWithValue }) => {
@@ -61,7 +102,7 @@ export const loginUser = createAsyncThunk(
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: loadUserFromStorage(), // ← восстанавливаем состояние
+  initialState: loadUserFromStorage(),
   reducers: {
     logout: (state) => {
       state.isLoggedIn = false;
@@ -107,6 +148,34 @@ const authSlice = createSlice({
         localStorage.setItem('access_token', action.payload.access_token);
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Получение профиля
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Обновление профиля
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

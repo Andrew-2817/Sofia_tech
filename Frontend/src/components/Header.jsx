@@ -2,12 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
-import { setSearchQuery, setCategory } from '../store/slices/filtersSlice';
+import { setSearchQuery } from '../store/slices/filtersSlice';
 import AuthModal from './AuthModal';
 import CartModal from './CartModal';
 import FavoritesModal from './FavoritesModal';
 import SearchDropdown from './SearchDropdown';
-import { logout } from '../store/slices/authSlice';
 import CatalogMenu from './CatalogMenu';
 import styles from './Header.module.css';
 import searchIcon from '../assets/search.svg'
@@ -25,7 +24,7 @@ const Header = () => {
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const searchContainerRef = useRef(null);
   const searchInputRef = useRef(null);
-  
+  const { tree: categories, loading } = useSelector(state => state.categories);
   const cartItemsCount = useSelector(state => state.cart.items.reduce((acc, item) => acc + item.quantity, 0));
   const favoritesCount = useSelector(state => state.favorites.items.length);
   const { isLoggedIn, user } = useSelector(state => state.auth);
@@ -74,7 +73,12 @@ const Header = () => {
     }
   };
 
-  const categories = ['Холодильники', 'Микроволновки', 'Телевизоры', 'Стиральные машины', 'Пылесосы'];
+  const level1Categories = categories.filter(cat => cat.level === 1);
+  
+  // Для отображения в строке категорий берём первые 5 категорий 2 уровня
+  const topCategories = level1Categories.slice(0, 5);
+
+  // const categories = ['Холодильники', 'Микроволновки', 'Телевизоры', 'Стиральные машины', 'Пылесосы'];
 
   return (
     <>
@@ -142,20 +146,20 @@ const Header = () => {
             </div>
           </div>
           
-          {/* <nav className={styles.categoriesNav}>
-            {categories.map(cat => (
-              <button
-                key={cat}
-                className={styles.categoryLink}
-                onClick={() => {
-                  dispatch(setCategory(cat));
-                  navigate('/catalog');
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </nav> */}
+        <nav className={styles.categoriesNav}>
+          {!loading && topCategories.map(cat => (
+            <button
+              key={cat.id}
+              className={styles.categoryLink}
+              onClick={() => {
+                // dispatch(setCategory(cat.name));
+                navigate(`/catalog?level1=${cat.slug}`);
+              }}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </nav>
         </div>
       </header>
       

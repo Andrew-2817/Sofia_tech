@@ -1,70 +1,85 @@
+/* FilterSidebar.module.css */
 .sidebar {
-  background: linear-gradient(135deg, #1a1a1a, #151515);
+  width: 280px;
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 16px;
-  padding: 25px;
-  border: 1px solid rgba(123, 198, 207, 0.1);
-  transition: all 0.3s ease;
-  width: 30%;
-  animation: slideInLeft 0.5s ease;
-}
-
-.sidebar:hover {
-  border-color: rgba(123, 198, 207, 0.2);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  position: relative;
+  top: 20px;
+  height: fit-content;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid rgba(123, 198, 207, 0.2);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header h3 {
-  color: #7bc6cf;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
+  color: #f0f0f0;
   margin: 0;
 }
 
 .resetBtn {
-  background: rgba(123, 198, 207, 0.1);
-  color: #7bc6cf;
+  background: rgba(255, 107, 107, 0.1);
   border: none;
+  color: #ff6b6b;
   padding: 6px 12px;
-  display: flex;
-  justify-content: center;
-  align-items: end;
-  gap: 0 5px;
   border-radius: 8px;
-  font-size: 13px;
   cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   transition: all 0.3s ease;
 }
 
+.resetBtn img {
+  width: 14px;
+  height: 14px;
+  filter: brightness(0) invert(1);
+}
+
 .resetBtn:hover {
-  background: rgba(123, 198, 207, 0.2);
+  background: rgba(255, 107, 107, 0.2);
   transform: translateY(-2px);
 }
 
 .filterGroup {
-  margin-bottom: 30px;
-  animation: fadeInUp 0.5s ease;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filterGroup:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .groupTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #7bc6cf;
+  margin-bottom: 16px;
   display: flex;
-  align-items: end;
-
+  align-items: center;
   gap: 8px;
-  margin-bottom: 15px;
-  font-size: 16px;
-  color: #f0f0f0;
-  font-weight: 500;
 }
 
+.groupTitle span,
+.groupTitle img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+}
+
+/* Чекбоксы */
 .checkboxGroup {
   display: flex;
   flex-direction: column;
@@ -76,22 +91,19 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  position: relative;
-  padding-left: 30px;
-  user-select: none;
+  font-size: 14px;
   color: #ccc;
-  transition: all 0.3s ease;
-}
-
-.checkboxLabel:hover {
-  color: #7bc6cf;
-  transform: translateX(5px);
+  position: relative;
+  padding-left: 28px;
+  user-select: none;
 }
 
 .checkboxLabel input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
 .checkmark {
@@ -99,17 +111,19 @@
   left: 0;
   height: 18px;
   width: 18px;
-  background-color: #f0f0f0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .checkboxLabel:hover input ~ .checkmark {
-  background-color: #3a3a3a;
+  background: rgba(123, 198, 207, 0.1);
 }
 
 .checkboxLabel input:checked ~ .checkmark {
-  background-color: #7bc6cf;
+  background: #7bc6cf;
+  border-color: #7bc6cf;
 }
 
 .checkmark:after {
@@ -125,70 +139,69 @@
 .checkboxLabel .checkmark:after {
   left: 6px;
   top: 2px;
-  width: 5px;
-  height: 10px;
+  width: 4px;
+  height: 8px;
   border: solid #121212;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
 
+/* Цена */
 .priceInputs {
   display: flex;
-  gap: 12px;
   align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 15px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .priceField {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: #f0f0f0;
-  color: #222;
-  padding: 8px 12px;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.priceField:focus-within {
-  box-shadow: 0 0 0 2px #7bc6cf;
+  padding: 4px 8px;
 }
 
 .priceField span {
   color: #888;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .priceField input {
-  flex: 1;
-  background: transparent;
+  background: none;
   border: none;
-  color: #444;
+  color: #f0f0f0;
+  font-size: 13px;
+  width: 100%;
   outline: none;
-  font-size: 14px;
+}
+
+.priceField input:focus {
+  color: #7bc6cf;
 }
 
 .priceSeparator {
-  color: #7bc6cf;
-  font-weight: bold;
+  color: #888;
 }
 
-.priceRange {
+.priceRangeSlider {
   position: relative;
-  height: 30px;
+  height: 4px;
+  margin: 20px 0;
 }
 
-.priceRange input[type="range"] {
+.priceRangeSlider input {
   position: absolute;
   width: 100%;
-  background: transparent;
+  height: 4px;
+  background: none;
   pointer-events: none;
   -webkit-appearance: none;
 }
 
-.priceRange input[type="range"]::-webkit-slider-thumb {
+.priceRangeSlider input::-webkit-slider-thumb {
   pointer-events: auto;
   -webkit-appearance: none;
   width: 16px;
@@ -196,183 +209,114 @@
   border-radius: 50%;
   background: #7bc6cf;
   cursor: pointer;
-  box-shadow: 0 0 6px #7bc6cf;
+  border: 2px solid #fff;
 }
 
-.priceRange input[type="range"]::-webkit-slider-runnable-track {
+.priceRangeSlider input::-webkit-slider-runnable-track {
   height: 4px;
-  background: #2c2c2c;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 2px;
 }
-.priceField input[type="number"]::-webkit-inner-spin-button,
-.priceField input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+
+.priceHint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+  margin-top: 8px;
 }
 
-.select {
-  width: 100%;
-  padding: 10px;
-  background: #2c2c2c;
-  color: #f0f0f0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.select:hover {
-  background: #3a3a3a;
-  transform: translateY(-1px);
-}
-
+/* Цвета */
 .colorOptions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .colorBtn {
-  padding: 8px;
-  border: 2px solid transparent;
-  border-radius: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #ccc;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 13px;
-  color: #121212;
-  font-weight: 500;
-}
-.colorBtn:nth-child(1){
-  color: #e1e1e1;
 }
 
 .colorBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.colorBtn.active {
   border-color: #7bc6cf;
-  box-shadow: 0 0 0 2px rgba(123, 198, 207, 0.5);
-  transform: scale(1.05);
-}
-
-/* Стили для кастомного селекта */
-.customSelect {
-  position: relative;
-  width: 100%;
-}
-
-.selectTrigger {
-  background: linear-gradient(135deg, #f0f0f0, #d4f7f6);
-  border: 2px solid transparent;
-  border-radius: 12px;
-  padding: 8px 16px;
-  color: #222;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.selectTrigger:hover {
-  /* border-color: rgba(123, 198, 207, 0.3); */
   transform: translateY(-2px);
 }
 
-.selectTrigger.open {
+.colorBtn.active {
+  background: #7bc6cf;
+  color: #121212;
   border-color: #7bc6cf;
-  /* background: #2c2c2c; */
-  box-shadow: 0 4px 12px rgba(123, 198, 207, 0.2);
 }
 
-.selectedValue {
+/* Радио кнопки */
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radioLabel {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #222;
-  font-size: 14px;
-}
-
-.selectedIcon {
-  font-size: 18px;
-}
-
-.selectArrow {
-  color: #7bc6cf;
-  transition: transform 0.3s ease;
-  font-size: 12px;
-}
-
-.selectArrow.rotated {
-  transform: rotate(180deg);
-}
-
-.selectDropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #2c2c2c, #252525);
-  border-radius: 12px;
-  overflow: hidden;
-  z-index: 10;
-  animation: dropdownSlide 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(123, 198, 207, 0.2);
-}
-
-@keyframes dropdownSlide {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.selectOption {
-  padding: 10px 16px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.3s ease;
-  color: #f0f0f0;
+  font-size: 13px;
+  color: #ccc;
   position: relative;
+  padding-left: 26px;
 }
 
-.selectOption:hover {
-  background: rgba(123, 198, 207, 0.1);
-  padding-left: 20px;
+.radioLabel input {
+  position: absolute;
+  opacity: 0;
 }
 
-.selectOption.selected {
-  background: rgba(123, 198, 207, 0.15);
-  color: #7bc6cf;
+.radioCustom {
+  position: absolute;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
 }
 
-.optionIcon {
-  font-size: 16px;
+.radioLabel input:checked ~ .radioCustom {
+  border-color: #7bc6cf;
 }
 
-.checkMark {
-  margin-left: auto;
-  color: #7bc6cf;
-  font-weight: bold;
+.radioCustom:after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 3px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7bc6cf;
 }
 
+.radioLabel input:checked ~ .radioCustom:after {
+  display: block;
+}
+
+/* Активные фильтры */
 .activeFilters {
-  margin-top: 25px;
-  padding-top: 20px;
+  margin-top: 20px;
+  padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .activeFilters h4 {
-  font-size: 14px;
+  font-size: 12px;
   color: #888;
   margin-bottom: 12px;
 }
@@ -387,156 +331,22 @@
   background: rgba(123, 198, 207, 0.15);
   color: #7bc6cf;
   padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 16px;
+  font-size: 11px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .filterTag:hover {
-  background: rgba(123, 198, 207, 0.3);
-  transform: translateY(-2px);
-}
-
-/* Добавьте в конец файла */
-
-/* Радиокнопки */
-.radioGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.radioLabel {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  position: relative;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-.radioLabel:hover {
-  background: rgba(123, 198, 207, 0.08);
-  transform: translateX(5px);
-}
-
-.radioLabel input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.radioCustom {
-  position: relative;
-  height: 18px;
-  width: 18px;
-  background-color: #2c2c2c;
-  border: 2px solid #7bc6cf;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-.radioCustom::after {
-  content: "";
-  position: absolute;
-  display: none;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #7bc6cf;
-}
-
-.resetBtn img {
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) invert(1);
-  transition: transform 0.3s ease;
-}
-.resetBtn:hover img {
-  transform: scale(1.1);
-}
-
-.groupTitle img {
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) invert(1);
-  transition: transform 0.3s ease;
-}
-.groupTitle:hover img {
-  transform: scale(1.1);
-}
-
-.radioLabel input:checked ~ .radioCustom::after {
-  display: block;
-}
-
-.radioLabel input:checked ~ .radioCustom {
-  background: rgba(123, 198, 207, 0.1);
-  animation: pulse 0.3s ease;
-}
-
-.radioLabel span:last-child {
-  flex: 1;
-  color: #f0f0f0;
-  font-size: 14px;
-}
-
-.radioLabel input:checked ~ span:last-child {
-  color: #7bc6cf;
-  font-weight: 500;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
   .sidebar {
+    width: 100%;
     position: static;
     margin-bottom: 20px;
-  }
-  
-  .colorOptions {
-    grid-template-columns: repeat(3, 1fr);
   }
 }

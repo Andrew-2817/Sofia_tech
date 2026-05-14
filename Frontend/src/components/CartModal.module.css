@@ -168,12 +168,17 @@
 }
 
 .itemImage {
-  width: 60px;
-  height: 60px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
 }
-
+/* Добавь в конец файла */
+.loadingUser {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
 .itemInfo {
   flex: 1;
 }
@@ -372,6 +377,151 @@
 .cartItems::-webkit-scrollbar-thumb {
   background: #7bc6cf;
   border-radius: 2px;
+}
+
+/* Добавьте в конец файла CartModal.module.css */
+
+/* Форма оформления */
+.checkoutForm {
+  padding: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.checkoutForm h3 {
+  color: #f0f0f0;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formGroup label {
+  display: block;
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #f0f0f0;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #7bc6cf;
+}
+
+.orderSummary {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.summaryItem:last-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: bold;
+  color: #f0f0f0;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+}
+
+.backBtn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ccc;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.submitBtn {
+  flex: 2;
+  background: #7bc6cf;
+  border: none;
+  color: #121212;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 198, 207, 0.3);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Сообщения об успехе/ошибке */
+.successMessage {
+  display: flex;
+  gap: 16px;
+  background: rgba(46, 125, 50, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px;
+}
+
+.successMessage span {
+  font-size: 32px;
+}
+
+.successMessage h4 {
+  color: #4caf50;
+  margin-bottom: 8px;
+}
+
+.successMessage p {
+  color: #ccc;
+  font-size: 13px;
+  margin: 4px 0;
+}
+
+.errorMessage {
+  display: flex;
+  gap: 16px;
+  background: rgba(198, 40, 40, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px;
 }
 
 /* Адаптивность */

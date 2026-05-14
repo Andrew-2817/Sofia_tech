@@ -1,19 +1,45 @@
+// components/FavoritesModal.jsx
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toggleFavorite } from '../store/slices/favoritesSlice';
 import { addToCart } from '../store/slices/cartSlice';
 import styles from './FavoritesModal.module.css';
-import heartIcon from '../assets/heart.svg'
-import basketIcon from '../assets/basket.svg'
-import crossIcon from '../assets/cross.svg'
-import transhIcon from "../assets/trash.svg"
+import heartIcon from '../assets/heart.svg';
+import basketIcon from '../assets/basket.svg';
+import crossIcon from '../assets/cross.svg';
+import trashIcon from "../assets/trash.svg";
+import { API_BASE_URL_photo } from '../services/api';
 
 const FavoritesModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
-  const favoritesIds = useSelector(state => state.favorites.items);
+  const favorites = useSelector(state => state.favorites.items); // массив объектов { id, brandId }
   const products = useSelector(state => state.products.items);
   
-  const favoriteProducts = products.filter(product => favoritesIds.includes(product.id));
+  // ИСПРАВЛЕНО: фильтрация по составному ключу
+  const favoriteProducts = products.filter(product => {
+    return favorites.some(fav => fav.id === product.id && fav.brandId === product.brand_id);
+  });
+  
+  const handleToggleFavorite = (e, productId, brandId) => {
+    e.preventDefault();
+    dispatch(toggleFavorite({ id: productId, brandId }));
+  };
+  
+  const handleAddToCart = (e, product) => {
+    e.preventDefault();
+    dispatch(addToCart({ 
+      id: product.id,
+      brandId: product.brand_id,
+      name: product.name,
+      price: product.price,
+      image: product.main_image || product.image,
+      sku: product.sku || product.model,
+      brandName: product.brandName || (product.brand_id === 1 ? 'Homeier' : 'Brandt'),
+      color: product.color || null,
+      model: product.model || null,
+    }));
+    onClose();
+  };
   
   if (!isOpen) return null;
   
@@ -31,7 +57,7 @@ const FavoritesModal = ({ isOpen, onClose }) => {
         
         {favoriteProducts.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}></div>
+            <div className={styles.emptyIcon}>❤️</div>
             <h3>Избранное пусто</h3>
             <p>Добавляйте товары в избранное, чтобы не потерять их</p>
             <button className={styles.continueBtn} onClick={onClose}>
@@ -42,12 +68,18 @@ const FavoritesModal = ({ isOpen, onClose }) => {
           <>
             <div className={styles.favoritesItems}>
               {favoriteProducts.map(product => (
-                <div key={product.id} className={styles.favoriteItem}>
-                  <img src={product.image} alt={product.name} className={styles.itemImage} />
+                <div key={`${product.id}-${product.brand_id}`} className={styles.favoriteItem}>
+                  <img 
+                    src={`${API_BASE_URL_photo}${product.main_image}` || `${API_BASE_URL_photo}${product.image}`} 
+                    alt={product.name} 
+                    className={styles.itemImage} 
+                  />
                   <div className={styles.itemInfo}>
-                    <div className={styles.itemCategory}>{product.categoryName}</div>
+                    <div className={styles.itemCategory}>
+                      {product.brandName || (product.brand_id === 1 ? 'Homeier' : 'Brandt')}
+                    </div>
                     <Link 
-                      to={`/product/${product.id}`} 
+                      to={`/product/${product.brand_id}/${product.id}`} 
                       className={styles.itemName}
                       onClick={onClose}
                     >
@@ -55,29 +87,29 @@ const FavoritesModal = ({ isOpen, onClose }) => {
                     </Link>
                     <div className={styles.itemPrice}>{product.price.toLocaleString()} ₽</div>
                     <div className={styles.itemSpecs}>
-                      {product.manufacturer && (
-                        <span className={styles.spec}>🏭 {product.manufacturer}</span>
-                      )}
                       {product.color && (
                         <span className={styles.spec}>🎨 {product.color}</span>
+                      )}
+                      {product.model && (
+                        <span className={styles.spec}>🔢 {product.model}</span>
+                      )}
+                      {product.sku && (
+                        <span className={styles.spec}>🔖 {product.sku}</span>
                       )}
                     </div>
                   </div>
                   <div className={styles.itemActions}>
                     <button 
                       className={styles.cartBtn}
-                      onClick={() => {
-                        dispatch(addToCart({ id: product.id }));
-                        onClose();
-                      }}
+                      onClick={(e) => handleAddToCart(e, product)}
                     >
                       <img src={basketIcon} alt="" /> <p>В корзину</p>
                     </button>
                     <button 
                       className={styles.removeBtn}
-                      onClick={() => dispatch(toggleFavorite(product.id))}
+                      onClick={(e) => handleToggleFavorite(e, product.id, product.brand_id)}
                     >
-                      <img src={transhIcon} alt="" /> <p>Удалить</p>
+                      <img src={trashIcon} alt="" /> <p>Удалить</p>
                     </button>
                   </div>
                 </div>
