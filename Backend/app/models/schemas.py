@@ -25,7 +25,7 @@ class CategoryResponse(CategoryBase):
 
 class CategoryWithChildren(CategoryBase):
     children: List['CategoryWithChildren'] = []
-    
+
 CategoryWithChildren.model_rebuild()
 
 class UserRegister(BaseModel):
@@ -234,6 +234,121 @@ class BrandtProductUpdate(BaseModel):
 
 class BrandtProductResponse(BrandtProductBase):
     id: int
+
+    class Config:
+        from_attributes = True
+
+
+# ==================== Схемы для товаров Liebherr ====================
+class LiebherrProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    model: Optional[str] = Field(None, max_length=100)
+    ean: Optional[str] = Field(None, max_length=50)
+    status: Optional[str] = Field(None, max_length=50)
+    name: str = Field(..., min_length=1, max_length=500)
+    category_name: Optional[str] = Field(None, max_length=255)
+    production_start: Optional[int] = Field(None)  # Убираем ограничение ge=1900
+    factory: Optional[str] = Field(None, max_length=255)
+    warranty: Optional[int] = Field(None, ge=0, le=50)
+    price_public: Optional[float] = Field(None, ge=0)
+    price_wholesale: Optional[float] = Field(None, ge=0)
+    promo_price_public: Optional[float] = Field(None, ge=0)
+    promo_price_wholesale: Optional[float] = Field(None, ge=0)
+
+class LiebherrProductCreate(LiebherrProductBase):
+    pass
+
+class LiebherrProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    model: Optional[str] = Field(None, max_length=100)
+    ean: Optional[str] = Field(None, max_length=50)
+    status: Optional[str] = Field(None, max_length=50)
+    name: Optional[str] = Field(None, min_length=1, max_length=500)
+    category_name: Optional[str] = Field(None, max_length=255)
+    production_start: Optional[int] = Field(None)  # Убираем ограничение ge=1900
+    factory: Optional[str] = Field(None, max_length=255)
+    warranty: Optional[int] = Field(None, ge=0, le=50)
+    price_public: Optional[float] = Field(None, ge=0)
+    price_wholesale: Optional[float] = Field(None, ge=0)
+    promo_price_public: Optional[float] = Field(None, ge=0)
+    promo_price_wholesale: Optional[float] = Field(None, ge=0)
+
+class LiebherrProductResponse(LiebherrProductBase):
+    id: int
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# ==================== Схемы для товаров Dedietrich ====================
+class DedietrichProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    main_image: Optional[str] = None
+    model: Optional[str] = Field(None, max_length=100)
+    name: str = Field(..., min_length=1, max_length=500)
+    line: Optional[str] = Field(None, max_length=255)
+    specifications: Optional[str] = None
+    color: Optional[str] = Field(None, max_length=100)
+    price_public: Optional[float] = Field(None, ge=0)
+    comment: Optional[str] = None
+
+class DedietrichProductCreate(DedietrichProductBase):
+    pass
+
+class DedietrichProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    main_image: Optional[str] = None
+    model: Optional[str] = Field(None, max_length=100)
+    name: Optional[str] = Field(None, min_length=1, max_length=500)
+    line: Optional[str] = Field(None, max_length=255)
+    specifications: Optional[str] = None
+    color: Optional[str] = Field(None, max_length=100)
+    price_public: Optional[float] = Field(None, ge=0)
+    comment: Optional[str] = None
+
+class DedietrichProductResponse(DedietrichProductBase):
+    id: int
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# ==================== Схемы для товаров Nivona ====================
+class NivonaProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    main_image: Optional[str] = None
+    sku: Optional[str] = None
+    model: Optional[str] = None
+    name: str = Field(..., min_length=1, max_length=500)
+    description: Optional[str] = None
+    price_public: Optional[float] = Field(None, gt=0)
+    comment: Optional[str] = None
+
+class NivonaProductCreate(NivonaProductBase):
+    pass
+
+class NivonaProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    main_image: Optional[str] = None
+    sku: Optional[str] = None
+    model: Optional[str] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=500)
+    description: Optional[str] = None
+    price_public: Optional[float] = Field(None, gt=0)
+    comment: Optional[str] = None
+
+class NivonaProductResponse(NivonaProductBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
