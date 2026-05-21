@@ -1,10 +1,12 @@
+// components/AuthModal.jsx
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { register, loginUser, clearError } from '../store/slices/authSlice';
+import LoadingSpinner from './LoadingSpinner';
 import styles from './AuthModal.module.css';
-import crossIcon from '../assets/cross.svg'
-import regIcon from '../assets/reg.svg'
-import singInIcon from '../assets/sign-in.svg'
+import crossIcon from '../assets/cross.svg';
+import regIcon from '../assets/reg.svg';
+import singInIcon from '../assets/sign-in.svg';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('login');
@@ -16,15 +18,18 @@ const AuthModal = ({ isOpen, onClose }) => {
   });
   const [errors, setErrors] = useState({});
   const [isVisible, setIsVisible] = useState(false);
+  const [serverError, setServerError] = useState(null);
   
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error: authError } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
       document.body.style.overflow = 'hidden';
       dispatch(clearError());
+      setServerError(null);
+      setErrors({});
     } else {
       setIsVisible(false);
       document.body.style.overflow = 'unset';
@@ -34,7 +39,18 @@ const AuthModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen, dispatch]);
 
+  useEffect(() => {
+    if (authError) {
+      setServerError(authError);
+    }
+  }, [authError]);
+
   if (!isOpen && !isVisible) return null;
+
+  // Показываем спиннер во время загрузки
+  if (loading) {
+    return <LoadingSpinner text={activeTab === 'login' ? 'Вход...' : 'Регистрация...'} />;
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -47,35 +63,62 @@ const AuthModal = ({ isOpen, onClose }) => {
         [e.target.name]: ''
       });
     }
-    if (error) {
+    if (serverError) {
+      setServerError(null);
       dispatch(clearError());
     }
   };
 
   const validateLogin = () => {
     const newErrors = {};
-    if (!formData.email) newErrors.email = 'Email обязателен';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email невалидный';
-    if (!formData.password) newErrors.password = 'Пароль обязателен';
-    else if (formData.password.length < 6) newErrors.password = 'Пароль должен быть не менее 6 символов';
+    if (!formData.email) {
+      newErrors.email = 'Email обязателен';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Введите корректный email';
+    }
+    if (!formData.password) {
+      newErrors.password = 'Пароль обязателен';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Пароль должен быть не менее 6 символов';
+    }
     return newErrors;
   };
 
   const validateRegister = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = 'Имя обязательно';
-    else if (formData.name.length < 2) newErrors.name = 'Имя должно быть не менее 2 символов';
-    if (!formData.email) newErrors.email = 'Email обязателен';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email невалидный';
-    if (!formData.password) newErrors.password = 'Пароль обязателен';
-    else if (formData.password.length < 6) newErrors.password = 'Пароль должен быть не менее 6 символов';
-    if (!formData.confirmPassword) newErrors.confirmPassword = 'Подтвердите пароль';
-    else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Пароли не совпадают';
+    if (!formData.name) {
+      newErrors.name = 'Имя обязательно';
+    } else if (formData.name.length < 2) {
+      newErrors.name = 'Имя должно быть не менее 2 символов';
+    } else if (formData.name.length > 50) {
+      newErrors.name = 'Имя не должно превышать 50 символов';
+    }
+    
+    if (!formData.email) {
+      newErrors.email = 'Email обязателен';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Введите корректный email';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Пароль обязателен';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Пароль должен быть не менее 6 символов';
+    } else if (formData.password.length > 100) {
+      newErrors.password = 'Пароль не должен превышать 100 символов';
+    }
+    
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Подтвердите пароль';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Пароли не совпадают';
+    }
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError(null);
     
     const validationErrors = activeTab === 'login' ? validateLogin() : validateRegister();
     
@@ -83,13 +126,13 @@ const AuthModal = ({ isOpen, onClose }) => {
       let result;
       if (activeTab === 'login') {
         result = await dispatch(loginUser({
-          email: formData.email,
+          email: formData.email.trim(),
           password: formData.password
         }));
       } else {
         result = await dispatch(register({
-          name: formData.name,
-          email: formData.email,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
           password: formData.password
         }));
       }
@@ -111,6 +154,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       confirmPassword: ''
     });
     setErrors({});
+    setServerError(null);
     setActiveTab('login');
     dispatch(clearError());
   };
@@ -129,6 +173,19 @@ const AuthModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const getServerErrorMessage = (errorText) => {
+    if (errorText?.includes('email уже существует')) {
+      return 'Пользователь с таким email уже зарегистрирован';
+    }
+    if (errorText?.includes('Неверный email или пароль')) {
+      return 'Неверный email или пароль';
+    }
+    if (errorText?.includes('Аккаунт деактивирован')) {
+      return 'Аккаунт деактивирован. Обратитесь в поддержку';
+    }
+    return errorText || 'Произошла ошибка. Попробуйте позже';
+  };
+
   return (
     <div className={`${styles.overlay} ${isVisible ? styles.visible : ''}`} onClick={handleOverlayClick}>
       <div className={`${styles.modal} ${isVisible ? styles.modalEnter : styles.modalExit}`}>
@@ -145,6 +202,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             onClick={() => {
               setActiveTab('login');
               dispatch(clearError());
+              setServerError(null);
             }}
           >
             <img src={singInIcon} alt="" />
@@ -155,6 +213,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             onClick={() => {
               setActiveTab('register');
               dispatch(clearError());
+              setServerError(null);
             }}
           >
             <img src={regIcon} alt="" />
@@ -162,19 +221,17 @@ const AuthModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {error && (
+        {serverError && (
           <div className={styles.errorBanner}>
-            {error}
+            <span className={styles.errorIcon}>⚠️</span>
+            <span>{getServerErrorMessage(serverError)}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           {activeTab === 'register' && (
             <div className={styles.inputGroup}>
-              <label>
-                {/* <span>👤</span> */}
-                Имя
-              </label>
+              <label>Имя</label>
               <input
                 type="text"
                 name="name"
@@ -188,10 +245,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           )}
 
           <div className={styles.inputGroup}>
-            <label>
-              {/* <span>📧</span> */}
-              Email
-            </label>
+            <label>Email</label>
             <input
               type="email"
               name="email"
@@ -204,10 +258,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>
-              {/* <span>🔒</span> */}
-              Пароль
-            </label>
+            <label>Пароль</label>
             <input
               type="password"
               name="password"
@@ -221,10 +272,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
           {activeTab === 'register' && (
             <div className={styles.inputGroup}>
-              <label>
-                {/* <span>✓</span> */}
-                Подтвердите пароль
-              </label>
+              <label>Подтвердите пароль</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -237,8 +285,8 @@ const AuthModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Загрузка...' : (activeTab === 'login' ? 'Войти' : 'Зарегистрироваться')}
+          <button type="submit" className={styles.submitBtn}>
+            {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
           </button>
         </form>
 
@@ -251,6 +299,8 @@ const AuthModal = ({ isOpen, onClose }) => {
               onClick={() => {
                 setActiveTab(activeTab === 'login' ? 'register' : 'login');
                 dispatch(clearError());
+                setServerError(null);
+                setErrors({});
               }}
             >
               {activeTab === 'login' ? 'Зарегистрироваться' : 'Войти'}

@@ -1,3 +1,4 @@
+// Header.jsx - исправленная версия
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
@@ -9,9 +10,12 @@ import FavoritesModal from './FavoritesModal';
 import SearchDropdown from './SearchDropdown';
 import CatalogMenu from './CatalogMenu';
 import styles from './Header.module.css';
-import searchIcon from '../assets/search.svg'
-import heartIcon from '../assets/heart.svg'
-import basketIcon from '../assets/basket.svg'
+import searchIcon from '../assets/search.svg';
+import heartIcon from '../assets/heart.svg';
+import basketIcon from '../assets/basket.svg';
+import LoadingSpinner from '../components/LoadingSpinner';
+import profileIcon from '../assets/profile.svg'
+import { getDefaultProductImage } from '../data/mockData';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -22,29 +26,58 @@ const Header = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showCartModal, setShowCartModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  
   const searchContainerRef = useRef(null);
   const searchInputRef = useRef(null);
+  
   const { tree: categories, loading } = useSelector(state => state.categories);
   const cartItemsCount = useSelector(state => state.cart.items.reduce((acc, item) => acc + item.quantity, 0));
   const favoritesCount = useSelector(state => state.favorites.items.length);
   const { isLoggedIn, user } = useSelector(state => state.auth);
   const allProducts = useSelector(state => state.products.items);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
-  // Поиск товаров
   useEffect(() => {
     if (search.trim().length > 0) {
-      // console.log(allProducts);
+      const lowerSearch = search.toLowerCase().trim();
       
-      const results = allProducts.filter(product =>
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.manufacturer.toLowerCase().includes(search.toLowerCase())
-      );
-      setSearchResults(results.slice(0, 8));
+      const results = allProducts.filter(product => {
+        const matchesName = product.name?.toLowerCase().includes(lowerSearch);
+        const matchesDescription = product.description?.toLowerCase().includes(lowerSearch);
+        const matchesSku = product.sku?.toLowerCase().includes(lowerSearch);
+        const matchesModel = product.model?.toLowerCase().includes(lowerSearch);
+        const matchesGroupLevel = product.group_level_1?.toLowerCase().includes(lowerSearch);
+        const matchesComment = product.comment?.toLowerCase().includes(lowerSearch);
+        
+        return matchesName || matchesDescription || matchesSku || matchesModel || matchesGroupLevel || matchesComment;
+      });
+      
+      setSearchResults(results.slice(0, 10));
     } else {
       setSearchResults(allProducts);
     }
   }, [search, allProducts]);
+
+
+      
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    if (value.trim().length > 0) {
+      setShowSearchResults(true);
+    } else {
+      setShowSearchResults(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await dispatch(logout());
+    navigate('/');
+    setIsLoggingOut(false);
+  };
 
   const handleFocus = () => {
     setShowSearchResults(true);
@@ -60,7 +93,7 @@ const Header = () => {
   };
 
   const handleProductClick = (product) => {
-    navigate(`/product/${product.id}`);
+    navigate(`/product/${product.brandId}/${product.id}`);
     setShowSearchResults(false);
     setSearch('');
   };
@@ -74,11 +107,11 @@ const Header = () => {
   };
 
   const level1Categories = categories.filter(cat => cat.level === 1);
-  
-  // Для отображения в строке категорий берём первые 5 категорий 2 уровня
   const topCategories = level1Categories.slice(0, 5);
 
-  // const categories = ['Холодильники', 'Микроволновки', 'Телевизоры', 'Стиральные машины', 'Пылесосы'];
+  if (isLoggingOut) {
+    return <LoadingSpinner text="Выход из аккаунта..." />;
+  }
 
   return (
     <>
@@ -101,7 +134,7 @@ const Header = () => {
                   type="text"
                   placeholder="Поиск товаров..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={handleSearchChange}
                   className={styles.searchInput}
                   onFocus={handleFocus}
                 />
@@ -125,18 +158,28 @@ const Header = () => {
             </div>
             
             <div className={styles.actions}>
-              <Link to="#" className={styles.actionBtn} onClick={() => setShowFavoritesModal(true)}>
-                <img src={heartIcon} alt="" /> {favoritesCount > 0 && <span>{favoritesCount}</span>}
-              </Link>
-              <Link to="#" className={styles.actionBtn} onClick={() => setShowCartModal(true)}>
-                <img src={basketIcon} alt="" /> {cartItemsCount > 0 && <span>{cartItemsCount}</span>}
-              </Link>
+              <button 
+                className={styles.actionBtn} 
+                onClick={() => setShowFavoritesModal(true)}
+              >
+                <img src={heartIcon} alt="" /> 
+                {favoritesCount > 0 && <span>{favoritesCount}</span>}
+              </button>
+              <button 
+                className={styles.actionBtn} 
+                onClick={() => setShowCartModal(true)}
+              >
+                <img src={basketIcon} alt="" /> 
+                {cartItemsCount > 0 && <span>{cartItemsCount}</span>}
+              </button>
               {isLoggedIn ? (
                 <div className={styles.userMenu}>
                   <Link to="/profile" className={styles.profileLink}>
-                    <span>👤 {user?.name || 'Профиль'}</span>
+                    <img src={profileIcon} alt="" /><span>{user?.name || 'Профиль'}</span>
                   </Link>
-                  <button onClick={() => dispatch(logout())}>Выйти</button>
+                  <button onClick={handleLogout} className={styles.logoutBtn}>
+                    Выйти
+                  </button>
                 </div>
               ) : (
                 <button onClick={() => setShowAuthModal(true)} className={styles.loginBtn}>
@@ -146,20 +189,17 @@ const Header = () => {
             </div>
           </div>
           
-        <nav className={styles.categoriesNav}>
-          {!loading && topCategories.map(cat => (
-            <button
-              key={cat.id}
-              className={styles.categoryLink}
-              onClick={() => {
-                // dispatch(setCategory(cat.name));
-                navigate(`/catalog?level1=${cat.slug}`);
-              }}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </nav>
+          <nav className={styles.categoriesNav}>
+            {!loading && topCategories.map(cat => (
+              <button
+                key={cat.id}
+                className={styles.categoryLink}
+                onClick={() => navigate(`/catalog?level1=${cat.slug}`)}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </nav>
         </div>
       </header>
       

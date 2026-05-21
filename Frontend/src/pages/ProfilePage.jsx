@@ -10,7 +10,14 @@ import profileIcon from "../assets/profile.svg";
 import orderIcon from "../assets/order.svg";
 import heartIcon from "../assets/heart.svg";
 import signOutIcon from "../assets/sign-out.svg";
+import trashIcon from "../assets/trash.svg";
 import { API_BASE_URL_photo } from '../services/api';
+import phoneImg from "../assets/phone.svg"
+import colorIcon from "../assets/colors.svg"
+import skuIcon from "../assets/sku.svg"
+import brandIcon from "../assets/brand.svg"
+import addressIcon from "../assets/address.svg"
+import { getDefaultProductImage } from '../data/mockData';
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -19,6 +26,7 @@ const ProfilePage = () => {
   const { items: orders, loading: ordersLoading } = useSelector(state => state.orders);
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [editForm, setEditForm] = useState({
     name: '',
@@ -74,9 +82,11 @@ const ProfilePage = () => {
     }
   }, [user]);
 
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+const handleLogout = async () => {
+  setIsLoggingOut(true);
+  dispatch(logout());
+  setIsLoggingOut(false);
+};
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -176,6 +186,10 @@ const ProfilePage = () => {
     return null;
   }
   console.log(orders);
+
+  if (isLoggingOut) {
+  return <LoadingSpinner text="Выход..." />;
+}
   
 
   return (
@@ -359,7 +373,6 @@ const ProfilePage = () => {
               </div>
             ) : orders.length === 0 ? (
               <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>📦</div>
                 <h3>У вас пока нет заказов</h3>
                 <p>Перейдите в каталог, чтобы сделать первый заказ</p>
                 <button className={styles.continueBtn} onClick={() => navigate('/catalog')}>
@@ -385,20 +398,20 @@ const ProfilePage = () => {
                   {/* Детали доставки */}
                   <div className={styles.orderDeliveryInfo}>
                     <div className={styles.deliveryRow}>
-                      <span className={styles.deliveryLabel}>📦 Получатель:</span>
+                      <span className={styles.deliveryLabel}><img src={profileIcon} alt="" /> <p>Получатель:</p></span>
                       <span className={styles.deliveryValue}>{order.customer_name}</span>
                     </div>
                     <div className={styles.deliveryRow}>
-                      <span className={styles.deliveryLabel}>📞 Телефон:</span>
+                      <span className={styles.deliveryLabel}><img src={phoneImg} alt="" /> <p>Телефон:</p> </span>
                       <span className={styles.deliveryValue}>{order.customer_phone}</span>
                     </div>
                     <div className={styles.deliveryRow}>
-                      <span className={styles.deliveryLabel}>📍 Адрес доставки:</span>
+                      <span className={styles.deliveryLabel}><img src={addressIcon} alt="" /> <p>Адрес доставки:</p> </span>
                       <span className={styles.deliveryValue}>{order.customer_address}</span>
                     </div>
                     {order.customer_comment && (
                       <div className={styles.deliveryRow}>
-                        <span className={styles.deliveryLabel}>💬 Комментарий:</span>
+                        <span className={styles.deliveryLabel}>Комментарий:</span>
                         <span className={styles.deliveryValue}>{order.customer_comment}</span>
                       </div>
                     )}
@@ -415,37 +428,35 @@ const ProfilePage = () => {
                     {order.items && order.items.map((item, idx) => (
                       <div key={idx} className={styles.orderItem}>
                         <div className={styles.orderItemImage}>
-                          {item.image ? (
-                            <img src={item.image} alt={item.name} />
-                          ) : (
-                            <div className={styles.noImage}>🖼️</div>
-                          )}
+                            <img src={item.image !== null
+    ? `${API_BASE_URL_photo}${item.image}`
+    : getDefaultProductImage(item.categoryId)} alt="" />
                         </div>
                         <div className={styles.orderItemDetails}>
                           <div className={styles.orderItemName}>{item.name}</div>
                           <div className={styles.orderItemSpecs}>
                             {item.brand && (
                               <span className={styles.specBadge}>
-                                <span className={styles.specIcon}>🏭</span>
-                                {item.brand}
+                                <span className={styles.specIcon}><img src={brandIcon} alt="" /></span>
+                                <p>{item.brand}</p>
                               </span>
                             )}
                             {item.color && (
                               <span className={styles.specBadge}>
-                                <span className={styles.specIcon}>🎨</span>
-                                {item.color}
+                                <span className={styles.specIcon}><img src={colorIcon} alt="" /></span>
+                                <p>{item.color}</p>
                               </span>
                             )}
-                            {item.model && (
+                            {/* {item.model && (
                               <span className={styles.specBadge}>
                                 <span className={styles.specIcon}>🔢</span>
                                 {item.model}
                               </span>
-                            )}
-                            {item.sku && (
+                            )} */}
+                            {(item.sku || item.model) && (
                               <span className={styles.specBadge}>
-                                <span className={styles.specIcon}>🔖</span>
-                                Артикул: {item.sku}
+                                <span className={styles.specIcon}><img src={skuIcon} alt="" /></span>
+                                <p>Артикул: {(item.sku || item.model)}</p>
                               </span>
                             )}
                             {item.width && (
@@ -511,7 +522,6 @@ const ProfilePage = () => {
       <div className={styles.favoritesSection}>
         {favoriteProducts.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>❤️</div>
             <h3>Избранное пусто</h3>
             <p>Добавляйте товары в избранное, чтобы не потерять их</p>
             <button className={styles.continueBtn} onClick={() => navigate('/catalog')}>
@@ -535,7 +545,7 @@ const ProfilePage = () => {
                     className={styles.removeFavoriteBtn}
                     onClick={() => handleRemoveFavorite(product.id, product.brand_id)}
                   >
-                    🗑️ Удалить
+                    <img src={trashIcon} alt="" /> <p>Удалить</p>
                   </button>
                 </div>
               </div>

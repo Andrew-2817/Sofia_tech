@@ -12,6 +12,10 @@ import heartIcon from '../assets/heart.svg';
 import basketIcon from '../assets/basket.svg';
 import fullfilledHeartIcon from "../assets/solid-heart.svg";
 import LoadingSpinner from '../components/LoadingSpinner';
+import { getDefaultProductImage } from '../data/mockData';
+
+import skuIcon from "../assets/sku.svg"
+import brandIcon from "../assets/brand.svg"
 
 
 const ProductPage = () => {
@@ -91,7 +95,7 @@ const ProductPage = () => {
   };
   
   const specs = getProductSpecs();
-  const imageUrl = `${API_BASE_URL_photo}${product.main_image}`
+  // const imageUrl = `${API_BASE_URL_photo}${product.main_image}`
   
 // ProductPage.jsx - обновленный handleAddToCart
 const handleAddToCart = () => {
@@ -109,6 +113,11 @@ const handleAddToCart = () => {
     }));
   }
 };
+
+
+const imageUrl = product.main_image !== null
+  ? `${API_BASE_URL_photo}${product.main_image}`
+  : getDefaultProductImage(product.categoryId);
   
   const handleToggleFavorite = () => {
     dispatch(toggleFavorite({ 

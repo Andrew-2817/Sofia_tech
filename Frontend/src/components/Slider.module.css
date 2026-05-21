@@ -1,11 +1,155 @@
 .sliderSection {
   margin: 40px 0;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .title {
   font-size: 28px;
-  margin-bottom: 20px;
   color: #7bc6cf;
   border-left: 4px solid #7bc6cf;
   padding-left: 15px;
+  margin: 0;
+}
+
+.navigationButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.prevBtn,
+.nextBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(123, 198, 207, 0.1);
+  border: 1px solid rgba(123, 198, 207, 0.3);
+  color: #7bc6cf;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.prevBtn:hover,
+.nextBtn:hover {
+  background: #7bc6cf;
+  color: #121212;
+  transform: scale(1.05);
+}
+
+.swiperContainer {
+  position: relative;
+  padding: 10px 0 60px; /* Увеличил нижний отступ для точек */
+}
+
+/* Контейнер для точек пагинации */
+:global(.swiper-pagination) {
+  position: absolute;
+  bottom: -40px !important; /* Точки внизу контейнера */
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+}
+
+/* Стили для точек */
+:global(.swiper-pagination-bullet) {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  opacity: 1;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Активная точка */
+:global(.swiper-pagination-bullet-active) {
+  background: #7bc6cf;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Точка при наведении */
+:global(.swiper-pagination-bullet:hover) {
+  background: #7bc6cf;
+  transform: scale(1.2);
+}
+
+/* Скрываем стандартные стрелки Swiper */
+:global(.swiper-button-next),
+:global(.swiper-button-prev) {
+  display: none !important;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .sliderSection {
+    margin: 30px 0;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .navigationButtons {
+    align-self: flex-end;
+  }
+
+  .prevBtn,
+  .nextBtn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .swiperContainer {
+    padding-bottom: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sliderSection {
+    margin: 20px 0;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .prevBtn,
+  .nextBtn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .swiperContainer {
+    padding-bottom: 40px;
+  }
+
+  :global(.swiper-pagination-bullet) {
+    width: 6px;
+    height: 6px;
+  }
+
+  :global(.swiper-pagination-bullet-active) {
+    width: 20px;
+  }
 }

@@ -1,4 +1,109 @@
 import categImg from "../assets/category.png"
+import { API_BASE_URL_photo } from "../services/api";
+
+import Img200 from "../assets/Img200.png"
+import Img201 from "../assets/Img200.png"
+import Img202 from "../assets/Img200.png"
+import Img203 from "../assets/Img200.png"
+import Img204 from "../assets/Img200.png"
+import Img205 from "../assets/Img200.png"
+import Img206 from "../assets/Img200.png"
+import Img207 from "../assets/Img200.png"
+import Img208 from "../assets/Img200.png"
+import Img210 from "../assets/Img210.png"
+import Img211 from "../assets/Img210.png"
+import Img212 from "../assets/Img210.png"
+import Img213 from "../assets/Img210.png"
+import Img214 from "../assets/Img210.png"
+import Img215 from "../assets/Img210.png"
+import Img216 from "../assets/Img210.png"
+import Img220 from "../assets/Img220.png"
+import Img221 from "../assets/Img220.png"
+import Img222 from "../assets/Img220.png"
+import Img223 from "../assets/Img220.png"
+import Img224 from "../assets/Img220.png"
+import Img225 from "../assets/Img220.png"
+import Img226 from "../assets/Img220.png"
+import Img227 from "../assets/Img220.png"
+import Img228 from "../assets/Img220.png"
+import Img230 from "../assets/Img230.png"
+import Img231 from "../assets/Img230.png"
+import Img240 from "../assets/Img240.png"
+import Img241 from "../assets/Img240.png"
+import Img242 from "../assets/Img240.png"
+import Img243 from "../assets/Img240.png"
+import Img260 from "../assets/Img260.png"
+import Img261 from "../assets/Img260.png"
+import Img262 from "../assets/Img260.png"
+import Img270 from "../assets/Img270.png"
+import Img271 from "../assets/Img270.png"
+import Img280 from "../assets/Img280.png"
+import Img281 from "../assets/Img280.png"
+import Img290 from "../assets/Img290.png"
+import Img291 from "../assets/Img290.png"
+import Img292 from "../assets/Img290.png"
+import Img293 from "../assets/Img290.png"
+import Img294 from "../assets/Img290.png"
+import Img300 from "../assets/Img300.png"
+import Img301 from "../assets/Img300.png"
+import Img302 from "../assets/Img300.png"
+import Img303 from "../assets/Img300.png"
+import Img304 from "../assets/Img300.png"
+import Img305 from "../assets/Img300.png"
+import Img330 from "../assets/Img330.png"
+import Img350 from "../assets/Img350.png"
+import Img351 from "../assets/Img350.png"
+import Img352 from "../assets/Img350.png"
+import Img353 from "../assets/Img350.png"
+import Img354 from "../assets/Img350.png"
+import Img401 from "../assets/Img401.jpg"
+import Img402 from "../assets/Img402.jpg"
+import Img403 from "../assets/Img403.jpg"
+import Img404 from "../assets/Img260.png"
+import Img405 from "../assets/Img210.png"
+import Img406 from "../assets/Img220.png"
+import Img407 from "../assets/Img200.png"
+import Img408 from "../assets/Img280.png"
+import Img409 from "../assets/Img403.jpg"
+import Img410 from "../assets/Img410.jpg"
+import Img411 from "../assets/Img230.png"
+import Img412 from "../assets/Img210.png"
+import Img435 from "../assets/Img460.png"
+import Img460 from "../assets/Img460.png"
+import Img461 from "../assets/Img460.png"
+import Img500 from "../assets/Img500.jpg"
+import Img501 from "../assets/Img501.jpg"
+import Img502 from "../assets/Img502.jpg"
+import Img503 from "../assets/Img220.png"
+import Img504 from "../assets/Img220.png"
+import Img505 from "../assets/Img505.jpg"
+import Img506 from "../assets/Img506.jpg"
+import Img507 from "../assets/Img507.jpg"
+import Img508 from "../assets/Img508.jpg"
+import Img520 from "../assets/Img523.jpg"
+import Img521 from "../assets/Img523.jpg"
+import Img523 from "../assets/Img523.jpg"
+import Img524 from "../assets/Img523.jpg"
+import Img525 from "../assets/Img525.jpg"
+import Img526 from "../assets/Img526.jpeg"
+import Img527 from "../assets/Img523.jpg"
+import Img528 from "../assets/Img523.jpg"
+
+
+import Img550 from "../assets/Img550.jpg"
+import Img551 from "../assets/Img551.jpg"
+import Img552 from "../assets/Img552.jpg"
+import Img580 from "../assets/Img580.jpg"
+import Img581 from "../assets/Img580.jpg"
+
+
+import Img600 from "../assets/Img523.jpg"
+import Img601 from "../assets/Img523.jpg"
+import Img602 from "../assets/Img602.jpg"
+import Img603 from "../assets/Img603.jpg"
+import Img650 from "../assets/Img650.png"
+import Img670 from "../assets/Img670.png"
+
 
 export const products = [
   // ========== КРУПНАЯ БЫТОВАЯ ТЕХНИКА ==========
@@ -1202,6 +1307,125 @@ export const products = [
     description: "Компактный измельчитель для зелени и орехов"
   }
 ];
+
+// constants/categoryImages.js
+
+export const categoryDefaultImages = {
+  // 200-х
+  200: Img200,
+  201: Img201,
+  202: Img202,
+  203: Img203,
+  204: Img204,
+  205: Img205,
+  206: Img206,
+  207: Img207,
+  208: Img208,
+  210: Img210,
+  211: Img211,
+  212: Img212,
+  213: Img213,
+  214: Img214,
+  215: Img215,
+  216: Img216,
+  220: Img220,
+  221: Img221,
+  222: Img222,
+  223: Img223,
+  224: Img224,
+  225: Img225,
+  226: Img226,
+  227: Img227,
+  228: Img228,
+  230: Img230,
+  231: Img231,
+  240: Img240,
+  241: Img241,
+  242: Img242,
+  243: Img243,
+  260: Img260,
+  261: Img261,
+  262: Img262,
+  270: Img270,
+  271: Img271,
+  280: Img280,
+  281: Img281,
+  290: Img290,
+  291: Img291,
+  292: Img292,
+  293: Img293,
+  294: Img294,
+  // 300-х
+  300: Img300,
+  301: Img301,
+  302: Img302,
+  303: Img303,
+  304: Img304,
+  305: Img305,
+  330: Img330,
+  350:Img350,
+  351:Img351,
+  352:Img352,
+  353:Img353,
+  354:Img354,
+  // 400-х
+  401: Img401,
+  402: Img402,
+  403: Img403,
+  404: Img404,
+  405: Img405,
+  406: Img406,
+  407: Img407,
+  408: Img408,
+  409: Img409,
+  410: Img410,
+  411: Img411,
+  412: Img412,
+  435: Img435,
+  460: Img460,
+  461: Img461,
+  // 500-х
+  500: Img500,
+  501: Img501,
+  502: Img502,
+  503: Img503,
+  504: Img504,
+  505: Img505,
+  506: Img506,
+  507: Img507,
+  508: Img508,
+  520: Img520,
+  521: Img521,
+  523: Img523,
+  524: Img524,
+  525: Img525,
+  526: Img526,
+  527: Img527,
+  528: Img528,
+  550: Img550,
+  551: Img551,
+  552: Img552,
+  580: Img580,
+  581: Img581,
+  // 600-х
+  600: Img600,
+  601: Img601,
+  602: Img602,
+  603: Img603,
+  650: Img650,
+  670: Img670,      // Фены
+  
+  // Дефолтная фотка для неизвестных категорий
+  default: '/uploads/default/product-default.jpg',
+};
+
+// Функция для получения дефолтной фотки по category_id
+export const getDefaultProductImage = (categoryId) => {
+  if (categoryId && categoryDefaultImages[categoryId]) {
+    return categoryDefaultImages[categoryId];
+  }
+  return categoryDefaultImages.default;
+};
 
 export const categories = [
     {

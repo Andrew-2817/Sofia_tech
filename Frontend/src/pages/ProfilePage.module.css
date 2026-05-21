@@ -381,6 +381,10 @@
   background: rgba(255, 255, 255, 0.05);
   border: none;
   color: #ff6b6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0 5px;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
@@ -390,6 +394,39 @@
 .removeFavoriteBtn:hover {
   background: rgba(255, 107, 107, 0.1);
 }
+
+
+.removeFavoriteBtn img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.removeFavoriteBtn:hover img {
+  transform: scale(1.1);
+}
+
+
+.specBadge img {
+  width: 14px;
+  height: 14px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.specBadge:hover img {
+  transform: scale(1.1);
+}
+
+.deliveryRow img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.deliveryRow:hover img {
+  transform: scale(1.1);
+}
+
 
 /* Настройки */
 .settingsItem {
@@ -780,12 +817,16 @@ input:checked + .slider:before {
 .deliveryRow {
   display: flex;
   gap: 12px;
+  align-items: center;
   padding: 6px 0;
   font-size: 14px;
 }
 
 .deliveryLabel {
   min-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
   color: #888;
 }
 
@@ -794,10 +835,9 @@ input:checked + .slider:before {
   flex: 1;
 }
 
-/* Шапка списка товаров */
 .orderItemsHeader {
   display: grid;
-  grid-template-columns: 80px 1fr 80px 100px;
+  grid-template-columns: 200px 1fr 80px 100px;
   gap: 12px;
   padding: 12px 16px;
   background: rgba(123, 198, 207, 0.05);
@@ -808,10 +848,10 @@ input:checked + .slider:before {
   font-weight: 500;
 }
 
-/* Карточка товара в заказе */
+/* Карточка товара в заказе - десктоп версия */
 .orderItem {
   display: grid;
-  grid-template-columns: 80px 1fr 80px 100px;
+  grid-template-columns: 200px 1fr 80px 100px;
   gap: 12px;
   padding: 16px;
   background: rgba(255, 255, 255, 0.02);
@@ -826,8 +866,8 @@ input:checked + .slider:before {
 }
 
 .orderItemImage {
-  width: 60px;
-  height: 60px;
+  width: 150px;
+  height: 150px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   display: flex;
@@ -841,6 +881,7 @@ input:checked + .slider:before {
   height: 100%;
   object-fit: contain;
 }
+
 
 .noImage {
   font-size: 24px;
@@ -867,13 +908,21 @@ input:checked + .slider:before {
 .specBadge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: #888;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 8px;
-  border-radius: 12px;
+  gap: 8px;
+  background: rgba(123, 198, 207, 0.08);
+  border: 1px solid rgba(123, 198, 207, 0.15);
+  border-radius: 16px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: #aaa;
+  transition: all 0.2s ease;
 }
+
+.specBadge:hover {
+  background: rgba(123, 198, 207, 0.1);
+  color: #7bc6cf;
+}
+
 
 .specIcon {
   font-size: 10px;
@@ -974,77 +1023,810 @@ input:checked + .slider:before {
   box-shadow: 0 4px 12px rgba(123, 198, 207, 0.3);
 }
 
-/* Адаптивность для мобильных */
-@media (max-width: 768px) {
-  .orderItemsHeader {
-    display: none;
+/* ========== АДАПТИВ ДЛЯ СТРАНИЦЫ ПРОФИЛЯ ========== */
+
+/* Планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+  .profilePage {
+    margin: 20px 0 40px;
   }
-  
-  .orderItem {
-    grid-template-columns: 1fr;
-    gap: 12px;
+
+  .profileHeader {
+    padding: 20px;
   }
-  
-  .orderItemImage {
-    width: 80px;
-    height: 80px;
+
+  .avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 32px;
   }
-  
-  .orderItemQuantity,
-  .orderItemPrice {
-    justify-content: flex-start;
-    padding-left: 0;
+
+  .profileInfo h1 {
+    font-size: 22px;
   }
-  
-  .orderFooter {
-    flex-direction: column;
-    align-items: stretch;
+
+  .infoGrid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
   }
-  
-  .orderSummary {
-    max-width: 100%;
+
+  .statsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
   }
-  
-  .orderActions {
-    justify-content: center;
-  }
-  
-  .deliveryRow {
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .deliveryLabel {
-    min-width: auto;
+
+  .favoritesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
   }
 }
 
-/* Адаптивность */
+/* Планшеты вертикальные (768px) */
 @media (max-width: 768px) {
+  .profilePage {
+    margin: 15px 0 30px;
+  }
+
+  /* Шапка профиля */
   .profileHeader {
     flex-direction: column;
+    align-items: flex-start;
     gap: 20px;
-    text-align: center;
+    padding: 20px;
   }
-  
+
   .profileAvatar {
-    flex-direction: column;
+    width: 100%;
   }
-  
+
+  .avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .profileInfo h1 {
+    font-size: 20px;
+  }
+
+  .profileEmail {
+    font-size: 13px;
+  }
+
+  .profileSince {
+    font-size: 11px;
+  }
+
+  .logoutBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  /* Табы */
+  .tabs {
+    gap: 8px;
+    padding-bottom: 8px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  /* .tab img {
+    width: 18px;
+    height: 18px;
+  } */
+
+  .tab span:first-child {
+    font-size: 16px;
+  }
+
+  /* Карточки секций */
+  .sectionCard {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .sectionCard h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+  }
+
+  /* Информация профиля */
   .infoGrid {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
   }
-  
+
+  .infoItem p {
+    font-size: 14px;
+  }
+
+  .addressCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .addressCard p {
+    font-size: 14px;
+  }
+
+  .editBtn, .changeBtn {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+
+  /* Статистика */
   .statsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
-  
-  .tabs {
-    justify-content: center;
+
+  .statCard {
+    padding: 12px;
   }
-  
+
+  .statValue {
+    font-size: 20px;
+  }
+
+  .statLabel {
+    font-size: 11px;
+  }
+
+  /* Заказы */
+  .orderCard {
+    padding: 16px;
+  }
+
   .orderHeader {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .orderInfo {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .orderNumber {
+    font-size: 14px;
+  }
+
+  .orderDate {
+    font-size: 12px;
+  }
+
+  .orderStatus {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .orderDetails {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .orderTotal {
+    font-size: 16px;
+  }
+
+  .orderBtn {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    background: rgba(123, 198, 207, 0.1);
+    border-radius: 8px;
+  }
+
+  /* Избранное */
+  .favoritesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .favoriteProduct img {
+    height: 180px;
+  }
+
+  .removeFavoriteBtn img{
+    height: 18px;
+  }
+
+  .productInfo {
+    padding: 12px;
+  }
+
+  .productInfo h4 {
+    font-size: 13px;
+  }
+
+  .productPrice {
+    font-size: 14px;
+  }
+
+  .removeFavoriteBtn {
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  /* Пустое состояние */
+  .emptyState {
+    padding: 40px 20px;
+  }
+
+  .emptyIcon {
+    font-size: 48px;
+  }
+
+  .emptyState h3 {
+    font-size: 18px;
+  }
+
+  .emptyState p {
+    font-size: 13px;
+  }
+
+  .continueBtn {
+    padding: 8px 20px;
+    font-size: 13px;
+  }
+
+  /* Не авторизован */
+  .notAuth {
+    padding: 60px 20px;
+    margin: 30px 0;
+  }
+
+  .notAuthIcon {
+    font-size: 60px;
+  }
+
+  .notAuth h2 {
+    font-size: 20px;
+  }
+
+  .notAuth p {
+    font-size: 13px;
+  }
+
+  /* Форма редактирования */
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .editForm {
+    gap: 16px;
+  }
+
+  .formGroup input,
+  .formGroup textarea {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .formActions {
+    flex-direction: column;
+  }
+
+  .cancelBtn, .saveBtn {
+    padding: 10px;
+  }
+
+  /* Заказы - детали */
+  .orderDeliveryInfo {
+    padding: 12px;
+  }
+
+  .deliveryRow {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .deliveryLabel {
+    min-width: auto;
+    font-size: 12px;
+  }
+
+  .deliveryValue {
+    font-size: 13px;
+  }
+
+  .orderItemsList {
+    padding: 8px;
+  }
+
+  .orderItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .orderItemInfo {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .orderItemName {
+    font-size: 13px;
+  }
+
+  .orderItemQuantity {
+    font-size: 11px;
+  }
+
+  .orderItemPrice {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+}
+
+/* Телефоны (480px) */
+@media (max-width: 480px) {
+  .profilePage {
+    margin: 10px 0 20px;
+  }
+
+  .profileHeader {
+    padding: 16px;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  .profileInfo h1 {
+    font-size: 18px;
+  }
+
+  .profileEmail {
+    font-size: 12px;
+  }
+
+  .tab {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .tab img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .sectionCard {
+    padding: 12px;
+  }
+
+  .statsGrid {
+    gap: 8px;
+  }
+
+  .statCard {
+    padding: 8px;
+  }
+
+  .statValue {
+    font-size: 18px;
+  }
+
+  .statLabel {
+    font-size: 10px;
+  }
+
+  .favoritesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* .favoriteProduct img {
+    height: 100px;
+  } */
+
+  .orderCard {
+    padding: 12px;
+  }
+
+  .orderItemImage {
+    width: 60px;
+    height: 60px;
+  }
+
+  .specBadge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .cancelOrderBtn, .reorderBtn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .emptyState {
+    padding: 30px 16px;
+  }
+}
+
+/* Очень маленькие телефоны (360px) */
+@media (max-width: 360px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .statCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+  }
+
+  .statValue {
+    font-size: 20px;
+    margin-bottom: 0;
+  }
+
+  .statLabel {
+    font-size: 12px;
+  }
+
+  .favoritesGrid {
+    gap: 10px;
+  }
+
+  .orderActions {
+    flex-direction: column;
+  }
+
+  .cancelOrderBtn, .reorderBtn {
+    width: 100%;
+  }
+}
+
+/* Альбомная ориентация на телефонах */
+@media (max-width: 768px) and (orientation: landscape) {
+  .profilePage {
+    margin: 10px 0 20px;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .favoritesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* .favoriteProduct img {
+    height: 100px;
+  } */
+
+  .orderItem {
+    grid-template-columns: 80px 1fr 80px;
+    gap: 12px;
+  }
+
+  .orderItemImage {
+    width: 60px;
+    height: 60px;
+  }
+
+  .orderItemQuantity,
+  .orderItemPrice {
+    justify-content: center;
+  }
+}
+
+/* Планшеты в альбомной ориентации (1024px) */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+  .favoritesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Большие экраны (от 1440px) */
+@media (min-width: 1440px) {
+  .profilePage {
+    margin: 40px 0 80px;
+  }
+
+  .profileHeader {
+    padding: 32px;
+  }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 48px;
+  }
+
+  .profileInfo h1 {
+    font-size: 28px;
+  }
+
+  .infoGrid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .favoritesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+/* ========== АДАПТИВ ДЛЯ ЗАКАЗОВ ========== */
+
+/* Планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+  .orderItemsHeader {
+    grid-template-columns: 150px 1fr 70px 90px;
+  }
+
+  .orderItem {
+    grid-template-columns: 150px 1fr 70px 90px;
+    padding: 12px;
+  }
+
+  .orderItemImage {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Планшеты вертикальные и большие телефоны (768px) */
+@media (max-width: 768px) {
+  /* Скрываем шапку таблицы */
+  .orderItemsHeader {
+    display: none;
+  }
+
+  /* Карточка товара - вертикальная */
+  .orderItem {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    position: relative;
+  }
+
+  .orderItem:hover {
+    transform: translateX(0);
+  }
+
+  /* Блок с изображением */
+  .orderItemImage {
+    width: 100%;
+    height: 180px;
+    margin-bottom: 8px;
+  }
+
+  /* Информация о товаре */
+  .orderItemDetails {
+    width: 100%;
+  }
+
+  .orderItemName {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  /* Характеристики */
+  .orderItemSpecs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .specBadge {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  /* Количество и цена */
+  .orderItemQuantity {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 13px;
+  }
+
+  .orderItemQuantity::before {
+    content: "Количество:";
+    color: #888;
+    font-weight: normal;
+  }
+
+  .orderItemPrice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    font-size: 16px;
+  }
+
+  .orderItemPrice::before {
+    content: "Сумма:";
+    color: #888;
+    font-weight: normal;
+    font-size: 13px;
+  }
+}
+
+/* Телефоны (480px - 768px) */
+@media (max-width: 650px) {
+  .orderItemImage {
+    height: 150px;
+  }
+
+  .orderItemName {
+    font-size: 13px;
+  }
+
+  .specBadge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .orderItemQuantity {
+    font-size: 12px;
+  }
+
+  .orderItemPrice {
+    font-size: 14px;
+  }
+
+  .orderItemPrice::before {
+    font-size: 12px;
+  }
+}
+
+/* Маленькие телефоны (до 480px) */
+@media (max-width: 480px) {
+  .orderItemImage {
+    height: 120px;
+  }
+
+  .orderItemName {
+    font-size: 12px;
+  }
+
+  .orderItemSpecs {
+    gap: 6px;
+  }
+
+  .specBadge {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  .orderItemQuantity {
+    font-size: 11px;
+    padding: 6px 0;
+  }
+
+  .orderItemPrice {
+    font-size: 13px;
+    padding-top: 6px;
+  }
+}
+
+/* Футер заказа - адаптив */
+@media (max-width: 768px) {
+  .orderFooter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .orderSummary {
+    max-width: 100%;
+  }
+
+  .summaryRow {
+    font-size: 12px;
+  }
+
+  .orderTotal {
+    font-size: 14px;
+  }
+
+  .orderTotal strong {
+    font-size: 16px;
+  }
+
+  .orderActions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .cancelOrderBtn,
+  .reorderBtn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Информация о доставке - адаптив */
+@media (max-width: 768px) {
+  .orderDeliveryInfo {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .deliveryRow {
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 0;
+  }
+
+  .deliveryLabel {
+    min-width: auto;
+    font-size: 12px;
+  }
+
+  .deliveryValue {
+    font-size: 13px;
+    word-break: break-word;
+  }
+}
+
+/* Очень маленькие телефоны (до 360px) */
+@media (max-width: 360px) {
+  .orderItemImage {
+    height: 100px;
+  }
+
+  .orderItemName {
+    font-size: 11px;
+  }
+
+  .specBadge {
+    padding: 2px 5px;
+    font-size: 8px;
+  }
+
+  .orderActions {
+    flex-direction: column;
+  }
+}
+
+/* Альбомная ориентация на телефонах */
+@media (max-width: 768px) and (orientation: landscape) {
+  .orderItem {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .orderItemImage {
+    width: 80px;
+    height: 80px;
+    margin-right: 12px;
+  }
+
+  .orderItemDetails {
+    flex: 1;
+  }
+
+  .orderItemQuantity,
+  .orderItemPrice {
+    width: 100%;
   }
 }

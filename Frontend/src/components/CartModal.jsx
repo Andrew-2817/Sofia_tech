@@ -9,6 +9,8 @@ import styles from './CartModal.module.css';
 import basketIcon from '../assets/basket.svg';
 import crossIcon from '../assets/cross.svg';
 import trashIcon from "../assets/trash.svg";
+import { API_BASE_URL_photo } from '../services/api';
+
 
 const CartModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -150,7 +152,6 @@ const CartModal = ({ isOpen, onClose }) => {
         
         {success && (
           <div className={styles.successMessage}>
-            <span>✅</span>
             <div>
               <h4>Заказ успешно оформлен!</h4>
               <p>Номер заказа: {success?.id || 'сформирован'}</p>
@@ -182,7 +183,7 @@ const CartModal = ({ isOpen, onClose }) => {
             <div className={styles.cartItems}>
               {items.map(item => (
                 <div key={`${item.id}-${item.brandId}`} className={styles.cartItem}>
-                  <img src={item.image} alt={item.name} className={styles.itemImage} />
+                  <img src={`${API_BASE_URL_photo}${item.image}`} alt={item.name} className={styles.itemImage} />
                   <div className={styles.itemInfo}>
                     <div className={styles.itemName}>{item.name}</div>
                     <div className={styles.itemPrice}>{item.price.toLocaleString()} ₽</div>

@@ -177,7 +177,38 @@ const findCategoryById = (categories, id) => {
 
   // Фильтрация товаров
 const filteredProducts = allProducts.filter(product => {
-  const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    // ========== РАСШИРЕННЫЙ ПОИСК ==========
+  let matchesSearch = true;
+  if (searchQuery.trim().length > 0) {
+    const lowerSearch = searchQuery.toLowerCase().trim();
+    const searchTerms = lowerSearch.split(/\s+/);
+    
+    const checkField = (field) => {
+      if (!field) return false;
+      const fieldLower = field.toLowerCase();
+      
+      // Проверка на полное совпадение или вхождение
+      if (fieldLower.includes(lowerSearch)) return true;
+      
+      // Проверка по отдельным словам
+      for (const term of searchTerms) {
+        if (fieldLower.includes(term)) return true;
+      }
+      return false;
+    };
+    
+    matchesSearch = 
+      checkField(product.name) ||
+      checkField(product.description) ||
+      checkField(product.sku) ||
+      checkField(product.model) ||
+      checkField(product.group_level_1) ||
+      checkField(product.groupLevel1) ||
+      checkField(product.comment) ||
+      checkField(product.brandName) ||
+      (product.brand_id === 1 && checkField('Homeier')) ||
+      (product.brand_id === 2 && checkField('Brandt'));
+  }
   
   let matchesCategory = true;
   console.log(activeLevel3);
@@ -417,6 +448,29 @@ console.log("level3", level3Categories);
                   {level3.name}
                 </button>
               ))}
+            </div>
+          )}
+          {/* Если нет активных категорий - показываем все категории первого уровня */}
+          {!level1Category && !level2Category && !activeLevel3 && categories.length > 0 && (
+            <div className={styles.allCategoriesSection}>
+              <h2 className={styles.allCategoriesTitle}>Категории товаров</h2>
+              <div className={styles.allCategoriesGrid}>
+                {categories.map(category => (
+                  <div 
+                    key={category.id} 
+                    className={styles.categoryCard}
+                    onClick={() => handleLevel1Click(category)}
+                  >
+                    {/* <div className={styles.categoryCardIcon}>
+                      {getCategoryIcon(category.name)}
+                    </div> */}
+                    <h3 className={styles.categoryCardName}>{category.name}</h3>
+                    <p className={styles.categoryCardCount}>
+                      {category.children?.reduce((total, child) => total + (child.children?.length || 0), 0) || 0} товаров
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

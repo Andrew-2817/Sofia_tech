@@ -28,17 +28,69 @@ const loadUserFromStorage = () => {
   };
 };
 
-// ========== НОВЫЕ THUNK ==========
+// Регистрация
+export const register = createAsyncThunk(
+  'auth/register',
+  async (userData, { rejectWithValue }) => {
+    try {
+      // Отправляем только name, email, password (как ожидает бэкенд)
+      const response = await axios.post(`${API_URL}/register`, {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password
+      });
+      return response.data;
+    } catch (error) {
+      // Обработка ошибки 409 (Conflict)
+      if (error.response?.status === 409) {
+        return rejectWithValue('Пользователь с таким email уже существует');
+      }
+      // Обработка ошибки 422 (Validation Error)
+      if (error.response?.status === 422) {
+        const detail = error.response?.data?.detail;
+        if (Array.isArray(detail)) {
+          return rejectWithValue(detail[0]?.msg || 'Ошибка валидации данных');
+        }
+        return rejectWithValue(detail || 'Ошибка валидации данных');
+      }
+      return rejectWithValue(error.response?.data?.detail || 'Ошибка регистрации');
+    }
+  }
+);
+
+// Логин
+export const loginUser = createAsyncThunk(
+  'auth/login',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/login`, {
+        email: userData.email,
+        password: userData.password
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 401) {
+        return rejectWithValue('Неверный email или пароль');
+      }
+      return rejectWithValue(error.response?.data?.detail || 'Ошибка входа');
+    }
+  }
+);
 
 // Получение профиля пользователя
 export const fetchUserProfile = createAsyncThunk(
   'auth/fetchProfile',
-  async (_, { rejectWithValue, getState }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('access_token');
+      
+      if (!token) {
+        return rejectWithValue('Нет токена авторизации');
+      }
+      
       const response = await axios.get(`${API_URL}/user/profile`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         }
       });
       return response.data;
@@ -56,46 +108,13 @@ export const updateUserProfile = createAsyncThunk(
       const token = localStorage.getItem('access_token');
       const response = await axios.put(`${API_URL}/user/profile`, userData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
       return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || 'Ошибка обновления профиля');
-    }
-  }
-);
-
-// Регистрация
-export const register = createAsyncThunk(
-  'auth/register',
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${API_URL}/register`, {
-        name: userData.name,
-        email: userData.email,
-        password: userData.password
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Ошибка регистрации');
-    }
-  }
-);
-
-// Логин
-export const loginUser = createAsyncThunk(
-  'auth/login',
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${API_URL}/login`, {
-        email: userData.email,
-        password: userData.password
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Ошибка входа');
     }
   }
 );
