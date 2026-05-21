@@ -271,7 +271,20 @@
 .profileLink {
   text-decoration: none;
   color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
   transition: color 0.3s ease;
+}
+
+.profileLink img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+.profileLink:hover img {
+  transform: scale(1.1);
 }
 
 .profileLink:hover {
@@ -279,45 +292,219 @@
 }
 
 /* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
+@media (max-width: 795px) {
   .topRow {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
     gap: 15px;
+    flex-wrap: nowrap;
   }
-  
+
+  /* Логотип */
+  .logo {
+    font-size: 22px;
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  /* Действия (избранное, корзина, вход) */
+  .actions {
+    grid-column: 3;
+    justify-self: end;
+    gap: 12px;
+  }
+
+  /* Контейнер поиска - на всю ширину, ниже */
+  .searchContainer {
+    grid-column: 1 / -1;
+    max-width: 100%;
+    width: 100%;
+    order: 3;
+    margin-top: 5px;
+  }
+
   .searchForm {
     max-width: 100%;
     width: 100%;
   }
-  
+
+  /* Кнопка каталога */
   .catalogBtn {
-    padding: 8px 15px;
-    font-size: 12px;
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
   }
-  
+
+  /* Поле поиска */
   .searchInput {
     padding: 8px 10px;
-    font-size: 12px;
+    font-size: 13px;
   }
-  
+
+  /* Кнопка отправки поиска */
   .searchSubmit {
     padding: 8px 12px;
-    font-size: 16px;
   }
-  
-  .actions {
-    gap: 15px;
+
+  .searchSubmit img {
+    width: 18px;
+    height: 18px;
   }
-  
-  .actionBtn {
-    font-size: 20px;
+
+  /* Действия (иконки) */
+  .actionBtn img {
+    width: 22px;
+    height: 22px;
   }
-  
+
+  .actionBtn span {
+    top: -6px;
+    right: -10px;
+    font-size: 10px;
+    padding: 2px 5px;
+  }
+
+  /* Кнопка входа */
+  .loginBtn {
+    padding: 8px 18px;
+    font-size: 14px;
+  }
+
+  /* Меню пользователя */
+  .userMenu {
+    padding: 4px 10px;
+  }
+
+  .userMenu span {
+    font-size: 13px;
+  }
+
+  .userMenu button {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .profileLink {
+    font-size: 13px;
+  }
+
+  .profileLink img {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Навигация по категориям */
   .categoriesNav {
-    gap: 15px;
+    margin-top: 20px;
+    gap: 12px;
     justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    -webkit-overflow-scrolling: touch;
   }
-  
+
+  .categoryLink {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+/* Для очень маленьких экранов (до 480px) */
+@media (max-width: 480px) {
+  .topRow {
+    gap: 10px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .actionBtn img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .actionBtn span {
+    top: -5px;
+    right: -8px;
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+
+  .loginBtn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+
+  .catalogBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .searchInput {
+    padding: 6px 0px;
+    font-size: 12px;
+  }
+
+  .searchSubmit {
+    padding: 6px 10px;
+  }
+
+  .searchSubmit img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .userMenu {
+    padding: 3px 8px;
+  }
+
+  .userMenu span {
+    font-size: 12px;
+  }
+
+  .userMenu button {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .profileLink {
+    font-size: 12px;
+  }
+
+  .profileLink img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .categoriesNav {
+    gap: 10px;
+  }
+
+  .categoryLink {
+    font-size: 12px;
+  }
+}
+
+/* Для экранов от 769px до 1024px (планшеты в альбомной ориентации) */
+@media (min-width: 795px) and (max-width: 1024px) {
+  .searchContainer {
+    max-width: 400px;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .categoriesNav {
+    gap: 20px;
+  }
+
   .categoryLink {
     font-size: 14px;
   }

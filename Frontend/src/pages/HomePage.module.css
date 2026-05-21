@@ -1,3 +1,4 @@
+/* Базовые стили */
 .banner {
   width: 100%;
   height: 65vh;
@@ -5,15 +6,31 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  padding: 120px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   margin-bottom: 30px;
+  position: relative;
+}
+
+/* Затемнение для лучшей читаемости текста */
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .banner h1 {
   font-size: 36px;
   color: #ffffff;
   margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .banner button {
@@ -22,6 +39,16 @@
   font-size: 18px;
   border-radius: 30px;
   font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.banner button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(123, 198, 207, 0.4);
 }
 
 .categoriesBlock {
@@ -34,16 +61,13 @@
   margin-bottom: 20px;
 }
 
-.categoriesGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-}
 .sectionHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .sectionHeader h2 {
@@ -74,13 +98,202 @@
   gap: 24px;
 }
 
+/* ========== АДАПТИВ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ ========== */
+
+/* Планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+  .banner {
+    height: 50vh;
+  }
+
+  .banner h1 {
+    font-size: 32px;
+    padding: 0 20px;
+  }
+
+  .banner button {
+    padding: 10px 25px;
+    font-size: 16px;
+  }
+
+  .sectionHeader h2 {
+    font-size: 24px;
+  }
+
+  .categoriesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Планшеты вертикальные и большие телефоны (768px) */
 @media (max-width: 768px) {
+  .banner {
+    height: 40vh;
+    background-position: center;
+    padding: 0;
+  }
+
+  .banner h1 {
+    font-size: 24px;
+    padding: 0 16px;
+    margin-bottom: 15px;
+  }
+
+  .banner button {
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+
+  .categoriesBlock {
+    margin: 30px 0;
+  }
+
+  .categoriesBlock h2 {
+    font-size: 22px;
+  }
+
   .sectionHeader h2 {
     font-size: 22px;
   }
-  
+
+  .sectionHeader {
+    margin-bottom: 20px;
+  }
+
+  .viewAllBtn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
   .categoriesGrid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
+  }
+}
+
+/* Телефоны (480px - 768px) */
+@media (max-width: 650px) {
+  .banner {
+    height: 35vh;
+  }
+
+  .banner h1 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .banner button {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+}
+
+/* Маленькие телефоны (до 480px) */
+@media (max-width: 480px) {
+  .banner {
+    height: 30vh;
+    background-position: center;
+  }
+
+  .banner h1 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .banner button {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .categoriesBlock {
+    margin: 20px 0;
+  }
+
+  .categoriesBlock h2 {
+    font-size: 20px;
+  }
+
+  .sectionHeader h2 {
+    font-size: 18px;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .viewAllBtn {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .categoriesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Очень маленькие телефоны (до 360px) */
+@media (max-width: 360px) {
+  .banner {
+    height: 25vh;
+  }
+
+  .banner h1 {
+    font-size: 16px;
+  }
+
+  .banner button {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+
+  .categoriesGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .categoriesBlock h2 {
+    font-size: 18px;
+  }
+}
+
+/* Альбомная ориентация на телефонах */
+@media (max-width: 768px) and (orientation: landscape) {
+  .banner {
+    height: 60vh;
+  }
+
+  .banner h1 {
+    font-size: 20px;
+  }
+}
+
+/* Планшеты в альбомной ориентации (1024px) */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .banner {
+    height: 55vh;
+  }
+
+  .categoriesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+/* Большие экраны (от 1440px) */
+@media (min-width: 1440px) {
+  .banner {
+    height: 70vh;
+  }
+
+  .banner h1 {
+    font-size: 48px;
+  }
+
+  .banner button {
+    padding: 14px 36px;
+    font-size: 20px;
   }
 }

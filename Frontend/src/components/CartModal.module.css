@@ -524,24 +524,309 @@
   margin: 20px;
 }
 
-/* Адаптивность */
+/* Адаптивность для CartModal */
 @media (max-width: 768px) {
   .modal {
     width: 95%;
-    max-height: 85vh;
+    max-height: 90vh;
+    margin: 10px;
   }
-  
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .header h2 {
+    font-size: 18px;
+  }
+
+  .cartItems {
+    padding: 12px 16px;
+    max-height: 50vh;
+  }
+
   .cartItem {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
   }
-  
+
+  .itemImage {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+  }
+
+  .itemInfo {
+    width: 100%;
+  }
+
+  .itemName {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .itemPrice {
+    font-size: 13px;
+  }
+
+  .itemActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .quantityControl {
+    gap: 12px;
+  }
+
+  .quantityBtn {
+    width: 32px;
+    height: 32px;
+  }
+
   .itemTotal {
     width: 100%;
     text-align: left;
-    margin-top: 8px;
+    font-size: 16px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
+  .footer {
+    padding: 16px 20px;
+  }
+
+  .totalInfo {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .totalItems {
+    font-size: 14px;
+  }
+
+  .totalPrice {
+    font-size: 18px;
+  }
+
+  .totalPrice strong {
+    font-size: 20px;
+  }
+
   .actions {
     flex-direction: column;
+    gap: 10px;
+  }
+
+  .clearBtn,
+  .checkoutBtn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .continueBtn {
+    margin-top: 8px;
+    padding: 10px;
+  }
+
+  /* Форма оформления */
+  .checkoutForm {
+    padding: 16px;
+  }
+
+  .checkoutForm h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .formGroup input,
+  .formGroup textarea {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .orderSummary {
+    padding: 12px;
+    margin: 16px 0;
+  }
+
+  .summaryItem {
+    font-size: 13px;
+    padding: 6px 0;
+  }
+
+  .formActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .backBtn,
+  .submitBtn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  /* Сообщения */
+  .successMessage,
+  .errorMessage {
+    margin: 16px;
+    padding: 12px;
+  }
+
+  .successMessage span {
+    font-size: 24px;
+  }
+
+  .successMessage h4 {
+    font-size: 16px;
+  }
+
+  .successMessage p {
+    font-size: 12px;
+  }
+
+  /* Пустое состояние */
+  .emptyState {
+    padding: 40px 20px;
+  }
+
+  .emptyIcon {
+    font-size: 60px;
+  }
+
+  .emptyState h3 {
+    font-size: 18px;
+  }
+
+  .emptyState p {
+    font-size: 14px;
+  }
+
+  /* Кнопки действий */
+  .cartBtn,
+  .removeBtn {
+    padding: 8px 12px;
+  }
+}
+
+/* Для очень маленьких экранов (до 480px) */
+@media (max-width: 480px) {
+  .modal {
+    width: 98%;
+    max-height: 95vh;
+  }
+
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header h2 {
+    font-size: 16px;
+  }
+
+  .headerIcon img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .closeBtn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .closeBtn img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .cartItems {
+    padding: 10px 12px;
+  }
+
+  .cartItem {
+    padding: 10px;
+  }
+
+  .itemImage {
+    height: 160px;
+  }
+
+  .itemName {
+    font-size: 13px;
+  }
+
+  .quantityBtn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .quantity {
+    min-width: 25px;
+    font-size: 13px;
+  }
+
+  .itemTotal {
+    font-size: 14px;
+  }
+
+  .footer {
+    padding: 12px 16px;
+  }
+
+  .totalPrice {
+    font-size: 16px;
+  }
+
+  .totalPrice strong {
+    font-size: 18px;
+  }
+
+  .checkoutBtn,
+  .clearBtn,
+  .continueBtn {
+    font-size: 13px;
+  }
+
+  .checkoutForm {
+    padding: 12px;
+  }
+
+  .formGroup label {
+    font-size: 12px;
+  }
+
+  .formGroup input,
+  .formGroup textarea {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .submitBtn,
+  .backBtn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .emptyState {
+    padding: 30px 16px;
+  }
+
+  .emptyIcon {
+    font-size: 48px;
+  }
+
+  .emptyState h3 {
+    font-size: 16px;
+  }
+
+  .emptyState p {
+    font-size: 13px;
+  }
+
+  .continueBtn {
+    font-size: 13px;
   }
 }

@@ -57,7 +57,6 @@ const FavoritesModal = ({ isOpen, onClose }) => {
         
         {favoriteProducts.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>❤️</div>
             <h3>Избранное пусто</h3>
             <p>Добавляйте товары в избранное, чтобы не потерять их</p>
             <button className={styles.continueBtn} onClick={onClose}>

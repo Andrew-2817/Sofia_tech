@@ -1,10 +1,13 @@
+// components/SearchDropdown.jsx
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setSearchQuery } from '../store/slices/filtersSlice';
+import { API_BASE_URL_photo } from '../services/api';
 import styles from './SearchDropdown.module.css';
-import searchIcon from '../assets/search.svg'
-import crossIcon from '../assets/cross.svg'
+import searchIcon from '../assets/search.svg';
+import crossIcon from '../assets/cross.svg';
+import { getDefaultProductImage } from '../data/mockData';
 
 const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }) => {
   const dropdownRef = useRef(null);
@@ -55,11 +58,33 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
 
   const handleProductClick = (product) => {
     if (onProductClick) {
+      console.log(product);
       onProductClick(product);
     } else {
-      navigate(`/product/${product.id}`);
+      
+      // Используем brand_id и id для перехода
+      navigate(`/product/${product.brandId}/${product.id}`);
       onClose();
     }
+  };
+
+  // Получение URL изображения
+  const getImageUrl = (product) => {
+    if (product.main_image) {
+      return `${API_BASE_URL_photo}${product.main_image}`;
+    }
+    if (product.image) {
+      return product.image;
+    }
+    return 'https://via.placeholder.com/60x60?text=No+Image';
+  };
+
+  // Получение названия бренда
+  const getBrandName = (product) => {
+    if (product.brandName) return product.brandName;
+    if (product.brand_id === 1) return 'Homeier';
+    if (product.brand_id === 2) return 'Brandt';
+    return 'Товар';
   };
 
   return (
@@ -81,38 +106,58 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
           <div className={styles.resultsList}>
             {results.map((product, index) => (
               <div
-                key={product.id}
+                key={`${product.id}-${product.brandId}`}
                 className={styles.resultItem}
                 onClick={() => handleProductClick(product)}
                 style={{ animationDelay: `${index * 0.03}s` }}
               >
                 <div className={styles.imageWrapper}>
-                  <img src={product.image} alt={product.name} className={styles.productImage} />
+                  <img 
+                    src={product.main_image!= null 
+                          ? `${API_BASE_URL_photo}${product.main_image}`
+                          : getDefaultProductImage(product.categoryId)} 
+                    alt={product.name} 
+                    className={styles.productImage} 
+                  />
                   {product.isNew && <span className={styles.newBadge}>NEW</span>}
-                  {product.isPopular && <span className={styles.popularBadge}>🔥</span>}
                 </div>
                 
                 <div className={styles.productInfo}>
                   <div className={styles.productHeader}>
-                    <span className={styles.category}>{product.category}</span>
-                    <span className={styles.manufacturer}>{product.manufacturer}</span>
+                    <span className={styles.category}>{getBrandName(product)}</span>
+                    <span className={styles.manufacturer}>
+                      {product.groupLevel1 || product.model || 'Бытовая техника'}
+                    </span>
                   </div>
                   <h4 className={styles.productName}>{product.name}</h4>
                   <div className={styles.productSpecs}>
-                    {product.weight && (
-                      <span className={styles.spec}>
-                        <span className={styles.specIcon}>⚖️</span> {product.weight}
-                      </span>
-                    )}
                     {product.color && (
                       <span className={styles.spec}>
                         <span className={styles.specIcon}>🎨</span> {product.color}
                       </span>
                     )}
+                    {product.width && (
+                      <span className={styles.spec}>
+                        <span className={styles.specIcon}>📏</span> {product.width}×{product.height}×{product.depth} см
+                      </span>
+                    )}
+                    {product.model && (
+                      <span className={styles.spec}>
+                        <span className={styles.specIcon}>🔢</span> {product.model}
+                      </span>
+                    )}
                   </div>
                   <div className={styles.productFooter}>
                     <span className={styles.price}>{product.price.toLocaleString()} ₽</span>
-                    <button className={styles.quickViewBtn}>Быстрый просмотр</button>
+                    <button 
+                      className={styles.quickViewBtn}
+                      onClick={(e) => {
+                        // e.stopPropagation();
+                        handleProductClick(product);
+                      }}
+                    >
+                      Быстрый просмотр
+                    </button>
                   </div>
                 </div>
               </div>

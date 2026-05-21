@@ -50,7 +50,7 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        <Slider title="Популярные товары" products={popular} />
+        <Slider  title="Популярные товары" products={popular} />
         <Slider title="Новинки" products={news} />
       </div>
     </>

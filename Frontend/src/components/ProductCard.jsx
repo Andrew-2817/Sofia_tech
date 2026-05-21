@@ -8,6 +8,8 @@ import heartIcon from '../assets/heart.svg';
 import basketIcon from '../assets/basket.svg';
 import fullfilledHeartIcon from "../assets/solid-heart.svg";
 import { API_BASE_URL_photo } from '../services/api';
+import { getDefaultProductImage } from '../data/mockData';
+
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -17,7 +19,7 @@ const ProductCard = ({ product }) => {
     state.favorites.items.some(fav => fav.id === product.id && fav.brandId === product.brand_id)
   );
 
-  const imageUrl = product.main_image || product.image || 'https://via.placeholder.com/300x300?text=No+Image';
+  // const imageUrl = product.main_image || product.image || 'https://via.placeholder.com/300x300?text=No+Image';
 
   const handleToggleFavorite = (e) => {
     e.preventDefault();
@@ -26,6 +28,10 @@ const ProductCard = ({ product }) => {
       brandId: product.brand_id 
     }));
   };
+
+  const imageUrl = product.main_image!= null 
+    ? `${API_BASE_URL_photo}${product.main_image}`
+    : getDefaultProductImage(product.categoryId);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -44,8 +50,8 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className={styles.card}>
-      <Link to={`/product/${product.brand_id}/${product.id}`}>
-        <img src={`${API_BASE_URL_photo}${product.main_image}`} alt={product.name} className={styles.image}/>
+      <Link to={`/product/${product.brandId}/${product.id}`}>
+        <img src={imageUrl} alt={product.name} className={styles.image}/>
         <div className={styles.category}>
           {product.brandName} • {product.groupLevel1 || product.model || 'Товар'}
         </div>
@@ -64,4 +70,4 @@ const ProductCard = ({ product }) => {
   );
 };
 
-export default ProductCard;
+export default ProductCard; 

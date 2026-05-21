@@ -311,27 +311,248 @@
   border-radius: 2px;
 }
 
-/* Адаптивность */
+/* Адаптивность для FavoritesModal */
 @media (max-width: 768px) {
   .modal {
     width: 95%;
     max-height: 85vh;
+    margin: 10px;
   }
-  
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .header h2 {
+    font-size: 18px;
+  }
+
+  .headerIcon img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .closeBtn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .closeBtn img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .favoritesItems {
+    padding: 12px 16px;
+    max-height: 50vh;
+  }
+
   .favoriteItem {
     flex-direction: column;
+    gap: 12px;
+    padding: 12px;
   }
-  
+
   .itemImage {
     width: 100%;
-    height: 150px;
+    height: 200px;
+    object-fit: contain;
   }
-  
+
+  .itemInfo {
+    width: 100%;
+  }
+
+  .itemCategory {
+    font-size: 10px;
+  }
+
+  .itemName {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .itemPrice {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .itemSpecs {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .spec {
+    font-size: 11px;
+  }
+
   .itemActions {
     flex-direction: row;
+    min-width: auto;
+    gap: 10px;
+    width: 100%;
   }
-  
-  .cartBtn, .removeBtn {
+
+  .cartBtn,
+  .removeBtn {
     flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .cartBtn img,
+  .removeBtn img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .footer {
+    padding: 12px 20px;
+  }
+
+  .continueBtn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  /* Пустое состояние */
+  .emptyState {
+    padding: 40px 20px;
+  }
+
+  .emptyIcon {
+    font-size: 60px;
+  }
+
+  .emptyState h3 {
+    font-size: 18px;
+  }
+
+  .emptyState p {
+    font-size: 14px;
+  }
+}
+
+/* Для очень маленьких экранов (до 480px) */
+@media (max-width: 480px) {
+  .modal {
+    width: 98%;
+    max-height: 90vh;
+  }
+
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header h2 {
+    font-size: 16px;
+    gap: 6px;
+  }
+
+  .headerIcon img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .itemCount {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .closeBtn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .closeBtn img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .favoritesItems {
+    padding: 10px 12px;
+  }
+
+  .favoriteItem {
+    padding: 10px;
+  }
+
+  .itemImage {
+    height: 160px;
+  }
+
+  .itemName {
+    font-size: 13px;
+  }
+
+  .itemPrice {
+    font-size: 14px;
+  }
+
+  .spec {
+    font-size: 10px;
+  }
+
+  .cartBtn,
+  .removeBtn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .cartBtn img,
+  .removeBtn img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .footer {
+    padding: 10px 16px;
+  }
+
+  .continueBtn {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  /* Пустое состояние */
+  .emptyState {
+    padding: 30px 16px;
+  }
+
+  .emptyIcon {
+    font-size: 48px;
+  }
+
+  .emptyState h3 {
+    font-size: 16px;
+  }
+
+  .emptyState p {
+    font-size: 13px;
+  }
+}
+
+/* Для экранов с высотой меньше 600px (компактный режим) */
+@media (max-height: 600px) {
+  .modal {
+    max-height: 95vh;
+  }
+
+  .favoritesItems {
+    max-height: 40vh;
+  }
+
+  .favoriteItem {
+    padding: 10px;
+  }
+
+  .itemImage {
+    height: 100px;
+    width: 100px;
+  }
+
+  .cartBtn,
+  .removeBtn {
+    padding: 6px 12px;
   }
 }

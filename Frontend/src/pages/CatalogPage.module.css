@@ -436,6 +436,83 @@
   }
 }
 
+/* Все категории */
+.allCategoriesSection {
+  margin-bottom: 40px;
+}
+
+.allCategoriesTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.allCategoriesTitle:before {
+  content: '📂';
+  font-size: 24px;
+}
+
+.allCategoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.categoryCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.categoryCard:hover {
+  transform: translateY(-5px);
+  background: rgba(123, 198, 207, 0.1);
+  border-color: rgba(123, 198, 207, 0.3);
+}
+
+.categoryCardIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.categoryCardName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.categoryCardCount {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 0px;
+}
+
+.categoryCardBtn {
+  background: rgba(123, 198, 207, 0.1);
+  border: none;
+  color: #7bc6cf;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.categoryCardBtn:hover {
+  background: #7bc6cf;
+  color: #121212;
+}
+  
+
 /* Адаптивность */
 @media (max-width: 1024px) {
   .catalogLayout {

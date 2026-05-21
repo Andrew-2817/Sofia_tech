@@ -1,3 +1,4 @@
+/* Базовые стили */
 .footer {
   background-color: #0a0a0a;
   padding: 40px 0 20px;
@@ -28,6 +29,7 @@
 
 .columns a {
   color: #f0f0f0;
+  text-decoration: none;
   transition: 0.3s;
 }
 .columns a:hover {
@@ -39,9 +41,10 @@
   padding-top: 20px;
   border-top: 1px solid #222;
   font-size: 14px;
+  color: #888;
 }
 
-.contacts_block{
+.contacts_block {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
@@ -56,4 +59,201 @@
 }
 .contacts_block:hover img {
   transform: scale(1.1);
+}
+
+/* ========== АДАПТИВ ДЛЯ ФУТЕРА ========== */
+
+/* Планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+  .footer {
+    padding: 35px 0 20px;
+    margin-top: 50px;
+  }
+
+  .columns {
+    gap: 30px;
+  }
+
+  .columns h3, .columns h4 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .columns li {
+    margin-bottom: 6px;
+  }
+
+  .columns a {
+    font-size: 14px;
+  }
+
+  .bottom {
+    font-size: 13px;
+    padding-top: 18px;
+  }
+}
+
+/* Планшеты вертикальные (768px) */
+@media (max-width: 768px) {
+  .footer {
+    padding: 30px 0 15px;
+    margin-top: 40px;
+  }
+
+  .columns {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+
+  .columns h3, .columns h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .columns a {
+    font-size: 13px;
+  }
+
+  .contacts_block {
+    margin-bottom: 8px;
+  }
+
+  .contacts_block img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .bottom {
+    font-size: 12px;
+    padding-top: 15px;
+  }
+}
+
+/* Телефоны (до 480px) */
+@media (max-width: 480px) {
+  .footer {
+    padding: 25px 0 12px;
+    margin-top: 30px;
+    
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .columns h3, .columns h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(123, 198, 207, 0.2);
+  }
+
+  .columns ul {
+    margin-bottom: 0;
+  }
+
+  .columns li {
+    margin-bottom: 8px;
+  }
+
+  .columns a {
+    font-size: 13px;
+    display: inline-block;
+    padding: 4px 0;
+  }
+
+  .contacts_block {
+    margin-bottom: 10px;
+  }
+
+  .contacts_block img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .contacts_block span {
+    font-size: 13px;
+  }
+
+  .bottom {
+    font-size: 11px;
+    padding-top: 12px;
+  }
+}
+
+/* Очень маленькие телефоны (до 360px) */
+@media (max-width: 360px) {
+  .footer {
+    padding: 20px 0 10px;
+    margin-top: 25px;
+  }
+
+  .columns {
+    gap: 15px;
+  }
+
+  .columns h3, .columns h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .columns li {
+    margin-bottom: 6px;
+  }
+
+  .columns a {
+    font-size: 12px;
+    padding: 3px 0;
+  }
+
+  .contacts_block img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .contacts_block span {
+    font-size: 12px;
+  }
+
+  .bottom {
+    font-size: 10px;
+    padding-top: 10px;
+  }
+}
+
+/* Планшеты и ноутбуки (между 769px и 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .columns {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+}
+
+/* Для экранов с высотой меньше 600px (компактный режим) */
+@media (max-height: 600px) {
+  .footer {
+    margin-top: 20px;
+    padding: 20px 0 10px;
+  }
+
+  .columns {
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .columns h3, .columns h4 {
+    margin-bottom: 8px;
+  }
+
+  .columns li {
+    margin-bottom: 4px;
+  }
+}
+
+/* Темная тема для мобильных (опционально) */
+@media (prefers-color-scheme: dark) {
+  .footer {
+    background-color: #0a0a0a;
+  }
 }
