@@ -14,10 +14,11 @@ const FavoritesModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const favorites = useSelector(state => state.favorites.items); // массив объектов { id, brandId }
   const products = useSelector(state => state.products.items);
+  console.log(favorites);
   
   // ИСПРАВЛЕНО: фильтрация по составному ключу
   const favoriteProducts = products.filter(product => {
-    return favorites.some(fav => fav.id === product.id && fav.brandId === product.brand_id);
+    return favorites.some(fav => fav.id === product.id && fav.brandId === product.brandId);
   });
   
   const handleToggleFavorite = (e, productId, brandId) => {
@@ -67,7 +68,7 @@ const FavoritesModal = ({ isOpen, onClose }) => {
           <>
             <div className={styles.favoritesItems}>
               {favoriteProducts.map(product => (
-                <div key={`${product.id}-${product.brand_id}`} className={styles.favoriteItem}>
+                <div key={`${product.id}-${product.brandId}`} className={styles.favoriteItem}>
                   <img 
                     src={`${API_BASE_URL_photo}${product.main_image}` || `${API_BASE_URL_photo}${product.image}`} 
                     alt={product.name} 

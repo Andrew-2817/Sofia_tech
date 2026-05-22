@@ -31,9 +31,11 @@ const ProductPage = () => {
     return String(p.id) === String(id) && String(p.brandId) === String(brandId);
   });
   
-  const isFavorite = (productId, brandId) => {
-    return favorites.some(fav => fav.id === productId && fav.brandId === brandId);
-  };
+const isFavorite = favorites.some(fav => fav.id === product.id && fav.brandId === product.brandId);
+console.log(isFavorite);
+console.log(product);
+console.log(favorites);
+
 
   
   // Загружаем товары, если их нет
@@ -53,7 +55,7 @@ const ProductPage = () => {
   
   // Похожие товары (по бренду или категории)
   const similarProducts = allProducts.filter(p => {
-    return (p.brand_id === product.brand_id || p.category_id === product.category_id) 
+    return (p.brandId === product.brandId || p.categoryId === product.categoryId) 
       && !(String(p.id) === String(id) && String(p.brand_id) === String(brandId));
   }).slice(0, 8);
   
@@ -62,7 +64,7 @@ const ProductPage = () => {
     const specs = [];
     
     // Общие для всех
-    specs.push({ key: 'Бренд', value: product.brand_id === 1 ? 'Homeier' : 'Brandt', icon: '🏭' });
+    specs.push({ key: 'Бренд', value: product.brandName, icon: '🏭' });
     specs.push({ key: 'Артикул', value: product.sku || product.model || '—', icon: '🔖' });
     
     // if (product.description) {
@@ -122,7 +124,7 @@ const imageUrl = product.main_image !== null
   const handleToggleFavorite = () => {
     dispatch(toggleFavorite({ 
       id: product.id,
-      brandId: product.brand_id
+      brandId: product.brandId
     }));
   };
   useEffect(() => {
@@ -170,7 +172,7 @@ const imageUrl = product.main_image !== null
           {/* Правая колонка - информация */}
           <div className={styles.infoSection}>
             <div className={styles.category}>
-              <span>{product.brand_id === 1 ? 'Homeier' : 'Brandt'}</span>
+              <span>{product.brandName}</span>
             </div>
             
             <h1 className={styles.title}>{product.name}</h1>

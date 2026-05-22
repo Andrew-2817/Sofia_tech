@@ -176,6 +176,8 @@ const findCategoryById = (categories, id) => {
   }, [location.search, categories]);
 
   // Фильтрация товаров
+  console.log(allProducts.filter(el => el.categoryId ===293));
+  
 const filteredProducts = allProducts.filter(product => {
     // ========== РАСШИРЕННЫЙ ПОИСК ==========
   let matchesSearch = true;
@@ -211,11 +213,9 @@ const filteredProducts = allProducts.filter(product => {
   }
   
   let matchesCategory = true;
-  console.log(activeLevel3);
   
   if (activeLevel3) {
     matchesCategory = isProductInCategory(product.categoryId, activeLevel3, categories);
-    console.log(matchesCategory);
     
   } else if (activeLevel2) {
     matchesCategory = isProductInCategory(product.categoryId, activeLevel2, categories);
@@ -224,6 +224,9 @@ const filteredProducts = allProducts.filter(product => {
   }
   
   const matchesManufacturer = manufacturer.length === 0 || manufacturer.includes(product.brand);
+
+  // console.log(manufacturer);
+  
   const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
   const matchesColor = color === '' || product.color === color;
   
@@ -233,8 +236,8 @@ const filteredProducts = allProducts.filter(product => {
   
   return matchesSearch && matchesCategory && matchesManufacturer && matchesPrice && matchesColor;
 });
-console.log(filteredProducts);
-
+  console.log(filteredProducts);
+  
 
   // Эффект загрузки
   useEffect(() => {
@@ -294,17 +297,6 @@ console.log(filteredProducts);
     }
     navigate(`/catalog?level1=${level1Category?.slug}`);
   };
-  console.log('=== DEBUG INFO ===');
-console.log('categories loading:', categoriesLoading);
-console.log('categories length:', categories.length);
-console.log('allProducts loading:', productsLoading);
-console.log('allProducts length:', allProducts.length);
-console.log('location.search:', location.search);
-console.log('=================');
-console.log('level2CategoriesForTabs:', level2CategoriesForTabs);
-console.log('activeLevel1:', activeLevel1);
-console.log('activeLevel2:', activeLevel2);
-console.log("level3", level3Categories);
 
   if (isPageLoading) {
     return <LoadingSpinner text="Загрузка каталога..." />;
@@ -489,7 +481,7 @@ console.log("level3", level3Categories);
           <div className={`${styles.productsGrid} ${isLoading ? styles.loading : ''}`}>
             {filteredProducts.map((product, index) => (
               <div 
-                key={product.id} 
+                key={`${product.id}_${product.brandId}`} 
                 className={styles.productItem}
                 style={{ animationDelay: `${index * 0.05}s` }}
               >

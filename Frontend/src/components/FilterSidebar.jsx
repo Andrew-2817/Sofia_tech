@@ -33,26 +33,25 @@ const FilterSidebar = () => {
   // Общие цвета (из реальных товаров)
   const [colors, setColors] = useState([]);
 
-  // Получаем уникальных производителей и цвета из товаров
-  useEffect(() => {
-    if (products && products.length > 0) {
-      // Уникальные производители
-      const uniqueManufacturers = [...new Set(
-        products
-          .map(p => p.brandName)
-          .filter(Boolean)
-      )];
-      setManufacturers(uniqueManufacturers);
-      
-      // Уникальные цвета (только у Homeier есть цвет, у Brandt может не быть)
-      const uniqueColors = [...new Set(
-        products
-          .map(p => p.color)
-          .filter(c => c && c !== 'null' && c !== 'undefined')
-      )];
-      setColors(uniqueColors);
-    }
-  }, [products]);
+useEffect(() => {
+  if (products && products.length > 0) {
+    // Уникальные производители из всех товаров
+    const uniqueManufacturers = [...new Set(
+      products
+        .map(p => p.brandName)
+        .filter(Boolean)
+    )];
+    setManufacturers(uniqueManufacturers);
+    
+    // Уникальные цвета
+    const uniqueColors = [...new Set(
+      products
+        .map(p => p.color)
+        .filter(c => c && c !== 'null' && c !== 'undefined')
+    )];
+    setColors(uniqueColors);
+  }
+}, [products]);
 
   // Максимальная цена из товаров
   const maxProductPrice = products.length > 0 

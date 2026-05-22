@@ -160,6 +160,108 @@ class HomeierProductResponse(HomeierProductBase):
         from_attributes = True
 
 
+from pydantic import BaseModel, Field
+from typing import Optional
+
+
+from pydantic import BaseModel, Field
+from typing import Optional
+
+# ==================== Схемы для товаров Schulthess ====================
+class SchulthessProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    model: Optional[str] = None
+    door_hinge: Optional[str] = None
+    product_group: Optional[str] = None
+    name: str = Field(..., min_length=1, max_length=255)
+    color: Optional[str] = None
+    main_image: Optional[str] = None
+    programs: Optional[str] = None
+    description: Optional[str] = None
+    price: float = Field(..., gt=0)
+    comment: Optional[str] = None
+    width: Optional[float] = Field(None, ge=0)
+    height: Optional[float] = Field(None, ge=0)
+    depth: Optional[float] = Field(None, ge=0)
+    volume: Optional[float] = Field(None, ge=0)
+    gross_weight: Optional[float] = Field(None, ge=0)
+
+class SchulthessProductCreate(SchulthessProductBase):
+    pass
+
+class SchulthessProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    model: Optional[str] = None
+    door_hinge: Optional[str] = None
+    product_group: Optional[str] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    color: Optional[str] = None
+    main_image: Optional[str] = None
+    programs: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = Field(None, gt=0)
+    comment: Optional[str] = None
+    width: Optional[float] = Field(None, ge=0)
+    height: Optional[float] = Field(None, ge=0)
+    depth: Optional[float] = Field(None, ge=0)
+    volume: Optional[float] = Field(None, ge=0)
+    gross_weight: Optional[float] = Field(None, ge=0)
+
+class SchulthessProductInDB(SchulthessProductBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
+
+# ==================== Схемы для товаров Kuppersbusch ====================
+class KuppersbuschProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    sku: Optional[str] = None
+    name: str = Field(..., min_length=1, max_length=255)
+    price: float = Field(..., gt=0)
+    main_image: Optional[str] = None
+    status: Optional[str] = None
+    comment: Optional[str] = None
+    color: Optional[str] = None
+    description: Optional[str] = None
+    series: Optional[str] = None
+    width: Optional[float] = Field(None, ge=0)
+    height: Optional[float] = Field(None, ge=0)
+    depth: Optional[float] = Field(None, ge=0)
+    volume: Optional[float] = Field(None, ge=0)
+    net_weight: Optional[float] = Field(None, ge=0)
+
+class KuppersbuschProductCreate(KuppersbuschProductBase):
+    pass
+
+class KuppersbuschProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    sku: Optional[str] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    price: Optional[float] = Field(None, gt=0)
+    main_image: Optional[str] = None
+    status: Optional[str] = None
+    comment: Optional[str] = None
+    color: Optional[str] = None
+    description: Optional[str] = None
+    series: Optional[str] = None
+    width: Optional[float] = Field(None, ge=0)
+    height: Optional[float] = Field(None, ge=0)
+    depth: Optional[float] = Field(None, ge=0)
+    volume: Optional[float] = Field(None, ge=0)
+    net_weight: Optional[float] = Field(None, ge=0)
+
+class KuppersbuschProductInDB(KuppersbuschProductBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
 # ==================== Схемы для заказов ====================
 class OrderItemSchema(BaseModel):
     product_name: str

@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/products/liebherr", tags=["products_liebherr"])
 @router.get("/", response_model=List[LiebherrProductResponse])
 def get_all_products(
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=500),
+    limit: int = Query(400, ge=1, le=500),
     category_id: Optional[int] = None,
     brand_id: Optional[int] = None,
     search: Optional[str] = None,
@@ -27,17 +27,17 @@ def get_all_products(
     if category_id:
         query = query.filter(LiebherrProduct.category_id == category_id)
 
-    if brand_id:
-        query = query.filter(LiebherrProduct.brand_id == brand_id)
+    # if brand_id:
+    #     query = query.filter(LiebherrProduct.brand_id == brand_id)
 
-    if search:
-        query = query.filter(
-            or_(
-                LiebherrProduct.name.ilike(f"%{search}%"),
-                LiebherrProduct.model.ilike(f"%{search}%"),
-                LiebherrProduct.ean.ilike(f"%{search}%")
-            )
-        )
+    # if search:
+    #     query = query.filter(
+    #         or_(
+    #             LiebherrProduct.name.ilike(f"%{search}%"),
+    #             LiebherrProduct.model.ilike(f"%{search}%"),
+    #             LiebherrProduct.ean.ilike(f"%{search}%")
+    #         )
+    #     )
 
     products = query.order_by(LiebherrProduct.id).offset(skip).limit(limit).all()
     return products
