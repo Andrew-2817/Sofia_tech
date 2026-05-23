@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
-from .routers import auth, products_homeier, orders, products_brandt, products_all, categories, users, products_liebherr, products_dedietrich, products_nivona
+from .routers import auth, products_homeier, orders, products_brandt, products_all, categories, users, products_liebherr, products_dedietrich, products_nivona, products_kuppersbusch, products_schulthess
 from .config import settings
 from .models import User, Category, Brand, Order, HomeierProduct
 
@@ -62,6 +62,8 @@ app.include_router(users.router)
 app.include_router(products_liebherr.router)
 app.include_router(products_dedietrich.router)
 app.include_router(products_nivona.router)
+app.include_router(products_kuppersbusch.router)
+app.include_router(products_schulthess.router)
 @app.get("/health")
 def health_check():
     return {

@@ -11,7 +11,7 @@ import io
 import xml.etree.ElementTree as ET
 
 # Пути
-BASE_DIR = Path('C:/vs code/Sofia_tech')
+BASE_DIR = Path('/home/raul/projects/sofa2/Sofia_tech')
 EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_1.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
@@ -110,17 +110,17 @@ def find_header_row(file_path):
     try:
         # Читаем первые 20 строк чтобы найти заголовки
         df_preview = pd.read_excel(file_path, header=None, nrows=20)
-        
+
         for idx, row in df_preview.iterrows():
             # Ищем строку, которая содержит нужные заголовки
             row_values = [str(v).lower() for v in row.values if pd.notna(v)]
-            
+
             # Проверяем наличие ключевых заголовков
-            if ('id' in row_values or 'артикул' in row_values or 
+            if ('id' in row_values or 'артикул' in row_values or
                 'наименование товара' in row_values or 'ррц' in row_values):
                 print(f"📌 Найдена строка с заголовками: {idx}")
                 return idx
-        
+
         print("⚠️ Строка с заголовками не найдена, используем первую строку")
         return 0
     except Exception as e:
@@ -247,7 +247,7 @@ def extract_all_images_with_order():
                             # xml_row - это 0-индексированный номер строки в Excel
                             # Прибавляем 1 для отображения (Excel строки начинаются с 1)
                             excel_row_number = xml_row + 1
-                            
+
                             img_name = f"1.{excel_row_number}.jpg"
                             img_path = PHOTOS_DIR / img_name
                             with open(img_path, 'wb') as f:
@@ -273,7 +273,7 @@ def extract_all_images_with_order():
         return {}
 
     print(f"\n📊 ИТОГО ИЗВЛЕЧЕНО: {len(photo_by_row)} изображений")
-    
+
     # Выводим соответствие строк и фото для отладки
     if photo_by_row:
         print("\n📋 Соответствие строк и фото:")
@@ -294,14 +294,14 @@ def load_products_to_db(photo_by_row):
 
     # Находим строку с заголовками
     header_row = find_header_row(EXCEL_FILE)
-    
+
     # Читаем Excel файл с указанием строки заголовков
     df = pd.read_excel(EXCEL_FILE, header=header_row)
-    
+
     print(f"📊 Строка заголовков: {header_row}")
     print(f"📊 Найдено строк данных в Excel: {len(df)}")
     print(f"📊 Доступные колонки: {list(df.columns)}")
-    
+
     # Выводим первые несколько строк для отладки
     print("\n📋 Первые 3 строки данных:")
     for i in range(min(3, len(df))):
@@ -332,7 +332,7 @@ def load_products_to_db(photo_by_row):
             # header_row - номер строки с заголовками
             # +2 потому что: строки в Excel нумеруются с 1, а заголовок занимает header_row+1
             excel_row_num = idx + header_row + 2
-            
+
             # Получаем наименование товара (обязательное поле)
             name = None
             for col_name in ['Наименование товара', 'наименование товара', 'Name', 'NAME', 'name']:
@@ -340,7 +340,7 @@ def load_products_to_db(photo_by_row):
                     name = clean_string(row[col_name])
                     if name:
                         break
-            
+
             if not name:
                 print(f"⚠️ Строка {excel_row_num}: пропущено (нет наименования)")
                 skipped_count += 1
@@ -362,7 +362,7 @@ def load_products_to_db(photo_by_row):
                     if val:
                         category_id = int(val)
                         break
-            
+
             if category_id:
                 category_exists = db.query(Category).filter(Category.id == category_id).first()
                 if not category_exists:
@@ -376,7 +376,7 @@ def load_products_to_db(photo_by_row):
                     price = clean_price(row[col_name])
                     if price > 0:
                         break
-            
+
             # Получаем артикул
             sku = None
             for col_name in ['Артикул', 'артикул', 'SKU', 'sku', 'Article']:

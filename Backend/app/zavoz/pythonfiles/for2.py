@@ -11,7 +11,7 @@ import io
 import xml.etree.ElementTree as ET
 
 # Пути
-BASE_DIR = Path('C:/vs code/Sofia_tech')
+BASE_DIR = Path('/home/raul/projects/sofa2/Sofia_tech')
 EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_2.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
@@ -109,15 +109,15 @@ def find_header_row(file_path):
     """Находит строку с заголовками в Excel файле"""
     try:
         df_preview = pd.read_excel(file_path, header=None, nrows=20)
-        
+
         for idx, row in df_preview.iterrows():
             row_values = [str(v).lower() for v in row.values if pd.notna(v)]
-            
-            if ('id' in row_values or 'модель' in row_values or 
+
+            if ('id' in row_values or 'модель' in row_values or
                 'наименование товара' in row_values or 'ррц' in row_values):
                 print(f"📌 Найдена строка с заголовками: {idx}")
                 return idx
-        
+
         print("⚠️ Строка с заголовками не найдена, используем первую строку")
         return 0
     except Exception as e:
@@ -154,19 +154,19 @@ def extract_all_images_with_order():
             # Выводим все файлы в архиве для отладки
             all_files = zip_ref.namelist()
             print(f"📁 Всего файлов в архиве: {len(all_files)}")
-            
+
             # Ищем все возможные изображения в разных местах
             media_files = [f for f in all_files if 'media' in f.lower()]
             print(f"📸 Найдено файлов в xl/media: {len(media_files)}")
-            
+
             # Также ищем в других местах
             other_images = [f for f in all_files if any(ext in f.lower() for ext in ['.png', '.jpg', '.jpeg', '.gif', '.bmp'])]
             print(f"📸 Найдено изображений в других папках: {len(other_images)}")
-            
+
             # Объединяем все изображения
             all_images = list(set(media_files + other_images))
             print(f"📸 Всего уникальных изображений: {len(all_images)}")
-            
+
             if not all_images:
                 print("⚠️ В архиве не найдено изображений!")
                 print("📋 Первые 20 файлов в архиве:")
@@ -187,7 +187,7 @@ def extract_all_images_with_order():
             # Ищем все drawing файлы (они содержат информацию о позициях фото)
             drawing_files = [f for f in all_files if 'xl/drawings/drawing' in f and f.endswith('.xml')]
             print(f"\n📄 Найдено drawing файлов: {len(drawing_files)}")
-            
+
             if not drawing_files:
                 print("⚠️ Drawing файлы не найдены! Фото могут быть вставлены как OLE-объекты.")
                 print("📋 Пробуем альтернативный метод извлечения...")
@@ -200,29 +200,29 @@ def extract_all_images_with_order():
                 try:
                     xml_content = zip_ref.read(drawing_file)
                     root = ET.fromstring(xml_content)
-                    
+
                     print(f"\n📄 Обработка {drawing_file}...")
-                    
+
                     namespaces = {
                         'xdr': 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
                         'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
                         'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
                     }
-                    
+
                     # Ищем все anchors
                     anchors = root.findall('.//xdr:twoCellAnchor', namespaces) + \
                              root.findall('.//xdr:oneCellAnchor', namespaces) + \
                              root.findall('.//xdr:absoluteAnchor', namespaces)
-                    
+
                     print(f"  Найдено anchors: {len(anchors)}")
-                    
+
                     for anchor in anchors:
                         pic = anchor.find('.//xdr:pic', namespaces)
                         if pic is not None:
                             blip = pic.find('.//a:blip', namespaces)
                             if blip is not None:
                                 r_id = blip.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed')
-                                
+
                                 # Пытаемся найти информацию о строке
                                 row_num = None
                                 from_elem = anchor.find('.//xdr:from', namespaces)
@@ -230,7 +230,7 @@ def extract_all_images_with_order():
                                     row_elem = from_elem.find('.//xdr:row', namespaces)
                                     if row_elem is not None:
                                         row_num = int(row_elem.text)
-                                
+
                                 if row_num is not None:
                                     photos_with_positions.append({
                                         'r_id': r_id,
@@ -238,7 +238,7 @@ def extract_all_images_with_order():
                                         'drawing_file': drawing_file
                                     })
                                     print(f"    Найдено фото: row={row_num}, rId={r_id}")
-                                    
+
                 except Exception as e:
                     print(f"  ⚠️ Ошибка парсинга {drawing_file}: {e}")
                     import traceback
@@ -279,12 +279,12 @@ def extract_all_images_with_order():
 
             # Извлекаем фото
             print(f"\n📸 Извлечение {len(photos_with_positions)} фото...")
-            
+
             for idx, photo_info in enumerate(photos_with_positions):
                 try:
                     # Получаем имя файла изображения
                     img_filename = None
-                    
+
                     if photo_info.get('r_id') and photo_info['r_id'] in rid_to_filename:
                         img_filename = rid_to_filename[photo_info['r_id']]
                     elif photo_info.get('img_file'):
@@ -293,34 +293,34 @@ def extract_all_images_with_order():
                         # Пробуем найти по индексу
                         if idx < len(all_images):
                             img_filename = Path(all_images[idx]).name
-                    
+
                     if not img_filename:
                         print(f"  ⚠️ Не удалось определить файл для фото {idx}")
                         continue
-                    
+
                     # Находим полный путь к файлу в архиве
                     img_path_in_zip = None
                     for file_path in image_files.keys():
                         if Path(file_path).name == img_filename:
                             img_path_in_zip = file_path
                             break
-                    
+
                     if img_path_in_zip:
                         img_data = zip_ref.read(img_path_in_zip)
                         if len(img_data) > 100:
                             converted_data, ext = convert_to_jpg(img_data)
-                            
+
                             # Номер строки (0-индекс -> 1-индекс)
                             excel_row_number = photo_info['xml_row'] + 1
-                            
+
                             img_name = f"2.{excel_row_number-1}.jpg"
                             img_path = PHOTOS_DIR / img_name
                             with open(img_path, 'wb') as f:
                                 f.write(converted_data)
-                            
+
                             dest_path = UPLOADS_DIR / img_name
                             shutil.copy2(img_path, dest_path)
-                            
+
                             photo_by_row[excel_row_number] = {
                                 'file_name': img_name,
                                 'path': f"/uploads/products/{img_name}",
@@ -331,7 +331,7 @@ def extract_all_images_with_order():
                             print(f"  ✅ Извлечено: фото для строки {excel_row_number} -> {img_name} (файл: {img_filename})")
                     else:
                         print(f"  ⚠️ Файл не найден в архиве: {img_filename}")
-                        
+
                 except Exception as e:
                     print(f"  ❌ Ошибка при извлечении фото {idx}: {e}")
 
@@ -342,7 +342,7 @@ def extract_all_images_with_order():
         return {}
 
     print(f"\n📊 ИТОГО ИЗВЛЕЧЕНО: {len(photo_by_row)} изображений")
-    
+
     if photo_by_row:
         print("\n📋 Соответствие строк и фото:")
         for row_num in sorted(photo_by_row.keys())[:20]:  # Показываем первые 20
@@ -369,14 +369,14 @@ def load_products_to_db(photo_by_row):
 
     # Находим строку с заголовками
     header_row = find_header_row(EXCEL_FILE)
-    
+
     # Читаем Excel файл с указанием строки заголовков
     df = pd.read_excel(EXCEL_FILE, header=header_row)
-    
+
     print(f"📊 Строка заголовков: {header_row}")
     print(f"📊 Найдено строк данных в Excel: {len(df)}")
     print(f"📊 Доступные колонки: {list(df.columns)}")
-    
+
     # Выводим первые несколько строк для отладки
     print("\n📋 Первые 3 строки данных:")
     for i in range(min(3, len(df))):
@@ -404,7 +404,7 @@ def load_products_to_db(photo_by_row):
         for idx, row in df.iterrows():
             # Реальный номер строки в Excel
             excel_row_num = idx + header_row + 2
-            
+
             # Получаем наименование товара (обязательное поле)
             name = None
             for col_name in ['Наименование товара', 'наименование товара', 'Name', 'NAME', 'name']:
@@ -412,7 +412,7 @@ def load_products_to_db(photo_by_row):
                     name = clean_string(row[col_name])
                     if name:
                         break
-            
+
             if not name:
                 print(f"⚠️ Строка {excel_row_num}: пропущено (нет наименования)")
                 skipped_count += 1
@@ -434,7 +434,7 @@ def load_products_to_db(photo_by_row):
                     if val:
                         category_id = int(val)
                         break
-            
+
             if category_id:
                 category_exists = db.query(Category).filter(Category.id == category_id).first()
                 if not category_exists:
@@ -448,7 +448,7 @@ def load_products_to_db(photo_by_row):
                     price = clean_price(row[col_name])
                     if price > 0:
                         break
-            
+
             # Получаем модель
             model = None
             for col_name in ['Модель', 'модель', 'Model', 'model']:
