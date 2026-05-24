@@ -18,6 +18,7 @@ import skuIcon from "../assets/sku.svg"
 import brandIcon from "../assets/brand.svg"
 import addressIcon from "../assets/address.svg"
 import { getDefaultProductImage } from '../data/mockData';
+import { toggleFavorite } from '../store/slices/favoritesSlice';
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const ProfilePage = () => {
   const favorites = useSelector(state => state.favorites.items);
   const products = useSelector(state => state.products.items);
   const favoriteProducts = products.filter(product => {
-    return favorites.some(fav => fav.id === product.id && fav.brandId === product.brand_id);
+    return favorites.some(fav => fav.id === product.id && fav.brandId === product.brandId);
   });
 
   const handleRemoveFavorite = (productId, brandId) => {
@@ -398,7 +399,7 @@ const handleLogout = async () => {
                   {/* Детали доставки */}
                   <div className={styles.orderDeliveryInfo}>
                     <div className={styles.deliveryRow}>
-                      <span className={styles.deliveryLabel}><img src={profileIcon} alt="" /> <p>Получатель:</p></span>
+                      <span className={styles.deliveryLabel}><img style={{fill:"#7bc6cf"}} src={profileIcon} alt="" /> <p>Получатель:</p></span>
                       <span className={styles.deliveryValue}>{order.customer_name}</span>
                     </div>
                     <div className={styles.deliveryRow}>
@@ -531,7 +532,7 @@ const handleLogout = async () => {
         ) : (
           <div className={styles.favoritesGrid}>
             {favoriteProducts.map(product => (
-              <div key={`${product.id}-${product.brand_id}`} className={styles.favoriteProduct}>
+              <div key={`${product.id}-${product.brandId}`} className={styles.favoriteProduct}>
                 <img 
                   src={`${API_BASE_URL_photo}${product.main_image}` || `${API_BASE_URL_photo}${product.image}`} 
                   alt={product.name} 
@@ -543,7 +544,7 @@ const handleLogout = async () => {
                   <p className={styles.productPrice}>{product.price.toLocaleString()} ₽</p>
                   <button 
                     className={styles.removeFavoriteBtn}
-                    onClick={() => handleRemoveFavorite(product.id, product.brand_id)}
+                    onClick={() => handleRemoveFavorite(product.id, product.brandId)}
                   >
                     <img src={trashIcon} alt="" /> <p>Удалить</p>
                   </button>

@@ -65,7 +65,7 @@
   color: #7bc6cf;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0 10px;
 }
 
 .headerIcon {
@@ -203,16 +203,24 @@
 }
 
 .level1Icon {
-  font-size: 28px;
-  width: 40px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  /* background: rgba(123, 198, 207, 0.08); */
+  color: #7bc6cf;
+  flex-shrink: 0;
   position: relative;
   z-index: 1;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.level1Item:hover .level1Icon {
-  transform: scale(1.1);
+.level1Item:hover .level1Icon,
+.level1Item.active .level1Icon {
+  /* background: rgba(123, 198, 207, 0.18); */
+  transform: scale(1.08);
 }
 
 .level1Info {
@@ -279,6 +287,9 @@
   color: #7bc6cf;
   text-transform: uppercase;
   letter-spacing: 1px;
+    display: flex;
+  align-items: center;
+  gap: 0 5px;
 }
 
 .showAllBtn {

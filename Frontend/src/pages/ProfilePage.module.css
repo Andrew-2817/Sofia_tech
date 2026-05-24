@@ -829,6 +829,9 @@ input:checked + .slider:before {
   gap: 0 5px;
   color: #888;
 }
+.deliveryLabel img{
+  fill: #7bc6cf;
+}
 
 .deliveryValue {
   color: #f0f0f0;

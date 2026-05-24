@@ -25,7 +25,7 @@ const ProductCard = ({ product }) => {
     e.preventDefault();
     dispatch(toggleFavorite({ 
       id: product.id, 
-      brandId: product.brand_id 
+      brandId: product.brandId 
     }));
   };
 

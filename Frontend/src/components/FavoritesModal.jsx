@@ -107,7 +107,7 @@ const FavoritesModal = ({ isOpen, onClose }) => {
                     </button>
                     <button 
                       className={styles.removeBtn}
-                      onClick={(e) => handleToggleFavorite(e, product.id, product.brand_id)}
+                      onClick={(e) => handleToggleFavorite(e, product.id, product.brandId)}
                     >
                       <img src={trashIcon} alt="" /> <p>Удалить</p>
                     </button>

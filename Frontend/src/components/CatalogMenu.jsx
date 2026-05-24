@@ -5,14 +5,21 @@ import styles from './CatalogMenu.module.css';
 import crossIcon from '../assets/cross.svg'
 import fireIcon from "../assets/fire.svg"
 import { useSelector } from 'react-redux';
+import {
+  IconHome, IconTool, IconBolt, IconPlant,
+  IconDeviceTv, IconCar, IconCooker, IconSofa, IconLayoutGrid,
+  IconApple, IconSportBillard, IconPackage
+} from '@tabler/icons-react';
 
 const CatalogMenu = ({ isOpen, onClose }) => {
-  const [activeLevel1, setActiveLevel1] = useState(null);
+  const [activeLevel1, setActiveLevel1] = useState(1);
   const { tree: categories, loading } = useSelector(state => state.categories);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
   const level1Categories = categories.filter(cat => cat.level === 1);
+  console.log(level1Categories);
+  
 
   // Закрытие по клику вне
   useEffect(() => {
@@ -32,6 +39,24 @@ const CatalogMenu = ({ isOpen, onClose }) => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
+
+// Маппинг — дополни под свои slug/id
+const CATEGORY_ICONS = {
+  1: IconHome,
+  2: IconTool,
+  3: IconBolt,
+  4: IconPlant,
+  5: IconCooker,
+};
+
+const IconCatalog = IconLayoutGrid
+const Iconlevel1 = activeLevel1 && CATEGORY_ICONS[activeLevel1];
+
+const getCategoryIcon = (category) => {
+  return CATEGORY_ICONS[category.slug]
+      || CATEGORY_ICONS[category.id]
+      || IconPackage; // fallback
+};
 
   // Закрытие по Escape
   useEffect(() => {
@@ -95,8 +120,8 @@ const CatalogMenu = ({ isOpen, onClose }) => {
       <div className={styles.menuContainer} ref={menuRef}>
         <div className={styles.header}>
           <h2>
-            <span className={styles.headerIcon}></span>
-            Каталог товаров
+            <IconCatalog size={22}/>
+            <p>Каталог товаров</p>
           </h2>
           <button className={styles.closeBtn} onClick={onClose}>
             <img src={crossIcon} alt="" />
@@ -107,35 +132,37 @@ const CatalogMenu = ({ isOpen, onClose }) => {
           {/* Левая колонка - категории 1 уровня */}
           <div className={styles.level1Column}>
             <div className={styles.level1List}>
-              {categories.map(category => (
-                <div
-                  key={category.id}
-                  className={`${styles.level1Item} ${activeLevel1 === category.id ? styles.active : ''}`}
-                  onClick={() => handleLevel1Click(category)}
-                >
-                  {/* <div className={styles.level1Icon}>
-                    {category.id === 1 && '🏠'}
-                    {category.id === 2 && '🔧'}
-                    {category.id === 3 && '⚡'}
-                    {category.id === 4 && '🔌'}
-                    {category.id === 5 && '🍳'}
-                  </div> */}
-                  <div className={styles.level1Info}>
-                    <div className={styles.level1Name}>{category.name}</div>
-                    <div className={styles.level1Count}>
-                      {category.children?.length || 0} подкатегорий
+              {categories.map(category => {
+                const Icon = getCategoryIcon(category);
+                return (
+                  <div
+                    key={category.id}
+                    className={`${styles.level1Item} ${activeLevel1 === category.id ? styles.active : ''}`}
+                    onClick={() => handleLevel1Click(category)}
+                  >
+                    <div className={styles.level1Icon}>
+                      <Icon size={22} stroke={1.5} />
                     </div>
+                    <div className={styles.level1Info}>
+                      <div className={styles.level1Name}>{category.name}</div>
+                      <div className={styles.level1Count}>
+                        {category.children?.length || 0} подкатегорий
+                      </div>
+                    </div>
+                    <div className={styles.level1Arrow}>→</div>
                   </div>
-                  <div className={styles.level1Arrow}>→</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
           {/* Правая колонка - категории 2 и 3 уровня в сетке */}
           <div className={styles.rightColumn}>
             <div className={styles.rightHeader}>
-              <h3>{activeCategory.name}</h3>
+              <h3>
+                <Iconlevel1 size={22}/>
+                <p>{activeCategory.name}</p>
+              </h3>
               <button 
                 className={styles.showAllBtn}
                 onClick={() => handleNavigateToLevel1(activeCategory)}

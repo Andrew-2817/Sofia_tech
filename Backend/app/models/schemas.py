@@ -8,6 +8,35 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
 
+
+# ==================== Схемы для товаров Bonkrasher ====================
+class BonkrasherProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    name: str = Field(..., min_length=1, max_length=255)
+    sku: Optional[str] = None
+    price: float = Field(..., gt=0)
+    main_image: Optional[str] = None
+    functionality: Optional[str] = None
+
+class BonkrasherProductCreate(BonkrasherProductBase):
+    pass
+
+class BonkrasherProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    sku: Optional[str] = None
+    price: Optional[float] = Field(None, gt=0)
+    main_image: Optional[str] = None
+    functionality: Optional[str] = None
+
+class BonkrasherProductInDB(BonkrasherProductBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
 class CategoryBase(BaseModel):
     id: int
     name: str
