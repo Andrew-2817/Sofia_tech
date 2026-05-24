@@ -211,7 +211,7 @@ class SchulthessProductUpdate(BaseModel):
 
 class SchulthessProductInDB(SchulthessProductBase):
     id: int
-    
+
     class Config:
         from_attributes = True
 
@@ -258,7 +258,7 @@ class KuppersbuschProductUpdate(BaseModel):
 
 class KuppersbuschProductInDB(KuppersbuschProductBase):
     id: int
-    
+
     class Config:
         from_attributes = True
 
@@ -450,6 +450,36 @@ class NivonaProductUpdate(BaseModel):
 class NivonaProductResponse(NivonaProductBase):
     id: int
     created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# ==================== Схемы для товаров Graude ====================
+class GraudeProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    main_image: Optional[str] = None
+    sku: Optional[str] = Field(None, max_length=100)
+    name: str = Field(..., min_length=1, max_length=500)
+    description: Optional[str] = None
+    price_public: Optional[float] = Field(None, ge=0)
+
+class GraudeProductCreate(GraudeProductBase):
+    pass
+
+class GraudeProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    main_image: Optional[str] = None
+    sku: Optional[str] = Field(None, max_length=100)
+    name: Optional[str] = Field(None, min_length=1, max_length=500)
+    description: Optional[str] = None
+    price_public: Optional[float] = Field(None, ge=0)
+
+class GraudeProductResponse(GraudeProductBase):
+    id: int
+    created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
     class Config:
