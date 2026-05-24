@@ -10,6 +10,7 @@ from typing import Optional, List
 
 
 # ==================== Схемы для товаров Bonkrasher ====================
+
 class BonkrasherProductBase(BaseModel):
     category_id: Optional[int] = None
     brand_id: Optional[int] = None
@@ -19,8 +20,10 @@ class BonkrasherProductBase(BaseModel):
     main_image: Optional[str] = None
     functionality: Optional[str] = None
 
+
 class BonkrasherProductCreate(BonkrasherProductBase):
     pass
+
 
 class BonkrasherProductUpdate(BaseModel):
     category_id: Optional[int] = None
@@ -31,12 +34,13 @@ class BonkrasherProductUpdate(BaseModel):
     main_image: Optional[str] = None
     functionality: Optional[str] = None
 
+
 class BonkrasherProductInDB(BonkrasherProductBase):
     id: int
-    
+
     class Config:
         from_attributes = True
-
+#===========================================================================================
 class CategoryBase(BaseModel):
     id: int
     name: str

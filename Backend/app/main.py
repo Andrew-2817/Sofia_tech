@@ -18,7 +18,10 @@ from .routers import (
     products_nivona,
     products_kuppersbusch,
     products_schulthess,
-    products_graude  # добавьте эту строку
+    products_graude,
+    products_bonkrasher,
+    products_teka,
+    products_falmec
 )
 from .config import settings
 from .models import User, Category, Brand, Order, HomeierProduct
@@ -79,6 +82,9 @@ app.include_router(products_nivona.router)
 app.include_router(products_kuppersbusch.router)
 app.include_router(products_schulthess.router)
 app.include_router(products_graude.router)
+app.include_router(products_bonkrasher.router)
+app.include_router(products_teka.router)
+app.include_router(products_falmec.router)
 
 @app.get("/health")
 def health_check():

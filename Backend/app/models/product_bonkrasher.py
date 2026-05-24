@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String, Numeric, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from ..database import Base
+from pydantic import BaseModel, Field
+from typing import Optional
+
 
 class BonkrasherProduct(Base):
     __tablename__ = "products_bonkrasher"
@@ -19,3 +22,35 @@ class BonkrasherProduct(Base):
     # Отношения
     category = relationship("Category", backref="bonkrasher_products")
     brand = relationship("Brand", backref="bonkrasher_products")
+
+
+# ==================== Схемы для товаров Bonkrasher ====================
+class BonkrasherProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    name: str = Field(..., min_length=1, max_length=255)
+    sku: Optional[str] = None
+    price: float = Field(..., gt=0)
+    main_image: Optional[str] = None
+    functionality: Optional[str] = None
+
+
+class BonkrasherProductCreate(BonkrasherProductBase):
+    pass
+
+
+class BonkrasherProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    sku: Optional[str] = None
+    price: Optional[float] = Field(None, gt=0)
+    main_image: Optional[str] = None
+    functionality: Optional[str] = None
+
+
+class BonkrasherProductInDB(BonkrasherProductBase):
+    id: int
+
+    class Config:
+        from_attributes = True
