@@ -50,6 +50,9 @@
   margin-bottom: 10px;
   gap: 0 5px;
 }
+.contacts_block span{
+  color: #7bc6cf;
+}
 
 .contacts_block img {
   width: 20px;

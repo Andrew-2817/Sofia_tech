@@ -18,6 +18,41 @@ import skuIcon from "../assets/sku.svg"
 import brandIcon from "../assets/brand.svg"
 
 
+import {
+  IconBuildingFactory,
+  IconTag,
+  IconCircleDot,
+  IconArrowsHorizontal,
+  IconArrowsVertical,
+  IconArrowsMaximize,
+  IconBottle,
+  IconWeight,
+  IconPackage,
+  IconTool,
+  IconShieldCheck,
+  IconList,
+  IconSettings,
+  IconPalette,
+  IconSparkles,
+  IconCalendar,
+  IconCategory,
+  IconFileDescription,
+  IconZoomQuestion,
+  IconClipboardList,
+  IconMessageCircle,
+  IconNotes,
+  IconWind,
+  IconVolume,
+  IconTruck,
+  IconBarcode,
+  IconDoor,
+  IconLayoutList,
+  IconChartBar,
+  IconCurrencyRubel,
+  IconCircleCheck, IconFireHydrant
+} from '@tabler/icons-react';
+
+
 const ProductPage = () => {
   const { brandId, id } = useParams(); // получаем brandId и id из URL
   const navigate = useNavigate();
@@ -36,6 +71,14 @@ console.log(isFavorite);
 console.log(product);
 console.log(favorites);
 
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   
   // Загружаем товары, если их нет
@@ -60,41 +103,87 @@ console.log(favorites);
   }).slice(0, 8);
   
   // Формируем характеристики в зависимости от бренда
-  const getProductSpecs = () => {
-    const specs = [];
-    
-    // Общие для всех
-    specs.push({ key: 'Бренд', value: product.brandName, icon: '🏭' });
-    specs.push({ key: 'Артикул', value: product.sku || product.model || '—', icon: '🔖' });
-    
-    // if (product.description) {
-    //   specs.push({ key: 'Описание', value: product.description, icon: '📝' });
-    // }
-    
-    // Характеристики для Homeier (brand_id = 1)
-    if (product.brand_id === 1) {
-      if (product.color) specs.push({ key: 'Цвет', value: product.color, icon: '🎨' });
-      if (product.width) specs.push({ key: 'Ширина', value: `${product.width} см`, icon: '📏' });
-      if (product.height) specs.push({ key: 'Высота', value: `${product.height} см`, icon: '📐' });
-      if (product.depth) specs.push({ key: 'Глубина', value: `${product.depth} см`, icon: '📏' });
-      if (product.volume) specs.push({ key: 'Объём', value: `${product.volume} л`, icon: '📦' });
-      if (product.net_weight) specs.push({ key: 'Вес нетто', value: `${product.net_weight} кг`, icon: '⚖️' });
-      if (product.gross_weight) specs.push({ key: 'Вес брутто', value: `${product.gross_weight} кг`, icon: '📦' });
-      if (product.comment) specs.push({ key: 'Комментарий', value: product.comment, icon: '💬' });
+// ProductPage.jsx - обновите функцию getProductSpecs
+
+const getProductSpecs = () => {
+  const specs = [];
+
+  const add = (key, value, Icon) => {
+    if (value !== undefined && value !== null && value !== '' 
+        && value !== 'null' && value !== 'undefined') {
+      specs.push({ key, value, Icon });
     }
-    
-    // Характеристики для Brandt (brand_id = 2)
-    if (product.brand_id === 2) {
-      if (product.model) specs.push({ key: 'Модель', value: product.model, icon: '🔢' });
-      if (product.design) specs.push({ key: 'Дизайн', value: product.design, icon: '🎨' });
-      if (product.specifications && product.specifications !== product.description) {
-        specs.push({ key: 'Технические характеристики', value: product.specifications, icon: '⚙️' });
-      }
-      if (product.comment) specs.push({ key: 'Примечание', value: product.comment, icon: '💬' });
-    }
-    
-    return specs;
   };
+
+  // Основные
+  add('Бренд', product.brandName, IconBuildingFactory);
+  add('Артикул', product.sku || product.model || product.ean, IconTag);
+  if (product.model) add('Модель', product.model, IconCircleDot);
+  if (product.ean)   add('EAN', product.ean, IconBarcode);
+  if (product.status) add('Статус', product.status, IconCircleCheck);
+
+  // Габариты
+  const width = product.width_cm || product.width;
+  if (width) add('Ширина', `${width} см`, IconArrowsHorizontal);
+  if (product.height) add('Высота', `${product.height} см`, IconArrowsVertical);
+  if (product.depth)  add('Глубина', `${product.depth} см`, IconArrowsMaximize);
+  if (product.volume) add('Объём', `${product.volume} л`, IconBottle);
+
+  // Вес
+  if (product.net_weight) {
+    const w = parseFloat(product.net_weight);
+    if (!isNaN(w)) add('Вес нетто', `${w} кг`, IconWeight);
+  }
+  if (product.gross_weight) {
+    const w = parseFloat(product.gross_weight);
+    if (!isNaN(w)) add('Вес брутто', `${w} кг`, IconPackage);
+  }
+
+  // Техника
+  if (product.factory)      add('Тип установки', product.factory, IconTool);
+  if (product.warranty) {
+    const yr = product.warranty;
+    const label = `${yr} ${yr === 1 ? 'год' : yr < 5 ? 'года' : 'лет'}`;
+    add('Гарантия', label, IconShieldCheck);
+  }
+  if (product.series)        add('Серия', product.series, IconList);
+  if (product.control_type)  add('Тип управления', product.control_type, IconSettings);
+
+  // Дизайн
+  if (product.color)  add('Цвет', product.color, IconPalette);
+  if (product.design) add('Дизайн', product.design, IconSparkles);
+
+  // Производство
+  if (product.production_start) add('Производство', product.production_start, IconCalendar);
+  if (product.category_name)    add('Категория', product.category_name, IconCategory);
+
+  // Описание
+  if (product.specifications && product.specifications !== product.description)
+    add('Технические характеристики', product.specifications, IconClipboardList);
+  if (product.functionality) add('Функционал', product.functionality, IconZoomQuestion);
+  if (product.programs)      add('Программы', product.programs, IconClipboardList);
+  if (product.comment)       add('Комментарий', product.comment, IconMessageCircle);
+  if (product.description && product.brand_id !== 1)
+    add('Описание', product.description, IconNotes);
+
+  // Falmec
+  if (product.mounting_type)    add('Тип монтажа', product.mounting_type, IconTool);
+  if (product.performance_m3h)  add('Производительность', `${product.performance_m3h} м³/ч`, IconWind);
+  if (product.min_noise_db)     add('Минимальный шум', `${product.min_noise_db} дБ`, IconVolume);
+  if (product.supply_program)   add('Программа поставки', product.supply_program, IconTruck);
+  if (product.manufacturer_code) add('Код производителя', product.manufacturer_code, IconBarcode);
+
+  // Teka
+  if (product.dmd_quantity)      add('DMD количество', product.dmd_quantity, IconChartBar);
+  if (product.dmd_perup_quantity) add('DMD PERUP количество', product.dmd_perup_quantity, IconChartBar);
+
+  // Kuppersbusch
+  if (product.door_hinge)    add('Навеска дверцы', product.door_hinge, IconDoor);
+  if (product.product_group) add('Группа товара', product.product_group, IconLayoutList);
+  if (product.line)          add('Линейка', product.line, IconChartBar);
+
+  return specs;
+};
   
   const specs = getProductSpecs();
   // const imageUrl = `${API_BASE_URL_photo}${product.main_image}`
@@ -127,12 +216,7 @@ const imageUrl = product.main_image !== null
       brandId: product.brandId
     }));
   };
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsPageLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+
 
   if (isPageLoading) {
     return <LoadingSpinner text="Загрузка товара..." />;
@@ -185,22 +269,22 @@ const imageUrl = product.main_image !== null
               </div>
             </div>
 
-            {/* Краткие характеристики (первые 3) */}
-            <div className={styles.shortSpecs}>
-              {specs.slice(0, 3).map((spec, idx) => (
-                <div key={idx} className={styles.shortSpec}>
-                  <span className={styles.shortSpecIcon}>{spec.icon}</span>
-                  <div className={styles.shortSpecContent}>
-                    <div className={styles.shortSpecKey}>{spec.key}</div>
-                    <div className={styles.shortSpecValue}>
-                      {typeof spec.value === 'string' && spec.value.length > 50 
-                        ? spec.value.slice(0, 50) + '...' 
-                        : spec.value}
-                    </div>
-                  </div>
+          {/* Краткие характеристики */}
+          {specs.slice(0, 3).map((spec, idx) => (
+            <div key={idx} className={styles.shortSpec}>
+              <span className={styles.shortSpecIcon}>
+                <spec.Icon size={18} stroke={1.5} />
+              </span>
+              <div className={styles.shortSpecContent}>
+                <div className={styles.shortSpecKey}>{spec.key}</div>
+                <div className={styles.shortSpecValue}>
+                  {typeof spec.value === 'string' && spec.value.length > 50
+                    ? spec.value.slice(0, 50) + '...'
+                    : spec.value}
                 </div>
-              ))}
+              </div>
             </div>
+          ))}
 
             {/* Выбор количества */}
             <div className={styles.quantitySection}>
@@ -241,27 +325,23 @@ const imageUrl = product.main_image !== null
         </div>
 
         {/* Полные характеристики */}
-        {specs.length > 0 && (
-          <div className={styles.fullSpecs}>
-            <div className={styles.specsHeader}>
-              <h2 className={styles.specsTitle}>
-                📋 Характеристики
-                <span className={styles.specsCount}>{specs.length}</span>
-              </h2>
+        <h2 className={styles.specsTitle}>
+          <IconClipboardList size={22} stroke={1.5} />
+          Характеристики
+          <span className={styles.specsCount}>{specs.length}</span>
+        </h2>
+
+        {specs.map((spec, idx) => (
+          <div key={idx} className={styles.specRow}>
+            <div className={styles.specKey}>
+              <span className={styles.specIcon}>
+                <spec.Icon size={16} stroke={1.5} />
+              </span>
+              <span className={styles.specKeyText}>{spec.key}</span>
             </div>
-            <div className={styles.specsGrid}>
-              {specs.map((spec, idx) => (
-                <div key={idx} className={styles.specRow}>
-                  <div className={styles.specKey}>
-                    <span className={styles.specIcon}>{spec.icon}</span>
-                    <span className={styles.specKeyText}>{spec.key}</span>
-                  </div>
-                  <div className={styles.specValue}>{spec.value}</div>
-                </div>
-              ))}
-            </div>
+            <div className={styles.specValue}>{spec.value}</div>
           </div>
-        )}
+        ))}
 
         {/* Описание для Homeier */}
         {product.brand_id === 1 && product.description && (

@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import {
   IconHome, IconTool, IconBolt, IconPlant,
   IconDeviceTv, IconCar, IconCooker, IconSofa, IconLayoutGrid,
-  IconApple, IconSportBillard, IconPackage
+  IconApple, IconSportBillard, IconPackage, IconFireHydrant
 } from '@tabler/icons-react';
 
 const CatalogMenu = ({ isOpen, onClose }) => {
@@ -215,7 +215,7 @@ const getCategoryIcon = (category) => {
         <div className={styles.bottomBanner}>
           <div className={styles.bannerContent}>
             <div className={styles.bannerText}>
-              <img className={styles.bannerIcon} src={fireIcon} alt="" />
+              <IconFireHydrant size={22}/>
               <span>Акционные товары и новинки</span>
             </div>
             <button 

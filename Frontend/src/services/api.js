@@ -62,16 +62,52 @@ class ApiService {
     return this.request('/products/nivona/');
   }
 
+    async getDietProducts() {
+    return this.request('/products/dedietrich/');
+  }
+
+    async getKupperProducts() {
+    return this.request('/products/kuppersbusch/');
+  }
+
+    async getGraudeProducts() {
+    return this.request('/products/graude/');
+  }
+
+    async getBonkProducts() {
+    return this.request('/products/bonkrasher/');
+  }
+
+    async getTekaProducts() {
+    return this.request('/products/teka/');
+  }
+
+    async getFalmecProducts() {
+    return this.request('/products/falmec/');
+  }
+
+      async getSchultProducts() {
+    return this.request('/products/schulthess/');
+  }
+
   // Получить все товары всех брендов
   async getAllProducts() {
     try {
-      const [homeier, brandt, liebherr, nivona] = await Promise.all([
+      const [homeier, brandt, liebherr, nivona, diet, kupper, schult, graude, bonk, teka, falmec] = await Promise.all([
         this.getHomeierProducts(),
         this.getBrandtProducts(),
         this.getLiebherrProducts(),
-        this.getNivonaProducts()
+        this.getNivonaProducts(),
+        this.getDietProducts(),
+        this.getKupperProducts(),
+        this.getSchultProducts(),
+        this.getGraudeProducts(),
+        this.getBonkProducts(),
+        this.getTekaProducts(),
+        this.getFalmecProducts()
+
       ]);
-      return { homeier, brandt, liebherr, nivona };
+      return { homeier, brandt, liebherr, nivona, diet, kupper, schult, graude, bonk, teka, falmec};
     } catch (error) {
       console.error('Error fetching products:', error);
       throw error;

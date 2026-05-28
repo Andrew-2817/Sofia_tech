@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/products/graude", tags=["products_graude"])
 @router.get("/", response_model=List[GraudeProductResponse])
 def get_all_products(
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=500),
+    limit: int = Query(1000, ge=1, le=50000),
     category_id: Optional[int] = None,
     brand_id: Optional[int] = None,
     search: Optional[str] = None,

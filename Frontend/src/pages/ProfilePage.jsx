@@ -20,6 +20,19 @@ import addressIcon from "../assets/address.svg"
 import { getDefaultProductImage } from '../data/mockData';
 import { toggleFavorite } from '../store/slices/favoritesSlice';
 
+import {
+  IconFlame ,     // Огонь
+IconMail   ,    // Почта
+IconPhone  ,    // Телефон
+IconMapPin ,    // Адрес
+IconTag  ,
+IconUser    ,    // Получатель
+IconEdit   ,     // Редактировать
+IconMessage,
+IconBuildingFactory,IconCurrencyRubel, IconArrowsHorizontal, IconShoppingBag,   // Заказы
+IconHeart
+} from '@tabler/icons-react';
+
 const ProfilePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -221,14 +234,14 @@ const handleLogout = async () => {
             className={`${styles.tab} ${activeTab === 'profile' ? styles.active : ''}`}
             onClick={() => setActiveTab('profile')}
           >
-            <span><img src={profileIcon} alt="" /></span>
+            <span><IconUser size={22} /></span>
             Профиль
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'orders' ? styles.active : ''}`}
             onClick={() => setActiveTab('orders')}
           >
-            <span><img src={orderIcon} alt="" /></span>
+            <span><IconShoppingBag size={22} /></span>
             Заказы
             <span className={styles.tabCount}>{orders.length}</span>
           </button>
@@ -236,7 +249,7 @@ const handleLogout = async () => {
             className={`${styles.tab} ${activeTab === 'favorites' ? styles.active : ''}`}
             onClick={() => setActiveTab('favorites')}
           >
-            <span><img src={heartIcon} alt="" /></span>
+            <span><IconHeart size={22} /></span>
             Избранное
             <span className={styles.tabCount}>{favoriteProducts.length}</span>
           </button>
@@ -252,7 +265,7 @@ const handleLogout = async () => {
                   <h3>Личная информация</h3>
                   {!isEditing && (
                     <button className={styles.editBtn} onClick={handleEditClick}>
-                      ✎ Редактировать
+                      <IconEdit  size={22}/> Редактировать
                     </button>
                   )}
                 </div>
@@ -399,15 +412,15 @@ const handleLogout = async () => {
                   {/* Детали доставки */}
                   <div className={styles.orderDeliveryInfo}>
                     <div className={styles.deliveryRow}>
-                      <span className={styles.deliveryLabel}><img style={{fill:"#7bc6cf"}} src={profileIcon} alt="" /> <p>Получатель:</p></span>
+                      <span className={styles.deliveryLabel}><IconUser size={22} /> <p>Получатель:</p></span>
                       <span className={styles.deliveryValue}>{order.customer_name}</span>
                     </div>
                     <div className={styles.deliveryRow}>
-                      <span className={styles.deliveryLabel}><img src={phoneImg} alt="" /> <p>Телефон:</p> </span>
+                      <span className={styles.deliveryLabel}><IconPhone size={22} /> <p>Телефон:</p> </span>
                       <span className={styles.deliveryValue}>{order.customer_phone}</span>
                     </div>
                     <div className={styles.deliveryRow}>
-                      <span className={styles.deliveryLabel}><img src={addressIcon} alt="" /> <p>Адрес доставки:</p> </span>
+                      <span className={styles.deliveryLabel}><IconMapPin size={22} /> <p>Адрес доставки:</p> </span>
                       <span className={styles.deliveryValue}>{order.customer_address}</span>
                     </div>
                     {order.customer_comment && (
@@ -438,13 +451,13 @@ const handleLogout = async () => {
                           <div className={styles.orderItemSpecs}>
                             {item.brand && (
                               <span className={styles.specBadge}>
-                                <span className={styles.specIcon}><img src={brandIcon} alt="" /></span>
+                                <span className={styles.specIcon}><IconBuildingFactory size={18}/></span>
                                 <p>{item.brand}</p>
                               </span>
                             )}
                             {item.color && (
                               <span className={styles.specBadge}>
-                                <span className={styles.specIcon}><img src={colorIcon} alt="" /></span>
+                                <span className={styles.specIcon}><IconCurrencyRubel size={18}/></span>
                                 <p>{item.color}</p>
                               </span>
                             )}
@@ -456,13 +469,13 @@ const handleLogout = async () => {
                             )} */}
                             {(item.sku || item.model) && (
                               <span className={styles.specBadge}>
-                                <span className={styles.specIcon}><img src={skuIcon} alt="" /></span>
+                                <span className={styles.specIcon}><IconTag size={18} /></span>
                                 <p>Артикул: {(item.sku || item.model)}</p>
                               </span>
                             )}
                             {item.width && (
                               <span className={styles.specBadge}>
-                                <span className={styles.specIcon}>📏</span>
+                                <IconArrowsHorizontal size={18} />
                                 {item.width}x{item.height}x{item.depth} см
                               </span>
                             )}

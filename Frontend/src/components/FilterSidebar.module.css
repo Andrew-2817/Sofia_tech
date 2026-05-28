@@ -226,6 +226,154 @@
   margin-top: 8px;
 }
 
+
+
+/* Ширина и Высота - аналогично цене */
+.dimensionInputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.dimensionField {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.dimensionField span {
+  color: #888;
+  font-size: 12px;
+}
+
+.dimensionField input {
+  background: none;
+  border: none;
+  color: #f0f0f0;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+
+.dimensionField input:focus {
+  color: #7bc6cf;
+}
+
+.dimensionSeparator {
+  color: #888;
+}
+
+.dimensionRangeSlider {
+  position: relative;
+  height: 4px;
+  margin: 20px 0;
+}
+
+.dimensionRangeSlider input {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+}
+
+.dimensionRangeSlider input::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #7bc6cf;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.dimensionRangeSlider input::-webkit-slider-runnable-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.dimensionHint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+  margin-top: 8px;
+}
+
+/* Специфичные для ширины и высоты (если нужно отдельно) */
+.widthSlider, .heightSlider {
+  margin-bottom: 20px;
+}
+
+/* FilterSidebar.module.css */
+
+.statusOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.statusLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background: #f8f9fa;
+}
+
+.statusLabel:hover {
+  background: #e9ecef;
+}
+
+.statusLabel input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.statusMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 18px;
+  color: white;
+}
+
+.statusText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+/* Для активного состояния */
+.statusLabel input:checked + .statusMark {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+}
+
+.statusLabel input:checked ~ .statusText {
+  font-weight: 600;
+  color: #000;
+}
+
+.widthSlider:last-child, .heightSlider:last-child {
+  margin-bottom: 0;
+}
+
 /* Цвета */
 .colorOptions {
   display: flex;

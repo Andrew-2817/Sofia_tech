@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/products/brandt", tags=["products_brandt"])
 @router.get("/", response_model=List[BrandtProductResponse])
 def get_all_products(
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 10000,
     category_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):

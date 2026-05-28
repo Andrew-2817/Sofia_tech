@@ -3,6 +3,18 @@ import styles from './Footer.module.css';
 import phoneImg from "../assets/phone.svg"
 import mailIcon from "../assets/mail.svg"
 
+import {
+  IconFlame ,     // Огонь
+IconMail   ,    // Почта
+IconPhone  ,    // Телефон
+IconMapPin ,    // Адрес
+IconTag  ,
+IconUser    ,    // Получатель
+IconEdit   ,     // Редактировать
+IconMessage,
+IconBuildingFactory,IconCurrencyRubel, IconArrowsHorizontal 
+} from '@tabler/icons-react';
+
 const Footer = () => {
   const categories = ['Холодильники', 'Микроволновки', 'Телевизоры', 'Стиральные машины', 'Пылесосы'];
 
@@ -22,8 +34,8 @@ const Footer = () => {
           </div>
           <div>
             <h4>Контакты</h4>
-            <div className={styles.contacts_block}><img src={phoneImg} alt="" /><p>+7 (999) 123-45-67</p></div>
-            <div className={styles.contacts_block}><img src={mailIcon} alt="" /><p>info@techstore.ru</p></div>
+            <div className={styles.contacts_block}><span><IconPhone size={22} /></span><p>+7 (999) 123-45-67</p></div>
+            <div className={styles.contacts_block}><span><IconMail size={22} /></span><p>info@techstore.ru</p></div>
             {/* <p>📍 Москва, ул. Техническая, 1</p> */}
           </div>
         </div>

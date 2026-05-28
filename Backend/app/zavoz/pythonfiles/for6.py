@@ -13,7 +13,7 @@ import pandas as pd
 from sqlalchemy import text
 
 # Пути
-BASE_DIR = Path('/home/raul/projects/sofa2/Sofia_tech')
+BASE_DIR = Path('C:/vs code/Sofia_tech')
 EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_6.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'

@@ -93,6 +93,7 @@
   transition: all 0.3s ease;
   position: relative;
 }
+.tab span {}
 
 .tab img, .logoutBtn img {
   width: 20px;
@@ -179,6 +180,9 @@
   padding: 8px 20px;
   border-radius: 30px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
   transition: all 0.3s ease;
 }
 
@@ -827,7 +831,7 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 0 5px;
-  color: #888;
+  color: #7bc6cf;
 }
 .deliveryLabel img{
   fill: #7bc6cf;
@@ -928,7 +932,7 @@ input:checked + .slider:before {
 
 
 .specIcon {
-  font-size: 10px;
+  color: #7bc6cf;
 }
 
 .orderItemQuantity {

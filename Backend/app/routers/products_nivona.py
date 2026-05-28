@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/products/nivona", tags=["products_nivona"])
 @router.get("/", response_model=List[NivonaProductResponse])
 def get_all_products(
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 1000,
     category_id: Optional[int] = None,
     search: Optional[str] = None,
     db: Session = Depends(get_db)

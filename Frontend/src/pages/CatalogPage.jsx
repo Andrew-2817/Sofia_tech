@@ -7,6 +7,7 @@ import { setSearchQuery, setFilters } from '../store/slices/filtersSlice';
 import { fetchAllProducts } from '../store/slices/productsSlice'; // Импортируем thunk
 import styles from './CatalogPage.module.css';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { resetFilters } from '../store/slices/filtersSlice';
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,30 @@ const CatalogPage = () => {
   const { items: allProducts, loading: productsLoading } = useSelector(state => state.products);
   const { searchQuery, manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
   const { tree: categories, loading: categoriesLoading } = useSelector(state => state.categories);
-  // console.log(allProducts.filter(e => e.id === 137));
+const { 
+  widthRange,
+  heightRange,
+  depthRange,
+  volumeRange,
+  performanceRange,
+  noiseLevelRange,
+  mountingType,
+  controlType,
+  material,
+  compatibility,
+  powerRange,
+  inStock,
+    factory,    // добавить
+  warranty,
+      series,
+  netWeightRange,
+  widthCmRange,
+  status
+} = useSelector(state => state.filters);
+
+
+
+  // console.log(allProducts.filter(e => e.brandId === 1));
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [activeLevel1, setActiveLevel1] = useState(null);
   const [activeLevel2, setActiveLevel2] = useState(null);
@@ -175,11 +199,153 @@ const findCategoryById = (categories, id) => {
     }
   }, [location.search, categories]);
 
+  useEffect(() => {
+  // При изменении категории в URL сбрасываем фильтры
+  dispatch(resetFilters());
+}, [location.search]); 
+
   // Фильтрация товаров
-  console.log(allProducts.filter(el => el.categoryId ===293));
+  // console.log(allProducts.filter(el => el.categoryId ===293));
+
+
+const normalizeColorForFilter = (color) => {
+  if (!color || color === 'null' || color === 'undefined') return null;
+  
+  const colorLower = color.toLowerCase().trim();
+  
+  // Карта соответствий
+  const colorMap = {
+    'черный': 'Черный',
+    'чёрный': 'Черный',
+    'black': 'Черный',
+    'master black': 'Черный',
+    'infinite black': 'Черный',
+    'black velvet': 'Черный',
+    'black steel': 'Черный',
+    'black chrome': 'Черный',
+    'чёрная': 'Черный',
+    'чёрная эмаль': 'Черный',
+    'чёрное стекло': 'Черный',
+    'чёрный матовый': 'Черный',
+    'чёрный (сталь + стекло)': 'Черный',
+    'чёрный (сталь)': 'Черный',
+    'чёрный сатин': 'Черный',
+    'черная+ дымчатый стеклянный поворотный козырек': 'Черный',
+    
+    'белый': 'Белый',
+    'white': 'Белый',
+    'eternal white': 'Белый',
+    'snow': 'Белый',
+    'белая': 'Белый',
+    'белая эмаль': 'Белый',
+    'белое стекло': 'Белый',
+    'белый сатин': 'Белый',
+    'белая эмаль + белое стекло': 'Белый',
+    
+    'серебро': 'Серебро',
+    'серый': 'Серый',
+    'grey': 'Серый',
+    'graphite': 'Графит',
+    'матовый "графит"': 'Графит',
+    'тёмно серый': 'Темно-серый',
+    'anthracite': 'Антрацит',
+    'anthrazit': 'Антрацит',
+    'stainless steel': 'Нержавеющая сталь',
+    'нержавеющая сталь': 'Нержавеющая сталь',
+    'нерж.сталь': 'Нержавеющая сталь',
+    'нерж. сталь': 'Нержавеющая сталь',
+    'inox': 'Нержавеющая сталь',
+    'сталь': 'Нержавеющая сталь',
+    'нерж.+ белое стекло': 'Нержавеющая сталь',
+    'нерж.+ чёрное стекло': 'Нержавеющая сталь',
+    'silver chrome': 'Серебро',
+    
+    'gold': 'Золотой',
+    'solid gold': 'Золотой',
+    'iconic gold': 'Золотой',
+    'copper': 'Медный',
+    'медь': 'Медный',
+    'ever rose': 'Розовый',
+    
+    'heritage': 'Бежевый',
+    'titan rock': 'Титан',
+    'flaw less': 'Прозрачный',
+    'vanity fair': 'Бежевый',
+  };
+  
+  if (colorMap[colorLower]) return colorMap[colorLower];
+  
+  if (colorLower.includes('черн') || colorLower.includes('black')) return 'Черный';
+  if (colorLower.includes('бел') || colorLower.includes('white')) return 'Белый';
+  if (colorLower.includes('сер') || colorLower.includes('grey')) return 'Серый';
+  if (colorLower.includes('серебр') || colorLower.includes('silver')) return 'Серебро';
+  if (colorLower.includes('стал') || colorLower.includes('inox') || colorLower.includes('stainless')) return 'Нержавеющая сталь';
+  if (colorLower.includes('графит') || colorLower.includes('graphite')) return 'Графит';
+  if (colorLower.includes('антрац') || colorLower.includes('anthra')) return 'Антрацит';
+  if (colorLower.includes('золот') || colorLower.includes('gold')) return 'Золотой';
+  if (colorLower.includes('мед') || colorLower.includes('copper')) return 'Медный';
+  
+  if (color.includes(',')) {
+    const firstColor = color.split(',')[0].trim();
+    return normalizeColorForFilter(firstColor);
+  }
+  
+  if (color.includes('/')) {
+    const firstColor = color.split('/')[0].trim();
+    return normalizeColorForFilter(firstColor);
+  }
+  
+  return color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
+};
+
+// Добавьте эту функцию в CatalogPage (рядом с normalizeColorForFilter)
+const normalizeControlType = (type) => {
+  if (!type || type === 'null' || type === 'undefined') return null;
+  
+  const typeLower = type.toLowerCase().trim();
+  
+  const controlTypeMap = {
+    'сенсорное': 'Сенсорное',
+    'сенсорный': 'Сенсорное',
+    'сенсорная': 'Сенсорное',
+    'сенсорное touch control': 'Сенсорное',
+    'сенсорное touch control + сенсор leaf sensor': 'Сенсорное',
+    'сенсорное (9 режимов вытяжки+9 режимов панели)': 'Сенсорное',
+    'сенсорное /dialogue system/ пульт ду-опция': 'Сенсорное',
+    'сенсорное + функция "24 ч"': 'Сенсорное',
+    'электронное сенсорное': 'Сенсорное',
+    'электронное (сенсор)': 'Сенсорное',
+    'электронное': 'Электронное',
+    'электронное (управление с варочной поверхности)': 'Электронное',
+    'электронное+управление с индукции': 'Электронное',
+    'электронное+ пульт ду (опция)': 'Электронное',
+    'электронное сенсорное+функция "24 ч"': 'Электронное',
+    'пульт ду - опция': 'С пультом ДУ',
+    'дистанционное управление кнопки': 'С пультом ДУ',
+    'слайдер': 'Слайдер',
+  };
+  
+  if (controlTypeMap[typeLower]) return controlTypeMap[typeLower];
+  
+  if (typeLower.includes('сенсор')) return 'Сенсорное';
+  if (typeLower.includes('электрон')) return 'Электронное';
+  if (typeLower.includes('пульт') || typeLower.includes('дистанцион')) return 'С пультом ДУ';
+  if (typeLower.includes('слайдер')) return 'Слайдер';
+  
+  return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+};
+
+// Вычисляем минимальную и максимальную цену из всех товаров
+const minProductPrice = allProducts.length > 0 
+  ? Math.min(...allProducts.map(p => p.price || 0))
+  : 0;
+
+const maxProductPrice = allProducts.length > 0 
+  ? Math.max(...allProducts.map(p => p.price || 0))
+  : 500000;
   
 const filteredProducts = allProducts.filter(product => {
-    // ========== РАСШИРЕННЫЙ ПОИСК ==========
+  // ========== РАСШИРЕННЫЙ ПОИСК ==========
   let matchesSearch = true;
   if (searchQuery.trim().length > 0) {
     const lowerSearch = searchQuery.toLowerCase().trim();
@@ -189,10 +355,8 @@ const filteredProducts = allProducts.filter(product => {
       if (!field) return false;
       const fieldLower = field.toLowerCase();
       
-      // Проверка на полное совпадение или вхождение
       if (fieldLower.includes(lowerSearch)) return true;
       
-      // Проверка по отдельным словам
       for (const term of searchTerms) {
         if (fieldLower.includes(term)) return true;
       }
@@ -212,31 +376,160 @@ const filteredProducts = allProducts.filter(product => {
       (product.brand_id === 2 && checkField('Brandt'));
   }
   
+  // ========== ФИЛЬТРАЦИЯ ПО КАТЕГОРИИ ==========
   let matchesCategory = true;
   
   if (activeLevel3) {
     matchesCategory = isProductInCategory(product.categoryId, activeLevel3, categories);
-    
   } else if (activeLevel2) {
     matchesCategory = isProductInCategory(product.categoryId, activeLevel2, categories);
   } else if (activeLevel1) {
     matchesCategory = isProductInCategory(product.categoryId, activeLevel1, categories);
   }
   
+  // ========== ФИЛЬТР ПРОИЗВОДИТЕЛЯ ==========
   const matchesManufacturer = manufacturer.length === 0 || manufacturer.includes(product.brand);
+  
+  // ========== ФИЛЬТР ЦЕНЫ (только если изменен) ==========
+  const isPriceFilterActive = priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice;
+  const matchesPrice = !isPriceFilterActive || (product.price >= priceRange[0] && product.price <= priceRange[1]);
+  
+  // ========== ФИЛЬТР ЦВЕТА (только если выбран) ==========
+  const isColorFilterActive = color && color !== '';
+  const matchesColor = !isColorFilterActive || normalizeColorForFilter(product.color) === color;
+  
+  // ========== ДИНАМИЧЕСКИЕ ФИЛЬТРЫ (только если активны) ==========
+  const isWidthFilterActive = widthRange && widthRange[1] !== 0 && widthRange[1] !== 200;
+  const matchesWidth = !isWidthFilterActive || (product.width && product.width <= widthRange[1]);
+  // console.log(product.width);
+  
+  
+  const isHeightFilterActive = heightRange && heightRange[1] !== 0 && heightRange[1] !== 200;
+  const matchesHeight = !isHeightFilterActive || (product.height && product.height <= heightRange[1]);
+  
+  const isVolumeFilterActive = volumeRange && volumeRange[1] !== 0 && volumeRange[1] !== 1000;
+  const matchesVolume = !isVolumeFilterActive || (product.volume && product.volume <= volumeRange[1]);
+  // console.log(product.volume);
+  
+  
+  const isPowerFilterActive = powerRange && powerRange[1] !== 0 && powerRange[1] !== 5000;
+  const matchesPower = !isPowerFilterActive || (product.power && product.power <= powerRange[1]);
+  
+  
+  const isControlTypeFilterActive = controlType && controlType !== '';
+  const matchesControlType = !isControlTypeFilterActive || 
+  (normalizeControlType(product.control_type) === controlType);
+  
+  const isMaterialFilterActive = material && material !== '';
+  const matchesMaterial = !isMaterialFilterActive || (product.material === material);
+  // console.log(product.material);
+  
+  
+  const isCompatibilityFilterActive = compatibility && compatibility.length > 0;
+  const matchesCompatibility = !isCompatibilityFilterActive || compatibility.includes(product.brandName);
+  
+  // ========== ФИЛЬТР НАЛИЧИЯ ==========
+  const matchesInStock = inStock === null || 
+    (inStock === true && product.in_stock === true) || 
+    (inStock === false && product.in_stock === false);
 
-  // console.log(manufacturer);
+    // ========== ФИЛЬТР ТИПА УСТАНОВКИ (factory) ==========
+  const isFactoryFilterActive = factory && factory.length > 0;
+  const matchesFactory = !isFactoryFilterActive || factory.includes(product.factory);
   
-  const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-  const matchesColor = color === '' || product.color === color;
+  // ========== ФИЛЬТР ГАРАНТИИ (warranty) ==========
+  const isWarrantyFilterActive = warranty && warranty.length > 0;
+  const matchesWarranty = !isWarrantyFilterActive || warranty.includes(product.warranty);
   
-  // ВРЕМЕННО ОТКЛЮЧАЮ
-  const matchesLoadCapacity = true;
-  const matchesEnergyClass = true;
+  // ========== ФИЛЬТР СЕРИИ (series) ==========
+const isSeriesFilterActive = series && series.length > 0;
+const matchesSeries = !isSeriesFilterActive || series.includes(product.series);
+
+// ========== ФИЛЬТР ВЕСА НЕТТО (net_weight) ==========
+const isNetWeightFilterActive = netWeightRange && (netWeightRange[0] > 0 || netWeightRange[1] < 100);
+const matchesNetWeight = !isNetWeightFilterActive || 
+  (product.net_weight >= netWeightRange[0] && product.net_weight <= netWeightRange[1]);
+
+// ========== ФИЛЬТР ШИРИНЫ В СМ (width_cm) ==========
+const isWidthCmFilterActive = widthCmRange && (widthCmRange[0] > 0 || widthCmRange[1] < 200);
+const matchesWidthCm = !isWidthCmFilterActive || 
+  (product.width_cm >= widthCmRange[0] && product.width_cm <= widthCmRange[1]);
+
+const isStatusFilterActive = status && status.length > 0;
+const matchesStatus = !isStatusFilterActive || status.includes(product.status);
   
-  return matchesSearch && matchesCategory && matchesManufacturer && matchesPrice && matchesColor;
+  // ========== ВРЕМЕННО ОТКЛЮЧЕННЫЕ ФИЛЬТРЫ ==========
+  const matchesLoadCapacity = true;  // loadCapacity === '' || product.load_capacity === loadCapacity
+  const matchesEnergyClass = true;   // energyClass === '' || product.energy_class === energyClass
+  
+  // ========== ИТОГОВОЕ УСЛОВИЕ ==========
+  return matchesCategory && 
+         matchesSearch && 
+         matchesManufacturer && 
+         matchesPrice && 
+         matchesColor &&
+         matchesWidth &&
+        matchesFactory &&
+         matchesWarranty &&
+         matchesHeight &&
+         matchesVolume &&
+          matchesSeries &&      // добавить
+       matchesNetWeight &&   // добавить
+       matchesWidthCm && 
+        //  matchesPower &&
+         matchesControlType &&
+         matchesMaterial &&
+         matchesStatus &&
+         matchesCompatibility;
 });
-  console.log(filteredProducts);
+  // Вставьте это в ваш компонент, где есть filteredProducts
+
+const analyzeFields = (products) => {
+  if (!products || products.length === 0) {
+    console.log('Нет товаров');
+    return;
+  }
+
+  const fieldCount = {};
+
+  products.forEach(product => {
+    Object.keys(product).forEach(field => {
+      const value = product[field];
+      const isFilled = value !== null && value !== undefined && value !== '';
+      
+      if (!fieldCount[field]) {
+        fieldCount[field] = {
+          total: products.length,
+          filled: 0,
+          empty: 0
+        };
+      }
+      
+      if (isFilled) {
+        fieldCount[field].filled++;
+      } else {
+        fieldCount[field].empty++;
+      }
+    });
+  });
+
+  console.log(`\n📊 Анализ ${products.length} товаров:`);
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+  
+  Object.entries(fieldCount)
+    .sort((a, b) => b[1].filled - a[1].filled)
+    .forEach(([field, stats]) => {
+      const percent = ((stats.filled / stats.total) * 100).toFixed(1);
+      console.log(`${field}: ${stats.filled}/${stats.total} (${percent}%)`);
+    });
+};
+
+// Использование:
+// analyzeFields(filteredProducts);
+  console.log(new Set(filteredProducts.map(e => e.status)));
+  
+
+
   
 
   // Эффект загрузки

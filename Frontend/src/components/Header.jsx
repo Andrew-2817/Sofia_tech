@@ -2,8 +2,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
-import { setSearchQuery } from '../store/slices/filtersSlice';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { resetFilters, setSearchQuery } from '../store/slices/filtersSlice';
 import AuthModal from './AuthModal';
 import CartModal from './CartModal';
 import FavoritesModal from './FavoritesModal';
@@ -31,6 +31,8 @@ const Header = () => {
   
   const searchContainerRef = useRef(null);
   const searchInputRef = useRef(null);
+  
+  const location = useLocation();
   
   const { tree: categories, loading } = useSelector(state => state.categories);
   const cartItemsCount = useSelector(state => state.cart.items.reduce((acc, item) => acc + item.quantity, 0));
@@ -60,7 +62,10 @@ const Header = () => {
   }, [search, allProducts]);
 
 
-      
+  useEffect(() => {
+  // При изменении категории в URL сбрасываем фильтры
+  dispatch(resetFilters());
+}, [location.search]);      
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -194,7 +199,10 @@ const Header = () => {
               <button
                 key={cat.id}
                 className={styles.categoryLink}
-                onClick={() => navigate(`/catalog?level1=${cat.slug}`)}
+                onClick={() => {
+                  navigate(`/catalog?level1=${cat.slug}`)
+                }
+                }
               >
                 {cat.name}
               </button>

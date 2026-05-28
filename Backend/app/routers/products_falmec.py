@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/products/falmec", tags=["products_falmec"])
 @router.get("/", response_model=List[FalmecProductResponse])
 def get_all_products(
     skip: int = Query(0, ge=0, description="Количество пропускаемых записей"),
-    limit: int = Query(100, ge=1, le=500, description="Максимальное количество записей"),
+    limit: int = Query(1000, ge=1, le=5000, description="Максимальное количество записей"),
     category_id: Optional[int] = Query(None, description="Фильтр по ID категории"),
     brand_id: Optional[int] = Query(None, description="Фильтр по ID бренда"),
     search: Optional[str] = Query(None, description="Поиск по модели или коду производителя"),

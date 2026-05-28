@@ -20,7 +20,7 @@ router = APIRouter(prefix="/api/products/schulthess", tags=["products_schulthess
 @router.get("/", response_model=List[SchulthessProductInDB])
 def get_all_products(
     skip: int = Query(0, ge=0, description="Количество пропускаемых записей"),
-    limit: int = Query(100, ge=1, le=500, description="Максимальное количество записей"),
+    limit: int = Query(1000, ge=1, le=50000, description="Максимальное количество записей"),
     category_id: Optional[int] = Query(None, description="Фильтр по ID категории"),
     brand_id: Optional[int] = Query(None, description="Фильтр по ID бренда"),
     search: Optional[str] = Query(None, description="Поиск по названию, модели или группе"),
