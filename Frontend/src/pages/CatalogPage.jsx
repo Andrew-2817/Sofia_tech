@@ -9,6 +9,12 @@ import styles from './CatalogPage.module.css';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { resetFilters } from '../store/slices/filtersSlice';
 
+import ImgCat1 from "../assets/cat-1.jpg"
+import ImgCat2 from "../assets/cat-2.jpg"
+import ImgCat3 from "../assets/cat-3.jpg"
+import ImgCat4 from "../assets/cat-4.jpg"
+import ImgCat5 from "../assets/cat-5.jpg"
+
 const CatalogPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -59,31 +65,31 @@ const {
     'large-appliances': {
       title: 'Крупная бытовая техника',
       description: 'Широкий выбор стиральных машин, холодильников, посудомоечных машин и другой крупной бытовой техники от ведущих производителей. Высокое качество, надежность и доступные цены.',
-      image: 'https://images.unsplash.com/photo-1556911220-bda9f7f7597e?w=1200',
+      image: ImgCat1,
       bgColor: '#7bc6cf'
     },
     'built-in-appliances': {
       title: 'Встраиваемая техника',
       description: 'Идеальное решение для современной кухни. Духовые шкафы, варочные поверхности, вытяжки и кофемашины, которые идеально впишутся в ваш интерьер.',
-      image: 'https://images.unsplash.com/photo-1556909172-5457c8c4f165?w=1200',
+      image: ImgCat2,
       bgColor: '#ff9f43'
     },
     'small-appliances': {
       title: 'Мелкая бытовая техника',
       description: 'Кофемашины, блендеры, пылесосы и другая техника для комфортной жизни. Компактные размеры и высокая функциональность.',
-      image: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?w=1200',
+      image: ImgCat3,
       bgColor: '#a55eea'
     },
     'accessories': {
       title: 'Аксессуары',
       description: 'Оригинальные аксессуары и комплектующие для вашей техники. Фильтры, направляющие, чистящие средства и многое другое.',
-      image: 'https://images.unsplash.com/photo-1585672284549-7b2cb6aedfc5?w=1200',
+      image: ImgCat4,
       bgColor: '#eb4d4b'
     },
     'kitchen-blocks': {
       title: 'Кухонные блоки ILVE',
       description: 'Премиальные кухонные блоки итальянского бренда ILVE. Сочетание стиля, мощности и функциональности для вашей кухни.',
-      image: 'https://images.unsplash.com/photo-1556912173-3bb406efc0c2?w=1200',
+      image: ImgCat5,
       bgColor: '#20bf6b'
     },
   };
