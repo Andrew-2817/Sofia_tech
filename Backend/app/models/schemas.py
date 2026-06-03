@@ -8,6 +8,35 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
 
+# ==================== Схемы для товаров Elica ====================
+class ElicaProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    type_of_price: Optional[str] = None
+    name: str = Field(..., min_length=1, max_length=255)
+    main_image: Optional[str] = None
+    model: Optional[str] = None
+    actual_code: Optional[str] = None
+    description: Optional[str] = None
+
+class ElicaProductCreate(ElicaProductBase):
+    pass
+
+class ElicaProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    type_of_price: Optional[str] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    main_image: Optional[str] = None
+    model: Optional[str] = None
+    actual_code: Optional[str] = None
+    description: Optional[str] = None
+
+class ElicaProductInDB(ElicaProductBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
 
 # ==================== Схемы для товаров Bonkrasher ====================
 
