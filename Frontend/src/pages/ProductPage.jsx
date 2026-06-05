@@ -49,12 +49,14 @@ import {
   IconLayoutList,
   IconChartBar,
   IconCurrencyRubel,
-  IconCircleCheck, IconFireHydrant
+  IconCircleCheck, IconFireHydrant,
+  IconBasket,
+IconHeart, IconHeartFilled
 } from '@tabler/icons-react';
 
 
 const ProductPage = () => {
-  const { brandId, id } = useParams(); // получаем brandId и id из URL
+  const { brand, sku } = useParams();; // получаем brandId и id из URL
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(1);
@@ -62,16 +64,8 @@ const ProductPage = () => {
   const { items: allProducts, loading } = useSelector(state => state.products);
   const favorites = useSelector(state => state.favorites.items);
   // Поиск товара по комбинации id + brandId
-  const product = allProducts.find(p => {
-    return String(p.id) === String(id) && String(p.brandId) === String(brandId);
-  });
+  console.log(allProducts.filter(el => el.main_image === null));
   
-const isFavorite = favorites.some(fav => fav.id === product.id && fav.brandId === product.brandId);
-console.log(isFavorite);
-console.log(product);
-console.log(favorites);
-
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -87,19 +81,27 @@ console.log(favorites);
       dispatch(fetchAllProducts());
     }
   }, [dispatch, allProducts.length, loading]);
+
+
+  const product = allProducts.find(p =>
+  p.brand === brand &&
+  (p.sku?.toLowerCase() === sku || p.model?.toLowerCase() === sku)
+);
   
-  if (loading && allProducts.length === 0) {
-    return <div className="container">Загрузка...</div>;
-  }
+if (isPageLoading || loading && allProducts.length === 0) {
+  return <div className="container">Загрузка...</div>;
+}
+
+if (!product) {
+  return <div className="container">Товар не найден</div>;
+}
+const isFavorite = favorites.some(fav => fav.id === product.id && fav.brandId === product.brandId);
   
-  if (!product) {
-    return <div className="container">Товар не найден</div>;
-  }
   
   // Похожие товары (по бренду или категории)
   const similarProducts = allProducts.filter(p => {
     return (p.brandId === product.brandId || p.categoryId === product.categoryId) 
-      && !(String(p.id) === String(id) && String(p.brand_id) === String(brandId));
+      && !(p.brand === brand && (p.sku?.toLowerCase() === sku || p.model?.toLowerCase() === sku));
   }).slice(0, 8);
   
   // Формируем характеристики в зависимости от бренда
@@ -190,13 +192,15 @@ const getProductSpecs = () => {
   
 // ProductPage.jsx - обновленный handleAddToCart
 const handleAddToCart = () => {
+  console.log(product);
+  
   for (let i = 0; i < quantity; i++) {
     dispatch(addToCart({ 
       id: product.id,
-      brandId: product.brand_id,
+      brandId: product.brandId,
       name: product.name,
       price: product.price,
-      image: product.main_image || product.image,
+      image:  product.main_image || product.image,
       sku: product.sku || product.model,
       brandName: product.brandName || (product.brand_id === 1 ? 'Homeier' : 'Brandt'),
       color: product.color || null,
@@ -218,32 +222,27 @@ const imageUrl = product.main_image !== null
   };
 
 
-  if (isPageLoading) {
-    return <LoadingSpinner text="Загрузка товара..." />;
-  }
+  // if (isPageLoading) {
+  //   return <LoadingSpinner text="Загрузка товара..." />;
+  // }
   
   return (
     <div className="container">
       <div className={styles.productPage}>
         {/* Хлебные крошки */}
-        <div className={styles.breadcrumbs}>
-          <button onClick={() => navigate('/')} className={styles.breadcrumbLink}>
-            Главная
-          </button>
-          <span className={styles.breadcrumbSeparator}>/</span>
-          <button 
-            onClick={() => navigate('/catalog')} 
-            className={styles.breadcrumbLink}
-          >
-            Каталог
-          </button>
-          <span className={styles.breadcrumbSeparator}>/</span>
-          <span className={styles.breadcrumbCurrent}>
-            {product.brand_id === 1 ? 'Homeier' : 'Brandt'}
-          </span>
-          <span className={styles.breadcrumbSeparator}>/</span>
-          <span className={styles.breadcrumbCurrent}>{product.name}</span>
-        </div>
+      <div className={styles.breadcrumbs}>
+        <button onClick={() => navigate('/')} className={styles.breadcrumbLink}>
+          Главная
+        </button>
+        <span className={styles.breadcrumbSeparator}>/</span>
+        <button onClick={() => navigate('/catalog')} className={styles.breadcrumbLink}>
+          Каталог
+        </button>
+        <span className={styles.breadcrumbSeparator}>/</span>
+        <span className={styles.breadcrumbCurrent}>{product.brandName}</span>
+        <span className={styles.breadcrumbSeparator}>/</span>
+        <span className={styles.breadcrumbCurrent}>{product.name}</span>
+      </div>
 
         <div className={styles.main}>
           {/* Левая колонка - изображение */}
@@ -310,14 +309,14 @@ const imageUrl = product.main_image !== null
             {/* Кнопки действий */}
             <div className={styles.buttons}>
               <button className={styles.cartBtn} onClick={handleAddToCart}>
-                <img src={basketIcon} alt="" /> 
+                <IconBasket size={25} /> 
                 <p>Добавить в корзину</p>
               </button>
               <button 
                 className={`${styles.favBtn} ${isFavorite ? styles.active : ''}`}
                 onClick={handleToggleFavorite}
               >
-                <img src={isFavorite ? fullfilledHeartIcon : heartIcon} alt="" />
+                {isFavorite ? <IconHeartFilled size={25} /> : <IconHeart size={25}/>}
                 <span>{isFavorite ? 'В избранном' : 'В избранное'}</span>
               </button>
             </div>

@@ -1,4 +1,8 @@
 // CartModal.jsx - обновленная версия
+// лимит для названия
+// ошибка при обновлении станницы товара
+
+
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -12,12 +16,18 @@ import trashIcon from "../assets/trash.svg";
 import { API_BASE_URL_photo } from '../services/api';
 
 
+import {
+  IconBasket, IconTrash,
+} from '@tabler/icons-react';
+
 const CartModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const { items } = useSelector(state => state.cart);
+  console.log(items);
+  
   const { user, isLoggedIn, loading: authLoading } = useSelector(state => state.auth);
   const { loading, error, success } = useSelector(state => state.orders);
-  
+  const products = useSelector(state => state.products.items);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
   const [formData, setFormData] = useState({
     customer_name: '',
@@ -135,7 +145,6 @@ const CartModal = ({ isOpen, onClose }) => {
   
   if (!isOpen) return null;
 
-  console.log(formData);
   
   
   return (
@@ -143,7 +152,7 @@ const CartModal = ({ isOpen, onClose }) => {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>
-            <span className={styles.headerIcon}><img src={basketIcon} alt="" /></span>
+            <span className={styles.headerIcon}><IconBasket size={25} /></span>
             <p>Корзина</p>
             <span className={styles.itemCount}>{totalItems}</span>
           </h2>
@@ -208,7 +217,7 @@ const CartModal = ({ isOpen, onClose }) => {
                       className={styles.removeBtn}
                       onClick={() => dispatch(removeFromCart({ id: item.id, brandId: item.brandId }))}
                     >
-                      <img src={trashIcon} alt="" />
+                      <IconTrash size={20} />
                     </button>
                   </div>
                   <div className={styles.itemTotal}>

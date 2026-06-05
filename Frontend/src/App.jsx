@@ -50,7 +50,10 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/catalog" element={<CatalogPage />} />
-          <Route path="/product/:brandId/:id" element={<ProductPage />} />
+          <Route path="/catalog/:level1" element={<CatalogPage />} />
+          <Route path="/catalog/:level1/:level2" element={<CatalogPage />} />
+          <Route path="/catalog/:level1/:level2/:level3" element={<CatalogPage />} />
+          <Route path="/product/:brand/:sku" element={<ProductPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </main>

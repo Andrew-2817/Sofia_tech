@@ -586,8 +586,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #f0f0f0;
+  color: #7bc6cf;
   font-size: 14px;
+}
+.bannerText span{
+  color: #f0f0f0;
 }
 
 .bannerIcon {

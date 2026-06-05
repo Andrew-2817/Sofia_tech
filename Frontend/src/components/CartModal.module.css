@@ -246,7 +246,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #ff6b6b;
+  color: #f0f0f0;
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -266,6 +266,7 @@
 
 .removeBtn:hover {
   background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
   transform: scale(1.05);
 }
 

@@ -10,17 +10,24 @@ import fullfilledHeartIcon from "../assets/solid-heart.svg";
 import { API_BASE_URL_photo } from '../services/api';
 import { getDefaultProductImage } from '../data/mockData';
 
+import {
+  IconBasket,
+IconHeart, IconHeartFilled
+} from '@tabler/icons-react';
+
+
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   
   // ИСПРАВЛЕНО: проверка избранного по составному ключу
   const isFavorite = useSelector(state => 
-    state.favorites.items.some(fav => fav.id === product.id && fav.brandId === product.brand_id)
+    state.favorites.items.some(fav => fav.id === product.id && fav.brandId === product.brandId)
   );
 
   // const imageUrl = product.main_image || product.image || 'https://via.placeholder.com/300x300?text=No+Image';
-
+  console.log(product);
+  
   const handleToggleFavorite = (e) => {
     e.preventDefault();
     dispatch(toggleFavorite({ 
@@ -35,9 +42,10 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
+    console.log('product перед добавлением:', product); //
     dispatch(addToCart({ 
       id: product.id,
-      brandId: product.brand_id,
+      brandId: product.brandId,
       name: product.name,
       price: product.price,
       image: product.main_image || product.image,
@@ -50,20 +58,22 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className={styles.card}>
-      <Link to={`/product/${product.brandId}/${product.id}`}>
+      <Link to={`/product/${product.brand}/${product.sku?.toLowerCase() || product.model?.toLowerCase()}`}>
         <img src={imageUrl} alt={product.name} className={styles.image}/>
         <div className={styles.category}>
-          {product.brandName} • {product.groupLevel1 || product.model || 'Товар'}
+          {product.brandName}
         </div>
-        <h3 className={styles.name}>{product.name}</h3>
+        <h3 className={styles.name}>
+          {product.name.length > 100 ? product.name.slice(0, 100) + '...' : product.name}
+        </h3>
         <p className={styles.price}>{product.price.toLocaleString()} ₽</p>
       </Link>
       <div className={styles.actions}>
         <button onClick={handleToggleFavorite} className={styles.favBtn}>
-          <img src={isFavorite ? fullfilledHeartIcon : heartIcon} alt="" /> 
+          {isFavorite ? <IconHeartFilled size={25} /> : <IconHeart size={25}/>}
         </button>
         <button onClick={handleAddToCart} className={styles.cartBtn}>
-          <img src={basketIcon} alt="" />
+          <IconBasket size={25} />
         </button>
       </div>
     </div>

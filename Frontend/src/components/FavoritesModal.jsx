@@ -10,6 +10,10 @@ import crossIcon from '../assets/cross.svg';
 import trashIcon from "../assets/trash.svg";
 import { API_BASE_URL_photo } from '../services/api';
 
+import {
+  IconBasket, IconTrash, IconHeart
+} from '@tabler/icons-react';
+
 const FavoritesModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const favorites = useSelector(state => state.favorites.items); // массив объектов { id, brandId }
@@ -20,6 +24,9 @@ const FavoritesModal = ({ isOpen, onClose }) => {
   const favoriteProducts = products.filter(product => {
     return favorites.some(fav => fav.id === product.id && fav.brandId === product.brandId);
   });
+
+  console.log(favoriteProducts);
+  
   
   const handleToggleFavorite = (e, productId, brandId) => {
     e.preventDefault();
@@ -49,7 +56,7 @@ const FavoritesModal = ({ isOpen, onClose }) => {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>
-            <span className={styles.headerIcon}><img src={heartIcon} alt="" /></span>
+            <span className={styles.headerIcon}><IconHeart size={25} /></span>
             Избранное
             <span className={styles.itemCount}>{favoriteProducts.length}</span>
           </h2>
@@ -86,30 +93,19 @@ const FavoritesModal = ({ isOpen, onClose }) => {
                       {product.name}
                     </Link>
                     <div className={styles.itemPrice}>{product.price.toLocaleString()} ₽</div>
-                    <div className={styles.itemSpecs}>
-                      {product.color && (
-                        <span className={styles.spec}>🎨 {product.color}</span>
-                      )}
-                      {product.model && (
-                        <span className={styles.spec}>🔢 {product.model}</span>
-                      )}
-                      {product.sku && (
-                        <span className={styles.spec}>🔖 {product.sku}</span>
-                      )}
-                    </div>
                   </div>
                   <div className={styles.itemActions}>
                     <button 
                       className={styles.cartBtn}
                       onClick={(e) => handleAddToCart(e, product)}
                     >
-                      <img src={basketIcon} alt="" /> <p>В корзину</p>
+                      <IconBasket size={20} /> <p>В корзину</p>
                     </button>
                     <button 
                       className={styles.removeBtn}
                       onClick={(e) => handleToggleFavorite(e, product.id, product.brandId)}
                     >
-                      <img src={trashIcon} alt="" /> <p>Удалить</p>
+                      <IconTrash size={20} /> <p>Удалить</p>
                     </button>
                   </div>
                 </div>

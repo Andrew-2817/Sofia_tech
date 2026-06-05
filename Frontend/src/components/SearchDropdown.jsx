@@ -129,24 +129,9 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
                       {product.groupLevel1 || product.model || 'Бытовая техника'}
                     </span>
                   </div>
-                  <h4 className={styles.productName}>{product.name}</h4>
-                  <div className={styles.productSpecs}>
-                    {product.color && (
-                      <span className={styles.spec}>
-                        <span className={styles.specIcon}>🎨</span> {product.color}
-                      </span>
-                    )}
-                    {product.width && (
-                      <span className={styles.spec}>
-                        <span className={styles.specIcon}>📏</span> {product.width}×{product.height}×{product.depth} см
-                      </span>
-                    )}
-                    {product.model && (
-                      <span className={styles.spec}>
-                        <span className={styles.specIcon}>🔢</span> {product.model}
-                      </span>
-                    )}
-                  </div>
+                    <h4 className={styles.name}>
+                      {product.name.length > 100 ? product.name.slice(0, 100) + '...' : product.name}
+                    </h4>
                   <div className={styles.productFooter}>
                     <span className={styles.price}>{product.price.toLocaleString()} ₽</span>
                     <button 
@@ -156,7 +141,7 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
                         handleProductClick(product);
                       }}
                     >
-                      Быстрый просмотр
+                      Перейти
                     </button>
                   </div>
                 </div>

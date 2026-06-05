@@ -81,22 +81,22 @@ const getCategoryIcon = (category) => {
   };
 
   // Переход на страницу каталога с категорией 1 уровня
-  const handleNavigateToLevel1 = (level1Category) => {
-    navigate(`/catalog?level1=${level1Category.slug}`);
-    onClose();
-  };
+// В CatalogMenu.jsx
 
-  // Переход на страницу каталога с категорией 2 уровня
-  const handleNavigateToLevel2 = (level2Category, level1Category) => {
-    navigate(`/catalog?level1=${level1Category.slug}&category=${level2Category.slug}`);
-    onClose();
-  };
+const handleNavigateToLevel1 = (level1Category) => {
+  navigate(`/catalog/${level1Category.slug}`);
+  onClose();
+};
 
-  // Переход на страницу каталога с категорией 3 уровня
-  const handleNavigateToLevel3 = (level3Category, level2Category, level1Category) => {
-    navigate(`/catalog?level1=${level1Category.slug}&category=${level2Category.slug}&subcategory=${level3Category.id}`);
-    onClose();
-  };
+const handleNavigateToLevel2 = (level2Category, level1Category) => {
+  navigate(`/catalog/${level1Category.slug}/${level2Category.slug}`);
+  onClose();
+};
+
+const handleNavigateToLevel3 = (level3Category, level2Category, level1Category) => {
+  navigate(`/catalog/${level1Category.slug}/${level2Category.slug}/${level3Category.slug}`);
+  onClose();
+};
 
   if (!isOpen) return null;
 

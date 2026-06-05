@@ -28,9 +28,9 @@ IconMapPin ,    // Адрес
 IconTag  ,
 IconUser    ,    // Получатель
 IconEdit   ,     // Редактировать
-IconMessage,
+IconMessage, IconTrash,
 IconBuildingFactory,IconCurrencyRubel, IconArrowsHorizontal, IconShoppingBag,   // Заказы
-IconHeart
+IconHeart, IconLogout
 } from '@tabler/icons-react';
 
 const ProfilePage = () => {
@@ -224,7 +224,7 @@ const handleLogout = async () => {
             </div>
           </div>
           <button onClick={handleLogout} className={styles.logoutBtn}>
-            <img src={signOutIcon} alt="" /> <p>Выйти</p>
+            <IconLogout size={25} /> <p>Выйти</p>
           </button>
         </div>
 
@@ -559,7 +559,7 @@ const handleLogout = async () => {
                     className={styles.removeFavoriteBtn}
                     onClick={() => handleRemoveFavorite(product.id, product.brandId)}
                   >
-                    <img src={trashIcon} alt="" /> <p>Удалить</p>
+                    <IconTrash size={20}/> <p>Удалить</p>
                   </button>
                 </div>
               </div>

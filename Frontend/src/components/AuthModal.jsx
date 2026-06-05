@@ -8,6 +8,10 @@ import crossIcon from '../assets/cross.svg';
 import regIcon from '../assets/reg.svg';
 import singInIcon from '../assets/sign-in.svg';
 
+import {
+  IconLogin, IconUserPlus
+} from '@tabler/icons-react';
+
 const AuthModal = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('login');
   const [formData, setFormData] = useState({
@@ -205,7 +209,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               setServerError(null);
             }}
           >
-            <img src={singInIcon} alt="" />
+            <IconLogin size={25} />
             Вход
           </button>
           <button
@@ -216,7 +220,7 @@ const AuthModal = ({ isOpen, onClose }) => {
               setServerError(null);
             }}
           >
-            <img src={regIcon} alt="" />
+            <IconUserPlus size={25} />
             Регистрация
           </button>
         </div>

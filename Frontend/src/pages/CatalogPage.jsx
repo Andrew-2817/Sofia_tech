@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams  } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
 import { setSearchQuery, setFilters } from '../store/slices/filtersSlice';
@@ -18,7 +18,7 @@ import ImgCat5 from "../assets/cat-5.jpg"
 const CatalogPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { level1: level1Slug, level2: level2Slug, level3: level3Slug } = useParams();
   const { items: allProducts, loading: productsLoading } = useSelector(state => state.products);
   const { searchQuery, manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
   const { tree: categories, loading: categoriesLoading } = useSelector(state => state.categories);
@@ -45,7 +45,7 @@ const {
 
 
 
-  // console.log(allProducts.filter(e => e.brandId === 1));
+  console.log(categories);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [activeLevel1, setActiveLevel1] = useState(null);
   const [activeLevel2, setActiveLevel2] = useState(null);
@@ -148,67 +148,65 @@ const findCategoryById = (categories, id) => {
   }, [dispatch, allProducts.length, productsLoading]);
 
   // Парсим URL при загрузке
-  useEffect(() => {
-    if (categories.length === 0) return;
-    const params = new URLSearchParams(location.search);
-    const level1Slug = params.get('level1');
-    const level2Slug = params.get('category');
-    const level3Id = params.get('subcategory');
-    
-    // Если есть level1 в URL
-    if (level1Slug) {
-      const foundLevel1 = categories.find(c => c.slug === level1Slug);
-      if (foundLevel1) {
-        setLevel1Category(foundLevel1);
-        setActiveLevel1(foundLevel1.id);
-        updateBanner(foundLevel1);
-        setLevel2CategoriesForTabs(foundLevel1.children || []);
-        setLevel2Category(null);
-        setActiveLevel2(null);
-        setLevel3Categories([]);
-        setActiveLevel3(null);
-      }
-    }
-    
-    // Если есть level2 в URL
-    if (level2Slug) {
-      let foundLevel2 = null;
-      let foundLevel1ForLevel2 = null;
-      
-      for (const cat1 of categories) {
-        for (const cat2 of cat1.children || []) {
-          if (cat2.slug === level2Slug) {
-            foundLevel2 = cat2;
-            foundLevel1ForLevel2 = cat1;
-            break;
-          }
-        }
-        if (foundLevel2) break;
-      }
-      
-      if (foundLevel2) {
-        setLevel1Category(foundLevel1ForLevel2);
-        setActiveLevel1(foundLevel1ForLevel2?.id);
-        setLevel2Category(foundLevel2);
-        setActiveLevel2(foundLevel2.id);
-        // updateBanner(foundLevel2);
-        setLevel3Categories(foundLevel2.children || []);
-        
-        if (level3Id) {
-          const foundLevel3 = foundLevel2.children?.find(c => c.id === parseInt(level3Id));
-          if (foundLevel3) {
-            setActiveLevel3(foundLevel3.id);
-            // setCurrentCategoryName(foundLevel3.name);
-          }
-        }
-      }
-    }
-  }, [location.search, categories]);
+useEffect(() => {
+  if (categories.length === 0) return;
 
-  useEffect(() => {
-  // При изменении категории в URL сбрасываем фильтры
+  // Нет ни одного сегмента — сбрасываем всё
+  if (!level1Slug) {
+    setLevel1Category(null);
+    setActiveLevel1(null);
+    setLevel2Category(null);
+    setActiveLevel2(null);
+    setLevel3Categories([]);
+    setActiveLevel3(null);
+    setLevel2CategoriesForTabs([]);
+    setCurrentCategoryName('');
+    setCurrentCategoryDescription('');
+    setCurrentCategoryImage('');
+    return;
+  }
+
+  // level1
+  const foundLevel1 = categories.find(c => c.slug === level1Slug);
+  if (!foundLevel1) return;
+
+  setLevel1Category(foundLevel1);
+  setActiveLevel1(foundLevel1.id);
+  updateBanner(foundLevel1);
+  setLevel2CategoriesForTabs(foundLevel1.children || []);
+
+  // level2
+  if (!level2Slug) {
+    setLevel2Category(null);
+    setActiveLevel2(null);
+    setLevel3Categories([]);
+    setActiveLevel3(null);
+    return;
+  }
+
+  const foundLevel2 = foundLevel1.children?.find(c => c.slug === level2Slug);
+  if (!foundLevel2) return;
+
+  setLevel2Category(foundLevel2);
+  setActiveLevel2(foundLevel2.id);
+  setLevel3Categories(foundLevel2.children || []);
+
+  // level3
+  if (!level3Slug) {
+    setActiveLevel3(null);
+    return;
+  }
+
+  const foundLevel3 = foundLevel2.children?.find(c => c.slug === level3Slug);
+  if (foundLevel3) {
+    setActiveLevel3(foundLevel3.id);
+  }
+
+}, [level1Slug, level2Slug, level3Slug, categories]);
+
+useEffect(() => {
   dispatch(resetFilters());
-}, [location.search]); 
+}, [level1Slug, level2Slug, level3Slug]); 
 
   // Фильтрация товаров
   // console.log(allProducts.filter(el => el.categoryId ===293));
@@ -547,55 +545,44 @@ const analyzeFields = (products) => {
   }, [searchQuery, manufacturer, priceRange, color, loadCapacity, energyClass, activeLevel3, activeLevel2, activeLevel1]);
 
   // Обработка клика по категории 1 уровня
-  const handleLevel1Click = (level1) => {
-    setActiveLevel1(level1.id);
-    setActiveLevel2(null);
-    setActiveLevel3(null);
-    setLevel1Category(level1);
-    updateBanner(level1);
-    setLevel2CategoriesForTabs(level1.children || []);
-    setLevel2Category(null);
-    setLevel3Categories([]);
-    navigate(`/catalog?level1=${level1.slug}`);
-  };
+const handleLevel1Click = (level1) => {
+  setActiveLevel1(level1.id);
+  setActiveLevel2(null);
+  setActiveLevel3(null);
+  setLevel1Category(level1);
+  updateBanner(level1);
+  setLevel2CategoriesForTabs(level1.children || []);
+  setLevel2Category(null);
+  setLevel3Categories([]);
+  navigate(`/catalog/${level1.slug}`);
+};
 
-  // Обработка клика по категории 2 уровня
-  const handleLevel2Click = (level2) => {
-    setActiveLevel2(level2.id);
-    setActiveLevel3(null);
-    setLevel2Category(level2);
-    // updateBanner(level2);
-    setLevel3Categories(level2.children || []);
-    navigate(`/catalog?level1=${level1Category?.slug}&category=${level2.slug}`);
-  };
+const handleLevel2Click = (level2) => {
+  setActiveLevel2(level2.id);
+  setActiveLevel3(null);
+  setLevel2Category(level2);
+  setLevel3Categories(level2.children || []);
+  navigate(`/catalog/${level1Category?.slug}/${level2.slug}`);
+};
 
-  // Обработка клика по категории 3 уровня
-  const handleLevel3Click = (level3) => {
-    setActiveLevel3(level3.id);
-    // setCurrentCategoryName(level3.name);
-    navigate(`/catalog?level1=${level1Category?.slug}&category=${level2Category?.slug}&subcategory=${level3.id}`);
-  };
+const handleLevel3Click = (level3) => {
+  setActiveLevel3(level3.id);
+  navigate(`/catalog/${level1Category?.slug}/${level2Category?.slug}/${level3.slug}`);
+};
 
-  // Возврат к категории 2 уровня
-  const handleBackToLevel2 = () => {
-    setActiveLevel3(null);
-    // if (level2Category) {
-    //   updateBanner(level2Category);
-    // }
-    navigate(`/catalog?level1=${level1Category?.slug}&category=${level2Category?.slug}`);
-  };
+const handleBackToLevel2 = () => {
+  setActiveLevel3(null);
+  navigate(`/catalog/${level1Category?.slug}/${level2Category?.slug}`);
+};
 
-  // Возврат к категории 1 уровня
-  const handleBackToLevel1 = () => {
-    setActiveLevel2(null);
-    setActiveLevel3(null);
-    setLevel2Category(null);
-    setLevel3Categories([]);
-    if (level1Category) {
-      updateBanner(level1Category);
-    }
-    navigate(`/catalog?level1=${level1Category?.slug}`);
-  };
+const handleBackToLevel1 = () => {
+  setActiveLevel2(null);
+  setActiveLevel3(null);
+  setLevel2Category(null);
+  setLevel3Categories([]);
+  updateBanner(level1Category);
+  navigate(`/catalog/${level1Category?.slug}`);
+};
 
   if (isPageLoading) {
     return <LoadingSpinner text="Загрузка каталога..." />;

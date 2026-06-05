@@ -17,6 +17,19 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import profileIcon from '../assets/profile.svg'
 import { getDefaultProductImage } from '../data/mockData';
 
+import {
+  IconFlame ,     // Огонь
+IconMail   ,    // Почта
+IconPhone  ,    // Телефон
+IconMapPin ,    // Адрес
+IconTag  ,
+IconUser    ,    // Получатель
+IconEdit   ,     // Редактировать
+IconBasket,
+IconHeart
+} from '@tabler/icons-react';
+
+
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -98,7 +111,7 @@ const Header = () => {
   };
 
   const handleProductClick = (product) => {
-    navigate(`/product/${product.brandId}/${product.id}`);
+    navigate(`/product/${product.brand}/${product.sku?.toLowerCase() || product.model?.toLowerCase()}`);
     setShowSearchResults(false);
     setSearch('');
   };
@@ -167,20 +180,20 @@ const Header = () => {
                 className={styles.actionBtn} 
                 onClick={() => setShowFavoritesModal(true)}
               >
-                <img src={heartIcon} alt="" /> 
+                <IconHeart size={25}/> 
                 {favoritesCount > 0 && <span>{favoritesCount}</span>}
               </button>
               <button 
                 className={styles.actionBtn} 
                 onClick={() => setShowCartModal(true)}
               >
-                <img src={basketIcon} alt="" /> 
+                <IconBasket size={25} /> 
                 {cartItemsCount > 0 && <span>{cartItemsCount}</span>}
               </button>
               {isLoggedIn ? (
                 <div className={styles.userMenu}>
                   <Link to="/profile" className={styles.profileLink}>
-                    <img src={profileIcon} alt="" /><span>{user?.name || 'Профиль'}</span>
+                    <IconUser size={25}/>
                   </Link>
                   <button onClick={handleLogout} className={styles.logoutBtn}>
                     Выйти
