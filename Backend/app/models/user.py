@@ -11,9 +11,15 @@ class User(Base):
     name = Column(String(100), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
-    phone = Column(String(20), nullable=True)  # Добавлено: телефон
-    address = Column(String(500), nullable=True)  # Добавлено: адрес
+    phone = Column(String(20), nullable=True)
+    address = Column(String(500), nullable=True)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
