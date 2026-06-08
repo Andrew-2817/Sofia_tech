@@ -5,8 +5,7 @@ import { register, loginUser, clearError } from '../store/slices/authSlice';
 import LoadingSpinner from './LoadingSpinner';
 import styles from './AuthModal.module.css';
 import crossIcon from '../assets/cross.svg';
-import regIcon from '../assets/reg.svg';
-import singInIcon from '../assets/sign-in.svg';
+
 
 import {
   IconLogin, IconUserPlus

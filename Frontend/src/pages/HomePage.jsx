@@ -27,12 +27,37 @@ const HomePage = () => {
 
   return (
     <>
-      <div className={styles.banner}>
-        <div className="container">
-          <h1>Скидки на бытовую технику до 50%</h1>
-          <button>Узнать больше</button>
-        </div>
-      </div>
+<div className={styles.banner}>
+  <div className={styles.bannerBgImage} />
+  <div className={styles.bannerBlurLayer} />
+  <div className={styles.bannerOverlay} />
+
+  <div className={styles.bannerParticles}>
+    {[...Array(6)].map((_, i) => (
+      <div key={i} className={`${styles.particle} ${styles[`particle${i + 1}`]}`} />
+    ))}
+  </div>
+
+  <div className="container">
+    <div className={styles.bannerContent}>
+      {/* <div className={styles.bannerLabel}>Специальное предложение</div> */}
+      <h1 className={styles.bannerTitle}>
+        Приглашаем к сотрудничеству
+        <span className={styles.bannerTitleAccent}> дизайнеров и архитекторов</span>
+      </h1>
+      <p className={styles.bannerSub}>
+        Выгодные условия партнёрства, персональный менеджер и эксклюзивные скидки
+      </p>
+      <button
+        className={styles.bannerBtn}
+        onClick={() => navigate('/cooperation')}
+      >
+        Подробнее <span className={styles.btnArrow}>&raquo;</span>
+      </button>
+    </div>
+  </div>
+</div>
+
       <div className="container">
         <div className={styles.categoriesBlock}>
           <div className={styles.sectionHeader}>

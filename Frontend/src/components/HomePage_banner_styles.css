@@ -1,0 +1,156 @@
+/* ── Добавь / замени в HomePage.module.css ── */
+
+.banner {
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 0 0 32px 32px;
+  margin-bottom: 48px;
+}
+
+/* Фоновое изображение кухни (замени URL на свой или оставь как есть) */
+.bannerBgImage {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1400&q=80');
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.05);
+  transition: transform 8s ease;
+  animation: slowZoom 8s ease forwards;
+}
+
+@keyframes slowZoom {
+  from { transform: scale(1.05); }
+  to   { transform: scale(1.0); }
+}
+
+/* Размытый слой поверх фото */
+.bannerBlurLayer {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Градиентный оверлей (слева тёмный, справа прозрачный) */
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(10, 10, 10, 0.82) 0%,
+    rgba(10, 10, 10, 0.55) 55%,
+    rgba(10, 10, 10, 0.15) 100%
+  );
+}
+
+/* Декоративные «частицы» — светящиеся круги */
+.bannerParticles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(123, 198, 207, 0.35), transparent 70%);
+  animation: float 6s ease-in-out infinite alternate;
+}
+
+.particle1 { width: 240px; height: 240px; top: -60px;  left: 55%;  animation-delay: 0s;   }
+.particle2 { width: 160px; height: 160px; bottom: -40px; left: 65%; animation-delay: 1.2s; }
+.particle3 { width: 100px; height: 100px; top: 30%;   left: 80%; animation-delay: 2.4s; }
+.particle4 { width: 80px;  height: 80px;  top: 10%;   left: 40%; animation-delay: 0.6s; opacity: 0.5; }
+.particle5 { width: 60px;  height: 60px;  bottom: 20%; left: 30%; animation-delay: 1.8s; opacity: 0.4; }
+.particle6 { width: 120px; height: 120px; top: 50%;   left: 72%; animation-delay: 3s;   opacity: 0.3; }
+
+@keyframes float {
+  from { transform: translateY(0)   scale(1);    opacity: 0.6; }
+  to   { transform: translateY(-24px) scale(1.1); opacity: 1;   }
+}
+
+/* Контент баннера */
+.bannerContent {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  animation: bannerFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes bannerFadeIn {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.bannerLabel {
+  display: inline-block;
+  background: rgba(123, 198, 207, 0.15);
+  border: 1px solid rgba(123, 198, 207, 0.4);
+  color: #7bc6cf;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.bannerTitle {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  margin: 0 0 16px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.bannerTitleAccent {
+  color: #7bc6cf;
+  display: block;
+}
+
+.bannerSub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 460px;
+}
+
+.bannerBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #e63030;
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 40px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 24px rgba(230, 48, 48, 0.4);
+  letter-spacing: 0.02em;
+}
+
+.bannerBtn:hover {
+  background: #c42828;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 32px rgba(230, 48, 48, 0.5);
+}
+
+.btnArrow {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.bannerBtn:hover .btnArrow {
+  transform: translateX(4px);
+}

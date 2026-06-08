@@ -12,6 +12,7 @@ import ProductPage from './pages/ProductPage';
 import ProfilePage from './pages/ProfilePage';
 import './App.module.css';
 import LoadingSpinner from './components/LoadingSpinner';
+import CooperationPage from "./pages/CooperationPage"
 
 function App() {
   const dispatch = useDispatch();
@@ -55,6 +56,7 @@ function App() {
           <Route path="/catalog/:level1/:level2/:level3" element={<CatalogPage />} />
           <Route path="/product/:brand/:sku" element={<ProductPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/cooperation" element={<CooperationPage />} />
         </Routes>
       </main>
       <Footer />

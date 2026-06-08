@@ -1,0 +1,182 @@
+.page {
+  padding: 40px 0 80px;
+  min-height: 60vh;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: #7bc6cf;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 0;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.backBtn:hover {
+  color: #5da5ae;
+  transform: translateX(-4px);
+}
+
+.pageTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin: 0 0 32px;
+}
+
+/* Карточка */
+.card {
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  min-height: 320px;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Левая колонка */
+.cardLeft {
+  flex: 1;
+  padding: 44px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.logoIcon {
+  font-size: 22px;
+  color: #7bc6cf;
+}
+
+.logoText {
+  font-size: 18px;
+  font-weight: 700;
+  color: #7bc6cf;
+  letter-spacing: 0.04em;
+}
+
+.intro {
+  font-size: 15px;
+  color: #d0d0d0;
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+
+.intro strong {
+  color: #f0f0f0;
+}
+
+.sub {
+  font-size: 14px;
+  color: #999;
+  line-height: 1.6;
+  margin: 0 0 32px;
+}
+
+/* Контакты */
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #f0f0f0;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.contactItem:hover {
+  background: rgba(123, 198, 207, 0.08);
+  border-color: rgba(123, 198, 207, 0.25);
+  color: #7bc6cf;
+  transform: translateX(4px);
+}
+
+.contactIcon {
+  font-size: 22px;
+  width: 28px;
+  text-align: center;
+}
+
+/* Правая колонка — фото */
+.cardRight {
+  flex: 0 0 45%;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 20px;
+  transition: transform 4s ease;
+}
+
+.card:hover .photo {
+  transform: scale(1.1);
+}
+
+.photoOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(90deg, rgba(30, 30, 30, 0.35) 0%, transparent 50%);
+  z-index: 1;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .cardLeft {
+    padding: 32px 28px;
+  }
+
+  .cardRight {
+    flex: 0 0 200px;
+  }
+
+  .contactItem {
+    font-size: 16px;
+  }
+}
