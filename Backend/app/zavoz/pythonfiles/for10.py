@@ -14,7 +14,7 @@ from sqlalchemy import text
 from decimal import Decimal
 
 # Пути
-BASE_DIR = Path('/home/raul/projects/sofa2/Sofia_tech')
+BASE_DIR = Path('C:/vs code/Sofia_tech')
 EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_10.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
@@ -413,7 +413,7 @@ def load_products_to_db(photos_by_sheet):
 
             # Получаем модель
             model = None
-            for col_name in ['Модель', 'модель', 'Model', 'model']:
+            for col_name in ['Модель', 'модель', 'Model', 'name']:
                 if col_name in row and pd.notna(row[col_name]):
                     model = clean_string(row[col_name])
                     if model:
@@ -528,7 +528,7 @@ def load_products_to_db(photos_by_sheet):
                 'category_id': category_id,
                 'brand_id': brand.id,
                 'main_image': photo_path,
-                'model': model,
+                'name': model,
                 'manufacturer_code': manufacturer_code,
                 'mounting_type': mounting_type,
                 'color': color,
@@ -544,7 +544,7 @@ def load_products_to_db(photos_by_sheet):
             existing = None
             if model:
                 existing = db.query(FalmecProduct).filter(
-                    FalmecProduct.model == model
+                    FalmecProduct.name == model
                 ).first()
 
             if existing:

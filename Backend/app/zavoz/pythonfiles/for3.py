@@ -7,7 +7,7 @@ import io
 import shutil
 from collections import defaultdict
 
-sys.path.insert(0, '/Users/eliseyshilin/Sofia_tech')
+sys.path.insert(0, 'C:/vs code/Sofia_tech')
 
 from Backend.app.database import SessionLocal, engine
 from Backend.app.models.product_ilve import IlveProduct
@@ -15,8 +15,8 @@ from Backend.app.models.brand import Brand
 from sqlalchemy import text
 import pandas as pd
 
-BASE_DIR = Path('/Users/eliseyshilin/Sofia_tech')
-EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_14.xlsx'
+BASE_DIR = Path('C:/vs code/Sofia_tech')
+EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_3.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
 ILVE_BRAND_ID = 14

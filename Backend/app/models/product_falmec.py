@@ -16,7 +16,7 @@ class FalmecProduct(Base):
 
     # Поля из Excel
     main_image = Column(String(500), nullable=True)
-    model = Column(String(500), nullable=True)  # Увеличено
+    name = Column(String(500), nullable=True)  # Увеличено
     manufacturer_code = Column(String(200), nullable=True)  # Увеличено
     mounting_type = Column(String(200), nullable=True)  # Увеличено
     color = Column(String(200), nullable=True)  # Увеличено

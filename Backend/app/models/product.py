@@ -10,7 +10,7 @@ class Product(Base):
     brand_id = Column(Integer, ForeignKey("brands.id"), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     name = Column(String(500), nullable=False)
-    sku = Column(String(100), nullable=True)
+    sku = Column(String(1000), nullable=True)
     price = Column(Float, nullable=True)
     main_image = Column(String(500), nullable=True)
     attributes = Column(JSON, nullable=True)
