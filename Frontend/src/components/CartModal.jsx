@@ -254,7 +254,7 @@ const CartModal = ({ isOpen, onClose }) => {
           </>
         ) : !success ? (
           <div className={styles.checkoutForm}>
-            <h3>Данные для доставки</h3>
+            <h3>Данные для заявки</h3>
             {authLoading ? (
               <div className={styles.loadingUser}>Загрузка данных пользователя...</div>
             ) : (

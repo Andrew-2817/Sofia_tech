@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { 
   toggleManufacturer, 
   setPriceRange, 
@@ -32,7 +33,7 @@ IconTag          ,
 IconWeight        ,
 IconBuildingFactory  ,
 IconCircleCheck, IconCurrencyRubel,
-IconPalette, IconTrash
+IconPalette, IconTrash, IconSettings 
 } from '@tabler/icons-react';
 import trashIcon from "../assets/trash.svg";
 import colorIcon from "../assets/colors.svg";
@@ -72,23 +73,20 @@ const FilterSidebar = () => {
   const [level1Category, setLevel1Category] = useState(null);
   const [level1CategoryObject, setLevel1CategoryObject] = useState(null);
 
-  // Парсим URL для получения текущей категории
+  const { level1: level1Slug } = useParams();
+
   useEffect(() => {
     if (categories.length === 0) return;
-    
-    const params = new URLSearchParams(location.search);
-    const level1Slug = params.get('level1');
-    
-    setLevel1Category(level1Slug);
-    
-    // Находим объект категории по slug
+
+    setLevel1Category(level1Slug || null);
+
     if (level1Slug) {
       const foundCategory = categories.find(c => c.slug === level1Slug);
       setLevel1CategoryObject(foundCategory || null);
     } else {
       setLevel1CategoryObject(null);
     }
-  }, [location.search, categories]);
+  }, [level1Slug, categories]);
 
   // Функция нормализации цветов
   const normalizeColor = (color) => {
@@ -210,36 +208,41 @@ const getWarrantyOptions = () => {
   
   return Array.from(warranties).sort((a, b) => a - b);
 };
-  const getStatusOptions = () => {
-    const statusSet = new Set();
-    
-    products.forEach(product => {
-      if (product.status && product.status !== 'null' && product.status !== 'undefined' && product.status !== '') {
-        // Очищаем статус от лишних пробелов и приводим к нормальному виду
-        let cleanStatus = product.status.trim();
-        
-        // Приводим к единому формату
-        if (cleanStatus.toLowerCase() === 'new 2026') cleanStatus = 'New 2026';
-        if (cleanStatus.toLowerCase() === 'stock') cleanStatus = 'Stock';
-        if (cleanStatus.toLowerCase() === 'outlet') cleanStatus = 'Outlet';
-        if (cleanStatus.toLowerCase() === 'новинка') cleanStatus = 'Новинка';
-        if (cleanStatus.toLowerCase() === 'акция') cleanStatus = 'Акция';
-        
-        statusSet.add(cleanStatus);
-      }
-    });
-    
-    // Сортируем статусы в нужном порядке
-    const order = ['New 2026', 'Новинка', 'Акция', 'Stock', 'Outlet', 'outlet'];
-    return Array.from(statusSet).sort((a, b) => {
-      const indexA = order.indexOf(a);
-      const indexB = order.indexOf(b);
-      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-      if (indexA === -1) return 1;
-      if (indexB === -1) return -1;
-      return indexA - indexB;
-    });
-  };
+const normalizeStatus = (status) => {
+  if (!status) return null;
+  const s = status.trim().toLowerCase();
+
+  if (s === 'new 2026')   return 'New 2026';
+  if (s === 'новинка')    return 'Новинка';
+  if (s === 'акция')      return 'Акция';
+  if (s === 'stock')      return 'Stock';
+  if (s === 'outlet')     return 'Outlet';
+
+  // Длинные статусы о наличии → одно значение
+  if (s.includes('в наличии'))   return 'В наличии';
+  if (s.includes('доступен') || s.includes('доступно')) return 'Под заказ';
+
+  return null; // остальное игнорируем
+};
+
+const getStatusOptions = () => {
+  const statusSet = new Set();
+
+  products.forEach(product => {
+    const normalized = normalizeStatus(product.status);
+    if (normalized) statusSet.add(normalized);
+  });
+
+  const order = ['New 2026', 'Новинка', 'Акция', 'Stock', 'Outlet', 'В наличии', 'Под заказ'];
+  return Array.from(statusSet).sort((a, b) => {
+    const indexA = order.indexOf(a);
+    const indexB = order.indexOf(b);
+    if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
+};
   
   const statusOptions = getStatusOptions();
   
@@ -266,6 +269,59 @@ const getWarrantyOptions = () => {
       default: return '#666';
     }
   };
+// Расширенная нормализация с сохранением всех серий для товара
+const extractSeriesList = (value) => {
+  if (!value || value === 'null' || value === 'undefined' || value === '') {
+    return [];
+  }
+  
+  const validSeries = [
+    'Professional Plus',
+    'Pro Line', 
+    'K-series.1',
+    'K-series.2',
+    'K-series.3',
+    'K-series.5',
+    'K-series.8',
+    'Majestic',
+    'Nostalgie',
+    'Panoramagic'
+  ];
+  
+  // Длинные описания игнорируем
+  if (value.length > 50 || value.includes('Для') || value.includes('Чугунный')) {
+    return [];
+  }
+  
+  const result = [];
+  
+  // Разбиваем по запятой
+  if (value.includes(',')) {
+    const parts = value.split(',').map(p => p.trim());
+    for (const part of parts) {
+      if (validSeries.includes(part)) {
+        result.push(part);
+      }
+    }
+  } else {
+    // Одиночное значение
+    if (validSeries.includes(value)) {
+      result.push(value);
+    } else {
+      // Поиск частичного совпадения
+      for (const series of validSeries) {
+        if (value.includes(series)) {
+          result.push(series);
+          break;
+        }
+      }
+    }
+  }
+  
+  return result;
+};
+
+// Получение опций для фильтра (только уникальные валидные серии)
 const getSeriesOptions = () => {
   let categoryProducts = products;
   
@@ -278,17 +334,27 @@ const getSeriesOptions = () => {
   }
   
   const seriesSet = new Set();
+  
   categoryProducts.forEach(product => {
-    if (product.series && product.series !== 'null' && product.series !== 'undefined' && product.series !== '') {
-      // Фильтруем null и undefined
-      if (product.series !== null && product.series !== 'null') {
-        seriesSet.add(product.series);
-      }
+    if (product.series) {
+      const seriesList = extractSeriesList(product.series);
+      seriesList.forEach(s => seriesSet.add(s));
     }
   });
   
-  // Сортируем серии (K-series.1, K-series.2, K-series.3 и т.д.)
-  return Array.from(seriesSet).sort();
+  // Сортировка
+  return Array.from(seriesSet).sort((a, b) => {
+    const aMatch = a.match(/K-series\.(\d+)/);
+    const bMatch = b.match(/K-series\.(\d+)/);
+    
+    if (aMatch && bMatch) {
+      return parseInt(aMatch[1]) - parseInt(bMatch[1]);
+    }
+    if (aMatch) return -1;
+    if (bMatch) return 1;
+    
+    return a.localeCompare(b);
+  });
 };
 
 const getNetWeightRange = () => {
@@ -753,7 +819,7 @@ case 'large-appliances':
            
             {filterOptions.controlTypes.length > 0 && (
         <div className={styles.filterGroup}>
-          <h4 className={styles.groupTitle}>🎮 Управление</h4>
+          <h4 className={styles.groupTitle}><IconSettings  size={22}/> Управление</h4>
           <div className={styles.checkboxGroup}>
             {filterOptions.controlTypes.map(type => (
               <label key={type} className={styles.checkboxLabel}>
@@ -871,7 +937,7 @@ case 'large-appliances':
             <label key={m} className={styles.checkboxLabel}>
               <input 
                 type="checkbox" 
-                checked={manufacturer.includes(m.toLowerCase())} 
+                checked={manufacturer.includes(m)} 
                 onChange={() => dispatch(toggleManufacturer(m))}
               />
               <span className={styles.checkmark}></span>

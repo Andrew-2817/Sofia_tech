@@ -42,76 +42,50 @@ class ApiService {
     return this.request('/categories/tree');
   }
 
-  // Homeier
-  async getHomeierProducts() {
-    return this.request('/products/homeier/');
-  }
-
-  // Brandt
-  async getBrandtProducts() {
-    return this.request('/products/brandt/');
-  }
-
-  // Liebherr (новый бренд)
-  async getLiebherrProducts() {
-    return this.request('/products/liebherr/');
-  }
-
-  // Nivona (новый бренд)
-  async getNivonaProducts() {
-    return this.request('/products/nivona/');
-  }
-
-    async getDietProducts() {
-    return this.request('/products/dedietrich/');
-  }
-
-    async getKupperProducts() {
-    return this.request('/products/kuppersbusch/');
-  }
-
-    async getGraudeProducts() {
-    return this.request('/products/graude/');
-  }
-
-    async getBonkProducts() {
-    return this.request('/products/bonkrasher/');
-  }
-
-    async getTekaProducts() {
-    return this.request('/products/teka/');
-  }
-
-    async getFalmecProducts() {
-    return this.request('/products/falmec/');
-  }
-
-      async getSchultProducts() {
-    return this.request('/products/schulthess/');
-  }
-
-  // Получить все товары всех брендов
+  // ========== ЕДИНЫЙ ЭНДПОИНТ ДЛЯ ВСЕХ ТОВАРОВ ==========
   async getAllProducts() {
     try {
-      const [homeier, brandt, liebherr, nivona, diet, kupper, schult, graude, bonk, teka, falmec] = await Promise.all([
-        this.getHomeierProducts(),
-        this.getBrandtProducts(),
-        this.getLiebherrProducts(),
-        this.getNivonaProducts(),
-        this.getDietProducts(),
-        this.getKupperProducts(),
-        this.getSchultProducts(),
-        this.getGraudeProducts(),
-        this.getBonkProducts(),
-        this.getTekaProducts(),
-        this.getFalmecProducts()
-
-      ]);
-      return { homeier, brandt, liebherr, nivona, diet, kupper, schult, graude, bonk, teka, falmec};
+      const response = await this.request('/products');
+      
+      // Ожидаемая структура ответа от сервера:
+      // {
+      //   products: [...],  // массив всех товаров
+      //   total: 123,       // общее количество (опционально)
+      //   brands: {...}     // разбивка по брендам (опционально)
+      // }
+      
+      // Если сервер возвращает просто массив
+      if (Array.isArray(response)) {
+        return { products: response };
+      }
+      
+      // Если сервер возвращает объект с полем products
+      if (response.products && Array.isArray(response.products)) {
+        return response;
+      }
+      
+      // Если сервер возвращает разбивку по брендам
+      if (response.homeier || response.brandt || response.liebherr) {
+        return response;
+      }
+      
+      // Если ничего не подошло, возвращаем как есть
+      return { products: response };
+      
     } catch (error) {
       console.error('Error fetching products:', error);
       throw error;
     }
+  }
+  
+  // ========== ОТДЕЛЬНЫЕ ЭНДПОИНТЫ ДЛЯ ОТЛАДКИ (опционально) ==========
+  // Если нужно получать товары конкретного бренда для отладки
+  async getProductsByBrand(brand) {
+    return this.request(`/products/brand/${brand}`);
+  }
+  
+  async getProductById(productId) {
+    return this.request(`/products/${productId}`);
   }
 }
 

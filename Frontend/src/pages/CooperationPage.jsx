@@ -10,7 +10,7 @@ IconTag  ,
 IconUser    ,    // Получатель
 IconEdit   ,     // Редактировать
 IconMessage,
-IconBuildingFactory,IconCurrencyRubel, IconArrowsHorizontal 
+IconBuildingFactory,IconCurrencyRubel, IconArrowsHorizontal, IconHome
 } from '@tabler/icons-react';
 
 const CooperationPage = () => {
@@ -29,7 +29,7 @@ const CooperationPage = () => {
           {/* Левая часть — текст */}
           <div className={styles.cardLeft}>
             <div className={styles.logo}>
-              <span className={styles.logoIcon}>⌂</span>
+              <span className={styles.logoIcon}><IconHome size={22}/></span>
               <span className={styles.logoText}>profit</span>
             </div>
 
@@ -44,11 +44,11 @@ const CooperationPage = () => {
             <div className={styles.contacts}>
               <a href="tel:+74951524027" className={styles.contactItem}>
                 <IconPhone size={22}/>
-                <span>+7 (495) 152-40-27</span>
+                <span>+7 (906) 760-00-88</span>
               </a>
               <a href="mailto:shop@euroflett.ru" className={styles.contactItem}>
                 <IconMail size={22}/>
-                <span>shop@euroflett.ru</span>
+                <span>profit.teh@yandex.ru</span>
               </a>
             </div>
           </div>

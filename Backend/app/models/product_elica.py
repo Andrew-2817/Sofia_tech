@@ -10,7 +10,7 @@ class ElicaProduct(Base):
     brand_id = Column(Integer, ForeignKey("brands.id", ondelete="SET NULL"), nullable=True)
 
     # Поля из Excel
-    type_of_price = Column(String(100), nullable=True)  # Type of Price
+    price = Column(Numeric(10, 2), nullable=True)  # Type of Price
     name = Column(String(255), nullable=False)  # Название
     main_image = Column(String(500), nullable=True)  # Изображение
     model = Column(String(100), nullable=True)  # Model

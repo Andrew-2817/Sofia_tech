@@ -45,7 +45,6 @@ const {
 
 
 
-  console.log(categories);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [activeLevel1, setActiveLevel1] = useState(null);
   const [activeLevel2, setActiveLevel2] = useState(null);
@@ -114,6 +113,58 @@ const isProductInCategory = (productCategoryId, targetCategoryId, categoriesTree
   return false;
 };
 
+// Расширенная нормализация с сохранением всех серий для товара
+const extractSeriesList = (value) => {
+  if (!value || value === 'null' || value === 'undefined' || value === '') {
+    return [];
+  }
+  
+  const validSeries = [
+    'Professional Plus',
+    'Pro Line', 
+    'K-series.1',
+    'K-series.2',
+    'K-series.3',
+    'K-series.5',
+    'K-series.8',
+    'Majestic',
+    'Nostalgie',
+    'Panoramagic'
+  ];
+  
+  // Длинные описания игнорируем
+  if (value.length > 50 || value.includes('Для') || value.includes('Чугунный')) {
+    return [];
+  }
+  
+  const result = [];
+  
+  // Разбиваем по запятой
+  if (value.includes(',')) {
+    const parts = value.split(',').map(p => p.trim());
+    for (const part of parts) {
+      if (validSeries.includes(part)) {
+        result.push(part);
+      }
+    }
+  } else {
+    // Одиночное значение
+    if (validSeries.includes(value)) {
+      result.push(value);
+    } else {
+      // Поиск частичного совпадения
+      for (const series of validSeries) {
+        if (value.includes(series)) {
+          result.push(series);
+          break;
+        }
+      }
+    }
+  }
+  
+  return result;
+};
+
 // Вспомогательная функция для поиска категории по id
 const findCategoryById = (categories, id) => {
   for (const cat of categories) {
@@ -124,6 +175,22 @@ const findCategoryById = (categories, id) => {
     }
   }
   return null;
+};
+const normalizeStatus = (status) => {
+  if (!status) return null;
+  const s = status.trim().toLowerCase();
+
+  if (s === 'new 2026')   return 'New 2026';
+  if (s === 'новинка')    return 'Новинка';
+  if (s === 'акция')      return 'Акция';
+  if (s === 'stock')      return 'Stock';
+  if (s === 'outlet')     return 'Outlet';
+
+  // Длинные статусы о наличии → одно значение
+  if (s.includes('в наличии'))   return 'В наличии';
+  if (s.includes('доступен') || s.includes('доступно')) return 'Под заказ';
+
+  return null; // остальное игнорируем
 };
   // Обновление баннера при смене категории
   const updateBanner = (category) => {
@@ -392,7 +459,10 @@ const filteredProducts = allProducts.filter(product => {
   }
   
   // ========== ФИЛЬТР ПРОИЗВОДИТЕЛЯ ==========
-  const matchesManufacturer = manufacturer.length === 0 || manufacturer.includes(product.brand);
+  const matchesManufacturer = manufacturer.length === 0 || manufacturer.includes(product.brandName);
+  // console.log(product.brand, manufacturer);
+  
+
   
   // ========== ФИЛЬТР ЦЕНЫ (только если изменен) ==========
   const isPriceFilterActive = priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice;
@@ -445,9 +515,12 @@ const filteredProducts = allProducts.filter(product => {
   const isWarrantyFilterActive = warranty && warranty.length > 0;
   const matchesWarranty = !isWarrantyFilterActive || warranty.includes(product.warranty);
   
-  // ========== ФИЛЬТР СЕРИИ (series) ==========
+
 const isSeriesFilterActive = series && series.length > 0;
-const matchesSeries = !isSeriesFilterActive || series.includes(product.series);
+const matchesSeries =  !isSeriesFilterActive || (() => {
+  const productSeriesList = extractSeriesList(product.series);
+  return productSeriesList.some(s => series.includes(s));
+})();
 
 // ========== ФИЛЬТР ВЕСА НЕТТО (net_weight) ==========
 const isNetWeightFilterActive = netWeightRange && (netWeightRange[0] > 0 || netWeightRange[1] < 100);
@@ -458,9 +531,10 @@ const matchesNetWeight = !isNetWeightFilterActive ||
 const isWidthCmFilterActive = widthCmRange && (widthCmRange[0] > 0 || widthCmRange[1] < 200);
 const matchesWidthCm = !isWidthCmFilterActive || 
   (product.width_cm >= widthCmRange[0] && product.width_cm <= widthCmRange[1]);
-
+// В filteredProducts
 const isStatusFilterActive = status && status.length > 0;
-const matchesStatus = !isStatusFilterActive || status.includes(product.status);
+const matchesStatus = !isStatusFilterActive || 
+  status.includes(normalizeStatus(product.status));
   
   // ========== ВРЕМЕННО ОТКЛЮЧЕННЫЕ ФИЛЬТРЫ ==========
   const matchesLoadCapacity = true;  // loadCapacity === '' || product.load_capacity === loadCapacity
@@ -517,8 +591,6 @@ const analyzeFields = (products) => {
     });
   });
 
-  console.log(`\n📊 Анализ ${products.length} товаров:`);
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
   
   Object.entries(fieldCount)
     .sort((a, b) => b[1].filled - a[1].filled)
@@ -530,7 +602,6 @@ const analyzeFields = (products) => {
 
 // Использование:
 // analyzeFields(filteredProducts);
-  console.log(new Set(filteredProducts.map(e => e.status)));
   
 
 
@@ -682,7 +753,7 @@ const handleBackToLevel1 = () => {
                   className={styles.tab}
                   onClick={() => handleLevel2Click(level2)}
                 >
-                  <span className={styles.tabIcon}>
+                  {/* <span className={styles.tabIcon}>
                     {level2.id === 10 && '🧺'}
                     {level2.id === 11 && '🌀'}
                     {level2.id === 12 && '⚡'}
@@ -701,7 +772,7 @@ const handleBackToLevel1 = () => {
                     {level2.id === 32 && '🥩'}
                     {level2.id === 33 && '🧹'}
                     {level2.id === 34 && '🥤'}
-                  </span>
+                  </span> */}
                   {level2.name}
                 </button>
               ))}

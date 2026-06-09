@@ -26,7 +26,7 @@ const ProductCard = ({ product }) => {
   );
 
   // const imageUrl = product.main_image || product.image || 'https://via.placeholder.com/300x300?text=No+Image';
-  console.log(product);
+  // console.log(product);
   
   const handleToggleFavorite = (e) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    console.log('product перед добавлением:', product); //
+    // console.log('product перед добавлением:', product); //
     dispatch(addToCart({ 
       id: product.id,
       brandId: product.brandId,

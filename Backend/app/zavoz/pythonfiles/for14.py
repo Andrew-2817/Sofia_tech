@@ -11,7 +11,7 @@ import io
 import xml.etree.ElementTree as ET
 
 # Пути
-BASE_DIR = Path('/home/raul/projects/sofa2/Sofia_tech')
+BASE_DIR = Path('C:/vs code/Sofia_tech')
 EXCEL_FILE = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'exelfiles' / 'файл_товары_14.xlsx'
 PHOTOS_DIR = BASE_DIR / 'Backend' / 'app' / 'zavoz' / 'photos'
 UPLOADS_DIR = BASE_DIR / 'Backend' / 'static' / 'uploads' / 'products'
@@ -390,11 +390,11 @@ def load_products_to_db(photo_by_row):
                     category_id = None
 
             # Получаем Type of Price
-            type_of_price = None
-            for col_name in ['Type of Price', 'type_of_price', 'Тип цены']:
+            price = None
+            for col_name in ['Price', 'type_of_price', 'Тип цены']:
                 if col_name in row:
-                    type_of_price = clean_string(row[col_name])
-                    if type_of_price:
+                    price = clean_string(row[col_name])
+                    if price:
                         break
 
             # Получаем модель
@@ -425,7 +425,7 @@ def load_products_to_db(photo_by_row):
             product_data = {
                 'category_id': category_id,
                 'brand_id': brand.id,
-                'type_of_price': type_of_price,
+                'price': price,
                 'name': name,
                 'main_image': photo_path,
                 'model': model,

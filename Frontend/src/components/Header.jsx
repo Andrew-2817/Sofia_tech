@@ -213,7 +213,7 @@ const Header = () => {
                 key={cat.id}
                 className={styles.categoryLink}
                 onClick={() => {
-                  navigate(`/catalog?level1=${cat.slug}`)
+                  navigate(`/catalog/${cat.slug}`)
                 }
                 }
               >

@@ -39,7 +39,7 @@ const filtersSlice = createSlice({
       state.category = action.payload;
     },
     toggleManufacturer: (state, action) => {
-      const manufacturer = action.payload.toLowerCase();
+      const manufacturer = action.payload;
       if (state.manufacturer.includes(manufacturer)) {
         state.manufacturer = state.manufacturer.filter(m => m !== manufacturer);
       } else {

@@ -23,7 +23,7 @@ const Footer = () => {
       <div className="container">
         <div className={styles.columns}>
           <div>
-            <h3>TechStore</h3>
+            <h3>profit</h3>
             <p>Лучшая бытовая техника</p>
           </div>
           <div>
@@ -34,13 +34,13 @@ const Footer = () => {
           </div>
           <div>
             <h4>Контакты</h4>
-            <div className={styles.contacts_block}><span><IconPhone size={22} /></span><p>+7 (999) 123-45-67</p></div>
-            <div className={styles.contacts_block}><span><IconMail size={22} /></span><p>info@techstore.ru</p></div>
+            <div className={styles.contacts_block}><span><IconPhone size={22} /></span><p>+7 (906) 760-00-88</p></div>
+            <div className={styles.contacts_block}><span><IconMail size={22} /></span><p>profit.teh@yandex.ru</p></div>
             {/* <p>📍 Москва, ул. Техническая, 1</p> */}
           </div>
         </div>
         <div className={styles.bottom}>
-          &copy; 2025 TechStore. Все права защищены.
+          &copy; 2025 profit. Все права защищены.
         </div>
       </div>
     </footer>
