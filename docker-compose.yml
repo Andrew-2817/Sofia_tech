@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: sofia_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 18122005
+      POSTGRES_DB: sofia_tech_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sofia_network
+
+  backend:
+    build: ./Backend
+    container_name: sofia_backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://postgres:18122005@postgres:5432/sofia_tech_db
+      - SECRET_KEY=key_for_jwt
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend:/app
+      - uploads_data:/app/static/uploads
+    networks:
+      - sofia_network
+
+  frontend:
+    build: ./Frontend
+    container_name: sofia_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./Frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - sofia_network
+
+volumes:
+  postgres_data:
+  uploads_data:
+
+networks:
+  sofia_network:
+    driver: bridge

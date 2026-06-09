@@ -34,7 +34,7 @@ class ElicaProductUpdate(BaseModel):
 
 class ElicaProductInDB(ElicaProductBase):
     id: int
-    
+
     class Config:
         from_attributes = True
 
@@ -540,6 +540,98 @@ class GraudeProductUpdate(BaseModel):
     price_public: Optional[float] = Field(None, ge=0)
 
 class GraudeProductResponse(GraudeProductBase):
+    id: int
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# ==================== Схемы для товаров Ilve ====================
+class IlveProductBase(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    sku: Optional[str] = Field(None, max_length=100)
+    main_image: Optional[str] = None
+    model: Optional[str] = Field(None, max_length=100)
+    name: str = Field(..., min_length=1, max_length=500)
+    series: Optional[str] = Field(None, max_length=255)
+    group: Optional[str] = Field(None, max_length=255)
+    color: Optional[str] = Field(None, max_length=100)
+    decor_color: Optional[str] = Field(None, max_length=100)
+    width: Optional[float] = Field(None, ge=0)
+    hob: Optional[str] = None
+    hob_sketch: Optional[str] = None
+    oven: Optional[str] = None
+    price: Optional[float] = Field(None, ge=0)
+    status: Optional[str] = Field(None, max_length=200)
+    description: Optional[str] = None
+    ean: Optional[str] = Field(None, max_length=50)
+    comment: Optional[str] = None
+
+
+class IlveProductCreate(IlveProductBase):
+    pass
+
+
+class IlveProductUpdate(BaseModel):
+    category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    sku: Optional[str] = Field(None, max_length=100)
+    main_image: Optional[str] = None
+    model: Optional[str] = Field(None, max_length=100)
+    name: Optional[str] = Field(None, min_length=1, max_length=500)
+    series: Optional[str] = Field(None, max_length=255)
+    group: Optional[str] = Field(None, max_length=255)
+    color: Optional[str] = Field(None, max_length=100)
+    decor_color: Optional[str] = Field(None, max_length=100)
+    width: Optional[float] = Field(None, ge=0)
+    hob: Optional[str] = None
+    hob_sketch: Optional[str] = None
+    oven: Optional[str] = None
+    price: Optional[float] = Field(None, ge=0)
+    status: Optional[str] = Field(None, max_length=200)
+    description: Optional[str] = None
+    ean: Optional[str] = Field(None, max_length=50)
+    comment: Optional[str] = None
+
+
+class IlveProductResponse(IlveProductBase):
+    id: int
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+
+# ==================== Схемы для общей таблицы Products ====================
+class ProductBase(BaseModel):
+    brand_id: int = Field(..., description="ID бренда")
+    category_id: Optional[int] = Field(None, description="ID категории")
+    name: str = Field(..., min_length=1, max_length=500, description="Название товара")
+    sku: Optional[str] = Field(None, max_length=1000, description="Артикул")
+    price: Optional[float] = Field(None, ge=0, description="Цена")
+    main_image: Optional[str] = Field(None, description="Путь к главному изображению")
+    attributes: Optional[dict] = Field(None, description="Дополнительные атрибуты в JSON")
+
+
+class ProductCreate(ProductBase):
+    pass
+
+
+class ProductUpdate(BaseModel):
+    brand_id: Optional[int] = Field(None, description="ID бренда")
+    category_id: Optional[int] = Field(None, description="ID категории")
+    name: Optional[str] = Field(None, min_length=1, max_length=500, description="Название товара")
+    sku: Optional[str] = Field(None, max_length=1000, description="Артикул")
+    price: Optional[float] = Field(None, ge=0, description="Цена")
+    main_image: Optional[str] = Field(None, description="Путь к главному изображению")
+    attributes: Optional[dict] = Field(None, description="Дополнительные атрибуты в JSON")
+
+
+class ProductResponse(ProductBase):
     id: int
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

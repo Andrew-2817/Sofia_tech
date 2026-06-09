@@ -6,7 +6,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def main():
     db = SessionLocal()
-    email = "aaaadmin@sofia.com"
+    email = "aaaadmn@sofia.com"
     password = "admin123"
     hashed = pwd_context.hash(password)
     user = User(

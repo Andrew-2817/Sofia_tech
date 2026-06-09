@@ -3,7 +3,7 @@ import sys
 
 from app.models.product_bonkrasher import BonkrasherProduct
 from app.models.product_dedietrich import DedietrichProduct
-from app.models.product_falmec import FalmecProduct
+#from app.models.product_falmec import FalmecProduct
 from app.models.product_graude import GraudeProduct
 from app.models.product_homeier import HomeierProduct
 from app.models.product_ilve import IlveProduct
@@ -12,7 +12,7 @@ from app.models.product_liebherr import LiebherrProduct
 from app.models.product_nivona import NivonaProduct
 from app.models.product_schulthess import SchulthessProduct
 from app.models.product_teka import TekaProduct
-sys.path.insert(0, 'C:/vs code/Sofia_tech')
+sys.path.insert(0, '/home/raul/projects/sofa2/Sofia_tech')
 
 from app.models.product_brandt import BrandtProduct
 from app.database import SessionLocal
@@ -39,7 +39,7 @@ models = [
     (BrandtProduct, 'Brandt'),
     (LiebherrProduct, 'Liebherr'),
     (DedietrichProduct, 'Dedietrich'),
-    (FalmecProduct, 'Falmec'),
+    #(FalmecProduct, 'Falmec'),
     (GraudeProduct, 'Graude'),
     (HomeierProduct, 'Homeier'),
     (KuppersbuschProduct, 'Kuppersbusch'),

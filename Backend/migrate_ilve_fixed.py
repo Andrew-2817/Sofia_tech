@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-sys.path.insert(0, '/Users/eliseyshilin/Sofia_tech/Backend')
+sys.path.insert(0, '/home/raul/projects/sofa2/Sofia_tech')
 
 from app.database import SessionLocal
 from app.models.product_ilve import IlveProduct
@@ -23,7 +23,7 @@ def convert(value):
 
 db = SessionLocal()
 
-brand = db.query(Brand).filter(Brand.name == 'ILVE').first()
+brand = db.query(Brand).filter(Brand.name == 'Ilve').first()
 if not brand:
     print("Бренд ILVE не найден в таблице brands. Сначала добавьте его (см. инструкцию).")
     db.close()

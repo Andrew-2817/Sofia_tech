@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import engine, Base, async_engine
-from .routers import auth, orders, categories, users
+from .routers import auth, orders, categories, users, products_brandt, products_bonkrasher, products_dedietrich, products_falmec, products_graude, products_homeier, products_ilve, products_kuppersbusch, products_liebherr, products_nivona, products_schulthess, products_teka, products_elica, products
 from .config import settings
 from .models import User, Category, Brand, Order, Product
 from .admin import setup_admin
@@ -48,6 +48,20 @@ app.include_router(auth.router)
 app.include_router(orders.router)
 app.include_router(categories.router)
 app.include_router(users.router)
+app.include_router(products_brandt.router)
+app.include_router(products_bonkrasher.router)
+app.include_router(products_dedietrich.router)
+app.include_router(products_falmec.router)
+app.include_router(products_graude.router)
+app.include_router(products_homeier.router)
+app.include_router(products_ilve.router)
+app.include_router(products_kuppersbusch.router)
+app.include_router(products_liebherr.router)
+app.include_router(products_nivona.router)
+app.include_router(products_schulthess.router)
+app.include_router(products_teka.router)
+app.include_router(products_elica.router)
+app.include_router(products.router)
 
 setup_admin(app, async_engine)
 

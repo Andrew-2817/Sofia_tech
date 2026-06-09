@@ -1,28 +1,29 @@
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
-#  для PostgreSQL
+# Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y \
     gcc \
-    postgresql-client \
+    libpq-dev \
+    libjpeg-dev \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-
+# Копируем зависимости
 COPY requirements.txt .
+
+# Устанавливаем Python зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-
+# Копируем код приложения
 COPY . .
 
-# для логов
-RUN mkdir -p /app/logs
+# Создаем директории для загрузок
+RUN mkdir -p static/uploads/products static/uploads/categories
 
+# Открываем порт
+EXPOSE 8000
 
-RUN ls -la /app/
-
-
-EXPOSE 5000
-
-# Команда запуска
-CMD ["python", "run.py"]
+# Запускаем приложение
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
