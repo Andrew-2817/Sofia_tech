@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import engine, Base, async_engine
+from .routers import auth, orders, categories, users
 from .routers import products_brandt, products_bonkrasher, products_dedietrich, products_falmec, products_graude, products_homeier, products_ilve, products_kuppersbusch, products_liebherr, products_nivona, products_schulthess, products_teka, products_elica
 from .routers.admin_products import router as admin_products_router
 from .config import settings
