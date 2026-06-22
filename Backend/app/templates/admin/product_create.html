@@ -12,6 +12,7 @@
         .card-header { background: #0d6efd; color: white; }
         .required::after { content: "*"; color: #dc3545; margin-left: 4px; }
         .preview-img { max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6; }
+        .debug-info { background: #fff3cd; padding: 10px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #ffc107; }
     </style>
 </head>
 <body>
@@ -21,6 +22,21 @@
                 <h4 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Добавить товар</h4>
             </div>
             <div class="card-body">
+                <!-- ★★★★★ ОТЛАДОЧНАЯ ИНФОРМАЦИЯ ★★★★★ -->
+                <div class="debug-info">
+                    <strong>🔍 Отладка:</strong> получено категорий: <span class="badge bg-warning text-dark">{{ categories|length }}</span>
+                    {% if categories %}
+                        <br><small>Первые 5: 
+                        {% for cat in categories[:5] %}
+                            {{ cat.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                        </small>
+                    {% else %}
+                        <br><small class="text-danger">⚠️ Категории не переданы!</small>
+                    {% endif %}
+                </div>
+                <!-- ★★★★★ КОНЕЦ ОТЛАДКИ ★★★★★ -->
+
                 <form method="post" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-8">

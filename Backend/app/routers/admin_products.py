@@ -39,19 +39,14 @@ async def products_list(
     per_page = 10
     offset = (page - 1) * per_page
 
-    # Базовый запрос
     query = select(Product)
     count_query = select(func.count()).select_from(Product)
 
-    # Условия фильтрации
     filters = []
     if search:
-        # ★★★ СТРОГИЙ ПОИСК ПО ID ★★★
         if search.isdigit():
-            # Если строка – число, ищем ТОЛЬКО точное совпадение по ID
             filters.append(Product.id == int(search))
         else:
-            # Иначе ищем по текстовым полям
             term = f"%{search}%"
             filters.append(
                 or_(
@@ -70,18 +65,18 @@ async def products_list(
         query = query.where(and_(*filters))
         count_query = count_query.where(and_(*filters))
 
-    # Пагинация
     query = query.offset(offset).limit(per_page).order_by(Product.id.desc())
     products = (await session.execute(query)).scalars().all()
     total = (await session.execute(count_query)).scalar()
 
-    # Подгружаем связанные данные
     for p in products:
         await session.refresh(p, attribute_names=["brand", "category"])
 
-    # Получаем все бренды и категории для фильтров
+    # ★★★ ТОЛЬКО КАТЕГОРИИ 3-ГО УРОВНЯ ★★★
     brands = (await session.execute(select(Brand).order_by(Brand.name))).scalars().all()
-    categories = (await session.execute(select(Category).order_by(Category.name))).scalars().all()
+    categories = (await session.execute(
+        select(Category).where(Category.level == 3).order_by(Category.name)
+    )).scalars().all()
 
     template = templates.get_template("admin/products_list.html")
     content = template.render(
@@ -104,7 +99,10 @@ async def product_create_form(
     session: AsyncSession = Depends(get_db)
 ):
     brands = (await session.execute(select(Brand).order_by(Brand.name))).scalars().all()
-    categories = (await session.execute(select(Category).order_by(Category.name))).scalars().all()
+    # ★★★ ТОЛЬКО КАТЕГОРИИ 3-ГО УРОВНЯ ★★★
+    categories = (await session.execute(
+        select(Category).where(Category.level == 3).order_by(Category.name)
+    )).scalars().all()
     template = templates.get_template("admin/product_create.html")
     content = template.render(
         request=request,
@@ -160,7 +158,10 @@ async def product_edit_form(
     if not product:
         raise HTTPException(status_code=404, detail="Товар не найден")
     brands = (await session.execute(select(Brand).order_by(Brand.name))).scalars().all()
-    categories = (await session.execute(select(Category).order_by(Category.name))).scalars().all()
+    # ★★★ ТОЛЬКО КАТЕГОРИИ 3-ГО УРОВНЯ ★★★
+    categories = (await session.execute(
+        select(Category).where(Category.level == 3).order_by(Category.name)
+    )).scalars().all()
     template = templates.get_template("admin/product_edit.html")
     content = template.render(
         request=request,

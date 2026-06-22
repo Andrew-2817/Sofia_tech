@@ -11,6 +11,8 @@ import json
 from markupsafe import Markup
 from .models import Category, Order, User, Brand
 from .auth import authenticate_user
+# ★★★★★ Импортируем нашу новую страницу-перенаправление
+from .admin_views import ProductRedirectView
 
 # ========== Вспомогательные функции ==========
 def moscow_datetime_formatter(value):
@@ -25,17 +27,14 @@ def moscow_datetime_formatter(value):
     return moscow_time.strftime("%d.%m.%Y %H:%M:%S")
 
 def slugify(text: str) -> str:
-    """Преобразует строку в латиницу, удаляет спецсимволы, заменяет пробелы на дефисы."""
     text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
     text = re.sub(r'[^\w\s-]', '', text).strip().lower()
     text = re.sub(r'[-\s]+', '-', text)
     return text
 
 def format_order_items(items_json):
-    """Преобразует список товаров в читаемую HTML-таблицу"""
     if not items_json:
         return Markup("<span style='color:gray;'>Нет товаров</span>")
-
     if isinstance(items_json, str):
         try:
             items = json.loads(items_json)
@@ -43,10 +42,8 @@ def format_order_items(items_json):
             return Markup("<span style='color:red;'>Ошибка данных</span>")
     else:
         items = items_json
-
     if not isinstance(items, list) or len(items) == 0:
         return Markup("<span style='color:gray;'>Нет товаров</span>")
-
     html = """
     <table style='border-collapse: collapse; width: 100%; font-size: 12px;'>
         <thead>
@@ -148,7 +145,7 @@ class BrandAdmin(ModelView, model=Brand):
     delete_button_text = "🗑️ Удалить"
     search_fields = [Brand.name]
 
-# ========== Заказы (с красивым отображением товаров) ==========
+# ========== Заказы ==========
 class OrderAdmin(ModelView, model=Order):
     name_plural = "Заказы"
     icon = "fa-solid fa-cart-shopping"
@@ -225,4 +222,8 @@ def setup_admin(app, engine: AsyncEngine):
     admin.add_view(BrandAdmin)
     admin.add_view(OrderAdmin)
     admin.add_view(UserAdmin)
+
+    # ★★★★★ Добавляем наш новый пункт меню (перенаправление на товары)
+    admin.add_view(ProductRedirectView)
+
     return admin
