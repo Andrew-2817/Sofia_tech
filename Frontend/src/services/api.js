@@ -42,6 +42,22 @@ class ApiService {
     return this.request('/categories/tree');
   }
 
+    // ========== БРЕНДЫ ==========
+  async getBrands() {
+    // Если есть кеш, возвращаем его
+    if (this.brandsCache) {
+      return this.brandsCache;
+    }
+    
+    const response = await this.request('/brands/');
+    this.brandsCache = response;
+    return response;
+  }
+
+  async getBrand(brandId) {
+    return this.request(`/brands/${brandId}`);
+  }
+
   // ========== ЕДИНЫЙ ЭНДПОИНТ ДЛЯ ВСЕХ ТОВАРОВ ==========
   async getAllProducts() {
     try {

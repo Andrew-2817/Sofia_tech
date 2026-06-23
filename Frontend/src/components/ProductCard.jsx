@@ -58,7 +58,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className={styles.card}>
-      <Link to={`/product/${product.brand}/${product.sku?.toLowerCase() || product.model?.toLowerCase()}`}>
+      <Link to={`/product/${product.brand}/${product.id}`}>
         <img src={imageUrl} alt={product.name} className={styles.image}/>
         <div className={styles.category}>
           {product.brandName}

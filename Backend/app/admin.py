@@ -46,43 +46,43 @@ def attributes_formatter(value):
         return ""
 
 # ---------- Основной товар (общая таблица) ----------
-class ProductAdmin(ModelView, model=Product):
-    name_plural = "Все товары"
-    icon = "fa-solid fa-box"
-    column_list = [Product.id, Product.name, Product.brand_id, Product.category_id, Product.price, Product.main_image, Product.attributes]
-    column_labels = {
-        Product.id: "ID",
-        Product.name: "Название",
-        Product.brand_id: "Бренд",
-        Product.category_id: "Категория",
-        Product.price: "Цена (₽)",
-        Product.main_image: "Фото",
-        Product.sku: "Артикул",
-        Product.attributes: "Доп. характеристики (JSON)",
-    }
-    column_formatters = {
-        Product.main_image: lambda m, a: image_formatter(m.main_image),
-        Product.attributes: lambda m, a: attributes_formatter(m.attributes),
-    }
-    search_fields = [Product.name, Product.sku]
-    column_sortable_list = [Product.brand_id, Product.category_id, Product.name, Product.price]
-    column_default_sort = [(Product.brand_id, True), (Product.name, True)]
-    create_button_text = "➕ Добавить товар"
-    save_button_text = "💾 Сохранить"
-    delete_button_text = "🗑️ Удалить"
-    form_columns = [Product.brand_id, Product.category_id, Product.name, Product.sku, Product.price, Product.main_image, Product.attributes]
-    def get_search_query(self, stmt, search_term: str):
-        if not search_term:
-            return stmt
-        from sqlalchemy import or_, cast, String
-        search_pattern = f"%{search_term}%"
-        return stmt.where(
-            or_(
-                Product.name.ilike(search_pattern),
-                Product.sku.ilike(search_pattern),
-                cast(Product.attributes, String).ilike(search_pattern),
-            )
-        )
+# class ProductAdmin(ModelView, model=Product):
+#     name_plural = "Все товары"
+#     icon = "fa-solid fa-box"
+#     column_list = [Product.id, Product.name, Product.brand_id, Product.category_id, Product.price, Product.main_image, Product.attributes]
+#     column_labels = {
+#         Product.id: "ID",
+#         Product.name: "Название",
+#         Product.brand_id: "Бренд",
+#         Product.category_id: "Категория",
+#         Product.price: "Цена (₽)",
+#         Product.main_image: "Фото",
+#         Product.sku: "Артикул",
+#         Product.attributes: "Доп. характеристики (JSON)",
+#     }
+#     column_formatters = {
+#         Product.main_image: lambda m, a: image_formatter(m.main_image),
+#         Product.attributes: lambda m, a: attributes_formatter(m.attributes),
+#     }
+#     search_fields = [Product.name, Product.sku]
+#     column_sortable_list = [Product.brand_id, Product.category_id, Product.name, Product.price]
+#     column_default_sort = [(Product.brand_id, True), (Product.name, True)]
+#     create_button_text = "➕ Добавить товар"
+#     save_button_text = "💾 Сохранить"
+#     delete_button_text = "🗑️ Удалить"
+#     form_columns = [Product.brand_id, Product.category_id, Product.name, Product.sku, Product.price, Product.main_image, Product.attributes]
+#     def get_search_query(self, stmt, search_term: str):
+#         if not search_term:
+#             return stmt
+#         from sqlalchemy import or_, cast, String
+#         search_pattern = f"%{search_term}%"
+#         return stmt.where(
+#             or_(
+#                 Product.name.ilike(search_pattern),
+#                 Product.sku.ilike(search_pattern),
+#                 cast(Product.attributes, String).ilike(search_pattern),
+#             )
+#         )
 
 # ---------- Бренды (отдельные таблицы) ----------
 class IlveProductAdmin(ModelView, model=IlveProduct):
@@ -427,7 +427,7 @@ class AdminAuth(AuthenticationBackend):
 def setup_admin(app, engine: AsyncEngine):
     auth = AdminAuth(secret_key="your-very-long-secret-key-for-sessions-2025-12345")
     admin = Admin(app, engine, authentication_backend=auth)
-    admin.add_view(ProductAdmin)
+    # admin.add_view(ProductAdmin)
     admin.add_view(IlveProductAdmin)
     admin.add_view(BrandtProductAdmin)
     admin.add_view(BonkrasherProductAdmin)

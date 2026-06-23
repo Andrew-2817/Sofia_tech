@@ -614,7 +614,14 @@ class ProductBase(BaseModel):
     sku: Optional[str] = Field(None, max_length=1000, description="Артикул")
     price: Optional[float] = Field(None, ge=0, description="Цена")
     main_image: Optional[str] = Field(None, description="Путь к главному изображению")
-    attributes: Optional[dict] = Field(None, description="Дополнительные атрибуты в JSON")
+    
+    # Новые поля
+    description: Optional[str] = Field(None, description="Описание товара")
+    color: Optional[str] = Field(None, max_length=100, description="Цвет")
+    width: Optional[float] = Field(None, ge=0, description="Ширина")
+    height: Optional[float] = Field(None, ge=0, description="Высота")
+    depth: Optional[float] = Field(None, ge=0, description="Глубина")
+    weight: Optional[float] = Field(None, ge=0, description="Вес")
 
 
 class ProductCreate(ProductBase):

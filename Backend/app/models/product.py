@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from ..database import Base
@@ -13,7 +13,14 @@ class Product(Base):
     sku = Column(String(1000), nullable=True)
     price = Column(Float, nullable=True)
     main_image = Column(String(500), nullable=True)
-    attributes = Column(JSON, nullable=True)
+
+    description = Column(Text, nullable=True)
+    color = Column(String(100), nullable=True)
+    width = Column(Float, nullable=True)
+    height = Column(Float, nullable=True)
+    depth = Column(Float, nullable=True)
+    weight = Column(Float, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
