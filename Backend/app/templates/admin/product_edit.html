@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать товар</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #f8f9fa; }
+        .form-label { font-weight: 600; }
+        .card-header { background: #0d6efd; color: white; }
+        .required::after { content: "*"; color: #dc3545; margin-left: 4px; }
+        .preview-img { max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6; }
+        .current-img { max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Редактировать товар</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label required">Название</label>
+                                <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Артикул</label>
+                                        <input type="text" name="sku" class="form-control" value="{{ product.sku or '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Цена (₽)</label>
+                                        <input type="number" name="price" class="form-control" value="{{ product.price or '' }}" step="0.01">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Бренд</label>
+                                        <select name="brand_id" class="form-select">
+                                            <option value="">Не выбран</option>
+                                            {% for brand in brands %}
+                                            <option value="{{ brand.id }}" {% if product.brand_id == brand.id %}selected{% endif %}>{{ brand.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Категория</label>
+                                        <select name="category_id" class="form-select">
+                                            <option value="">Не выбрана</option>
+                                            {% for category in categories %}
+                                            <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Описание</label>
+                                <textarea name="description" class="form-control" rows="3">{{ product.description or '' }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Цвет</label>
+                                <input type="text" name="color" class="form-control" value="{{ product.color or '' }}" placeholder="Например: Белый, Серый">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-image me-2"></i>Фото
+                                </div>
+                                <div class="card-body text-center">
+                                    {% if product.main_image %}
+                                    <div class="mb-2">
+                                        <img src="{{ product.main_image }}" alt="{{ product.name }}" class="current-img">
+                                        <br><small class="text-muted">Текущее фото</small>
+                                    </div>
+                                    {% else %}
+                                    <div id="imagePreview" class="mb-2">
+                                        <i class="fas fa-camera fa-3x text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <input type="file" name="main_image" accept="image/*" class="form-control" id="fileInput">
+                                    <small class="text-muted">Оставьте пустым, чтобы не менять</small>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <div class="row">
+                                    <div class="col-md-4"><label class="form-label">Ширина (см)</label><input type="number" step="0.01" name="width" class="form-control" value="{{ product.width or '' }}" placeholder="0"></div>
+                                    <div class="col-md-4"><label class="form-label">Высота (см)</label><input type="number" step="0.01" name="height" class="form-control" value="{{ product.height or '' }}" placeholder="0"></div>
+                                    <div class="col-md-4"><label class="form-label">Глубина (см)</label><input type="number" step="0.01" name="depth" class="form-control" value="{{ product.depth or '' }}" placeholder="0"></div>
+                                </div>
+                                <div class="mt-2">
+                                    <label class="form-label">Вес (кг)</label>
+                                    <input type="number" step="0.01" name="weight" class="form-control" value="{{ product.weight or '' }}" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Сохранить изменения</button>
+                        <a href="/admin-custom/products" class="btn btn-secondary"><i class="fas fa-times me-2"></i>Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <footer class="mt-4 text-center text-muted small">
+            <a href="/admin" class="text-decoration-none"><i class="fas fa-arrow-left"></i> Вернуться в основную админку</a>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            if (!preview) return;
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    preview.innerHTML = `<img src="${event.target.result}" class="preview-img">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление товарами</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #f2f4f8;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .container { max-width: 1400px; }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            background: #ffffff;
+        }
+        .card-header {
+            background: #f8f9fc;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        .card-header h4 {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 1.25rem;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
+            background: #f8f9fc;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+        .filter-bar .form-group {
+            margin-bottom: 0;
+            min-width: 150px;
+        }
+        .filter-bar label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6c757d;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.2rem;
+        }
+        .filter-bar select,
+        .filter-bar input {
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.9rem;
+            background: white;
+            width: 100%;
+        }
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.15);
+        }
+        .filter-bar .btn {
+            border-radius: 6px;
+            font-size: 0.9rem;
+            padding: 0.35rem 1rem;
+        }
+        .filter-bar .btn-primary {
+            background: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .filter-bar .btn-outline-secondary {
+            border-color: #d1d5db;
+            color: #495057;
+        }
+        .filter-bar .btn-outline-secondary:hover {
+            background: #e9ecef;
+        }
+        .table {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        .table th {
+            background: #f8f9fc;
+            color: #495057;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+            padding: 0.75rem 0.5rem;
+        }
+        .table td {
+            padding: 0.6rem 0.5rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .table-hover tbody tr:hover {
+            background: #f1f3f5;
+        }
+        .product-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+        .btn-action {
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+        .btn-action i {
+            font-size: 0.9rem;
+        }
+        .pagination .page-link {
+            color: #495057;
+            border: 1px solid #dee2e6;
+            padding: 0.3rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        .pagination .page-item.active .page-link {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+        .bottom-bar .info {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .bottom-bar .actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .bottom-bar .actions .btn {
+            border-radius: 4px;
+            font-size: 0.9rem;
+            padding: 0.3rem 0.8rem;
+        }
+        .bottom-bar .actions .btn-outline-secondary {
+            border-color: #d1d5db;
+            color: #495057;
+        }
+        .bottom-bar .actions .btn-outline-secondary:hover {
+            background: #e9ecef;
+        }
+        .badge-status {
+            background: #e9ecef;
+            color: #495057;
+            font-weight: 400;
+        }
+        .text-muted a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+        .text-muted a:hover {
+            text-decoration: underline;
+        }
+        .pagination-ellipsis {
+            display: flex;
+            align-items: center;
+            padding: 0 0.5rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-box me-2"></i>Товары</h4>
+                <div>
+                    <a href="/admin-custom/products/create" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i> Новый товар
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Фильтры -->
+                <form method="get" class="filter-bar">
+                    <div class="form-group">
+                        <label for="search">Поиск</label>
+                        <input type="text" id="search" name="search" class="form-control form-control-sm" placeholder="Название, артикул..." value="{{ search }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="brand_id">Бренд</label>
+                        <select id="brand_id" name="brand_id" class="form-select form-select-sm">
+                            <option value="0">Все бренды</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}" {% if brand_id == brand.id %}selected{% endif %}>{{ brand.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category_id">Категория</label>
+                        <select id="category_id" name="category_id" class="form-select form-select-sm">
+                            <option value="0">Все категории</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i> Применить</button>
+                        <a href="/admin-custom/products" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times me-1"></i> Сбросить</a>
+                    </div>
+                </form>
+
+                <!-- Таблица -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Фото</th>
+                                <th>Название</th>
+                                <th>Бренд</th>
+                                <th>Категория</th>
+                                <th>Цена (₽)</th>
+                                <th class="text-center">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>
+                                    {% if product.main_image %}
+                                    <img src="{{ product.main_image }}" alt="{{ product.name }}" class="product-img">
+                                    {% else %}
+                                    <span class="badge bg-light text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td>{{ product.brand.name if product.brand else '—' }}</td>
+                                <td>{{ product.category.name if product.category else '—' }}</td>
+                                <td>{{ "%.2f"|format(product.price) if product.price else '—' }}</td>
+                                <td class="text-center">
+                                    <a href="/admin-custom/products/edit/{{ product.id }}" class="btn btn-sm btn-outline-secondary btn-action" title="Редактировать">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    <a href="/admin-custom/products/delete/{{ product.id }}" class="btn btn-sm btn-outline-danger btn-action" title="Удалить" onclick="return confirm('Удалить товар «{{ product.name }}»?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x d-block mb-2"></i>
+                                    Товары не найдены
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Нижняя панель -->
+                <div class="bottom-bar">
+                    <div class="info">
+                        Показано с {{ (page-1)*per_page + 1 if total > 0 else 0 }} по {{ [page*per_page, total]|min }} из {{ total }} записей
+                    </div>
+                    <div class="actions d-flex align-items-center gap-3">
+                        <button class="btn btn-outline-secondary btn-sm" disabled><i class="fas fa-file-export me-1"></i> Экспорт</button>
+                        <nav aria-label="Пагинация">
+                            <ul class="pagination pagination-sm mb-0">
+                                {% if page > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page-1 }}{% if search %}&search={{ search }}{% endif %}{% if brand_id %}&brand_id={{ brand_id }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-left"></i></span></li>
+                                {% endif %}
+
+                                {% set total_pages = (total / per_page) | round(0, 'ceil') | int %}
+                                {% set from_page = [1, page - 1]|max %}
+                                {% set to_page = [total_pages, page + 1]|min %}
+
+                                {% if page > 2 %}
+                                <li class="page-item"><a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if brand_id %}&brand_id={{ brand_id }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}">1</a></li>
+                                {% if page > 3 %}
+                                <li class="page-item disabled"><span class="page-link">…</span></li>
+                                {% endif %}
+                                {% endif %}
+
+                                {% for p in range(from_page, to_page + 1) %}
+                                <li class="page-item {% if p == page %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ p }}{% if search %}&search={{ search }}{% endif %}{% if brand_id %}&brand_id={{ brand_id }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}">
+                                        {{ p }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+
+                                {% if page < total_pages - 1 %}
+                                {% if page < total_pages - 2 %}
+                                <li class="page-item disabled"><span class="page-link">…</span></li>
+                                {% endif %}
+                                <li class="page-item"><a class="page-link" href="?page={{ total_pages }}{% if search %}&search={{ search }}{% endif %}{% if brand_id %}&brand_id={{ brand_id }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}">{{ total_pages }}</a></li>
+                                {% endif %}
+
+                                {% if page < total_pages %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page+1 }}{% if search %}&search={{ search }}{% endif %}{% if brand_id %}&brand_id={{ brand_id }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-right"></i></span></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-4 text-center text-muted small">
+            <a href="/admin" class="text-decoration-none"><i class="fas fa-arrow-left me-1"></i> Вернуться в основную админку</a>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

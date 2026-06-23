@@ -4,7 +4,6 @@ from .order import Order
 from .user import User
 from .brand import Brand
 
-# Импорты для товаров каждого бренда
 from .product_ilve import IlveProduct
 from .product_brandt import BrandtProduct
 from .product_bonkrasher import BonkrasherProduct

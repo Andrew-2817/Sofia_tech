@@ -10,28 +10,25 @@ class LiebherrProduct(Base):
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True)
     brand_id = Column(Integer, ForeignKey("brands.id", ondelete="SET NULL"), nullable=True)
 
-    # Основные поля
-    model = Column(String(100), nullable=True)  # Model
-    ean = Column(String(50), nullable=True)  # EAN
-    status = Column(String(50), nullable=True)  # Status
-    name = Column(String(500), nullable=False)  # Название
-    category_name = Column(String(255), nullable=True)  # Категория (текстовое поле)
+    model = Column(String(100), nullable=True)
+    ean = Column(String(50), nullable=True)
+    status = Column(String(50), nullable=True)
+    name = Column(String(500), nullable=False)
+    category_name = Column(String(255), nullable=True)
 
-    # Производство и гарантия
-    production_start = Column(Integer, nullable=True)  # Старт производства 2026
-    factory = Column(String(255), nullable=True)  # Factory
-    warranty = Column(Integer, nullable=True)  # Гарантия 2026 (в годах)
+    production_start = Column(Integer, nullable=True)
+    factory = Column(String(255), nullable=True)
+    warranty = Column(Integer, nullable=True)
 
-    # Цены
-    price_public = Column(Numeric(10, 2), nullable=True)  # РРЦ
-    price_wholesale = Column(Numeric(10, 2), nullable=True)  # ОПТ
-    promo_price_public = Column(Numeric(10, 2), nullable=True)  # Промо РРЦ
-    promo_price_wholesale = Column(Numeric(10, 2), nullable=True)  # Промо ОПТ
+    price_public = Column(Numeric(10, 2), nullable=True)
+    price_wholesale = Column(Numeric(10, 2), nullable=True)
+    promo_price_public = Column(Numeric(10, 2), nullable=True)
+    promo_price_wholesale = Column(Numeric(10, 2), nullable=True)
 
-    # Временные метки
+    main_image = Column(String(500), nullable=True)
+
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
-    # Отношения
     category = relationship("Category", backref="liebherr_products")
     brand = relationship("Brand", backref="liebherr_products")
