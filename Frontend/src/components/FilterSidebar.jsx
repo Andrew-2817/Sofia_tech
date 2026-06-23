@@ -465,6 +465,8 @@ const normalizeControlType = (type) => {
           .map(c => normalizeColor(c))
           .filter(Boolean)
       )];
+      // console.log(products.filter(el => el.id === 851));
+      
       
       const colorOrder = ['Черный', 'Белый', 'Серый', 'Серебро', 'Нержавеющая сталь', 'Графит'];
       const sortedColors = [...uniqueColors].sort((a, b) => {
@@ -504,6 +506,9 @@ const normalizeControlType = (type) => {
       dispatch(setPriceRange([priceRange[0], newValue]));
     }
   };
+
+  const netWeightBounds = getNetWeightRange();
+      const widthCmBounds = getWidthCmRange();
 
   // Получение доступных значений для фильтров из товаров текущей категории
 const getFilterOptions = () => {
@@ -688,8 +693,7 @@ case 'large-appliances':
       case 'built-in-appliances':
 
       const seriesOptions = getSeriesOptions();
-      const netWeightBounds = getNetWeightRange();
-      const widthCmBounds = getWidthCmRange();
+      
         return (
           <>
 
@@ -713,109 +717,7 @@ case 'large-appliances':
             </div>
           )}
           
-          {/* Фильтр веса нетто (net_weight) */}
-          <div className={styles.filterGroup}>
-            <h4 className={styles.groupTitle}><IconWeight size={22}/> Вес нетто (кг)</h4>
-            <div className={styles.dimensionInputs}>
-              <div className={styles.dimensionField}>
-                <span>от</span>
-                <input 
-                  type="number" 
-                  value={netWeightRange[0]} 
-                  onChange={(e) => dispatch(setNetWeightRange([parseFloat(e.target.value) || 0, netWeightRange[1]]))}
-                  min={netWeightBounds.min}
-                  max={netWeightRange[1]}
-                  step={1}
-                />
-              </div>
-              <span className={styles.dimensionSeparator}>—</span>
-              <div className={styles.dimensionField}>
-                <span>до</span>
-                <input 
-                  type="number" 
-                  value={netWeightRange[1]} 
-                  onChange={(e) => dispatch(setNetWeightRange([netWeightRange[0], parseFloat(e.target.value) || 0]))}
-                  min={netWeightRange[0]}
-                  max={netWeightBounds.max}
-                  step={1}
-                />
-              </div>
-            </div>
-            <div className={styles.dimensionRangeSlider}>
-              <input 
-                type="range" 
-                min={netWeightBounds.min} 
-                max={netWeightBounds.max} 
-                step={1}
-                value={netWeightRange[0]} 
-                onChange={(e) => dispatch(setNetWeightRange([parseFloat(e.target.value), netWeightRange[1]]))}
-              />
-              <input 
-                type="range" 
-                min={netWeightBounds.min} 
-                max={netWeightBounds.max} 
-                step={1}
-                value={netWeightRange[1]} 
-                onChange={(e) => dispatch(setNetWeightRange([netWeightRange[0], parseFloat(e.target.value)]))}
-              />
-            </div>
-            <div className={styles.dimensionHint}>
-              <span>от {netWeightRange[0]} кг</span>
-              <span>до {netWeightRange[1]} кг</span>
-            </div>
-          </div>
-          
-          {/* Фильтр ширины в см (width_cm) */}
-          <div className={styles.filterGroup}>
-            <h4 className={styles.groupTitle}><IconArrowsHorizontal size={22}/> Ширина (см)</h4>
-            <div className={styles.dimensionInputs}>
-              <div className={styles.dimensionField}>
-                <span>от</span>
-                <input 
-                  type="number" 
-                  value={widthCmRange[0]} 
-                  onChange={(e) => dispatch(setWidthCmRange([parseFloat(e.target.value) || 0, widthCmRange[1]]))}
-                  min={widthCmBounds.min}
-                  max={widthCmRange[1]}
-                  step={1}
-                />
-              </div>
-              <span className={styles.dimensionSeparator}>—</span>
-              <div className={styles.dimensionField}>
-                <span>до</span>
-                <input 
-                  type="number" 
-                  value={widthCmRange[1]} 
-                  onChange={(e) => dispatch(setWidthCmRange([widthCmRange[0], parseFloat(e.target.value) || 0]))}
-                  min={widthCmRange[0]}
-                  max={widthCmBounds.max}
-                  step={1}
-                />
-              </div>
-            </div>
-            <div className={styles.dimensionRangeSlider}>
-              <input 
-                type="range" 
-                min={widthCmBounds.min} 
-                max={widthCmBounds.max} 
-                step={1}
-                value={widthCmRange[0]} 
-                onChange={(e) => dispatch(setWidthCmRange([parseFloat(e.target.value), widthCmRange[1]]))}
-              />
-              <input 
-                type="range" 
-                min={widthCmBounds.min} 
-                max={widthCmBounds.max} 
-                step={1}
-                value={widthCmRange[1]} 
-                onChange={(e) => dispatch(setWidthCmRange([widthCmRange[0], parseFloat(e.target.value)]))}
-              />
-            </div>
-            <div className={styles.dimensionHint}>
-              <span>от {widthCmRange[0]} см</span>
-              <span>до {widthCmRange[1]} см</span>
-            </div>
-          </div>
+
            
             {filterOptions.controlTypes.length > 0 && (
         <div className={styles.filterGroup}>
@@ -925,7 +827,7 @@ case 'large-appliances':
       </div>
 
       {/* Динамические фильтры для конкретной категории */}
-      {renderDynamicFilters()}
+      {/* {renderDynamicFilters()} */}
 
       {/* Бренд / Производитель */}
       <div className={styles.filterGroup}>
@@ -1044,6 +946,109 @@ case 'large-appliances':
           </div>
         </div>
       )}
+                {/* Фильтр веса нетто (net_weight) */}
+          <div className={styles.filterGroup}>
+            <h4 className={styles.groupTitle}><IconWeight size={22}/> Вес нетто (кг)</h4>
+            <div className={styles.dimensionInputs}>
+              <div className={styles.dimensionField}>
+                <span>от</span>
+                <input 
+                  type="number" 
+                  value={netWeightRange[0]} 
+                  onChange={(e) => dispatch(setNetWeightRange([parseFloat(e.target.value) || 0, netWeightRange[1]]))}
+                  min={netWeightBounds.min}
+                  max={netWeightRange[1]}
+                  step={1}
+                />
+              </div>
+              <span className={styles.dimensionSeparator}>—</span>
+              <div className={styles.dimensionField}>
+                <span>до</span>
+                <input 
+                  type="number" 
+                  value={netWeightRange[1]} 
+                  onChange={(e) => dispatch(setNetWeightRange([netWeightRange[0], parseFloat(e.target.value) || 0]))}
+                  min={netWeightRange[0]}
+                  max={netWeightBounds.max}
+                  step={1}
+                />
+              </div>
+            </div>
+            <div className={styles.dimensionRangeSlider}>
+              <input 
+                type="range" 
+                min={netWeightBounds.min} 
+                max={netWeightBounds.max} 
+                step={1}
+                value={netWeightRange[0]} 
+                onChange={(e) => dispatch(setNetWeightRange([parseFloat(e.target.value), netWeightRange[1]]))}
+              />
+              <input 
+                type="range" 
+                min={netWeightBounds.min} 
+                max={netWeightBounds.max} 
+                step={1}
+                value={netWeightRange[1]} 
+                onChange={(e) => dispatch(setNetWeightRange([netWeightRange[0], parseFloat(e.target.value)]))}
+              />
+            </div>
+            <div className={styles.dimensionHint}>
+              <span>от {netWeightRange[0]} кг</span>
+              <span>до {netWeightRange[1]} кг</span>
+            </div>
+          </div>
+          
+          {/* Фильтр ширины в см (width_cm) */}
+          <div className={styles.filterGroup}>
+            <h4 className={styles.groupTitle}><IconArrowsHorizontal size={22}/> Ширина (см)</h4>
+            <div className={styles.dimensionInputs}>
+              <div className={styles.dimensionField}>
+                <span>от</span>
+                <input 
+                  type="number" 
+                  value={widthCmRange[0]} 
+                  onChange={(e) => dispatch(setWidthCmRange([parseFloat(e.target.value) || 0, widthCmRange[1]]))}
+                  min={widthCmBounds.min}
+                  max={widthCmRange[1]}
+                  step={1}
+                />
+              </div>
+              <span className={styles.dimensionSeparator}>—</span>
+              <div className={styles.dimensionField}>
+                <span>до</span>
+                <input 
+                  type="number" 
+                  value={widthCmRange[1]} 
+                  onChange={(e) => dispatch(setWidthCmRange([widthCmRange[0], parseFloat(e.target.value) || 0]))}
+                  min={widthCmRange[0]}
+                  max={widthCmBounds.max}
+                  step={1}
+                />
+              </div>
+            </div>
+            <div className={styles.dimensionRangeSlider}>
+              <input 
+                type="range" 
+                min={widthCmBounds.min} 
+                max={widthCmBounds.max} 
+                step={1}
+                value={widthCmRange[0]} 
+                onChange={(e) => dispatch(setWidthCmRange([parseFloat(e.target.value), widthCmRange[1]]))}
+              />
+              <input 
+                type="range" 
+                min={widthCmBounds.min} 
+                max={widthCmBounds.max} 
+                step={1}
+                value={widthCmRange[1]} 
+                onChange={(e) => dispatch(setWidthCmRange([widthCmRange[0], parseFloat(e.target.value)]))}
+              />
+            </div>
+            <div className={styles.dimensionHint}>
+              <span>от {widthCmRange[0]} см</span>
+              <span>до {widthCmRange[1]} см</span>
+            </div>
+          </div>
 
       {/* Активные фильтры */}
       {(manufacturer.length > 0 || color || brand || inStock !== null || 

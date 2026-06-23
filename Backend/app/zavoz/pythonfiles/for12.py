@@ -211,7 +211,7 @@ def load_products_to_db(row_to_photo):
                 'main_image': photo_path,
                 'sku': sku,
                 'model': clean_string(row.get('Модель')),
-                'name': clean_string(row.get('Название')) or sku,
+                'name': clean_string(row.get('Модель')),
                 'description': clean_string(row.get('Описание')),
                 'price_public': clean_price(row.get('Цена')),
                 'comment': clean_string(row.get('Комментарий'))

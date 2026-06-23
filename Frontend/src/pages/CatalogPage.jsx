@@ -415,6 +415,8 @@ const maxProductPrice = allProducts.length > 0
   ? Math.max(...allProducts.map(p => p.price || 0))
   : 500000;
   
+console.log(allProducts.filter(el => el.width!==0 && el.width>widthCmRange[0] && el.width<widthCmRange[1]).map(el => el.width));
+
 const filteredProducts = allProducts.filter(product => {
   // ========== РАСШИРЕННЫЙ ПОИСК ==========
   let matchesSearch = true;
@@ -473,8 +475,13 @@ const filteredProducts = allProducts.filter(product => {
   const matchesColor = !isColorFilterActive || normalizeColorForFilter(product.color) === color;
   
   // ========== ДИНАМИЧЕСКИЕ ФИЛЬТРЫ (только если активны) ==========
-  const isWidthFilterActive = widthRange && widthRange[1] !== 0 && widthRange[1] !== 200;
-  const matchesWidth = !isWidthFilterActive || (product.width && product.width <= widthRange[1]);
+const defaultWidthRange = { min: 0, max: 200 };
+const isWidthFilterActive = widthCmRange && 
+  (widthCmRange[0] > defaultWidthRange.min || widthCmRange[1] < defaultWidthRange.max);
+const matchesWidth = !isWidthFilterActive || 
+  (product.width && product.width >= widthCmRange[0] && product.width <= widthCmRange[1]);
+  // console.log(widthCmRange, product.width);
+  
   // console.log(product.width);
   
   
@@ -525,7 +532,7 @@ const matchesSeries =  !isSeriesFilterActive || (() => {
 // ========== ФИЛЬТР ВЕСА НЕТТО (net_weight) ==========
 const isNetWeightFilterActive = netWeightRange && (netWeightRange[0] > 0 || netWeightRange[1] < 100);
 const matchesNetWeight = !isNetWeightFilterActive || 
-  (product.net_weight >= netWeightRange[0] && product.net_weight <= netWeightRange[1]);
+  (product.weight >= netWeightRange[0] && product.weight <= netWeightRange[1]);
 
 // ========== ФИЛЬТР ШИРИНЫ В СМ (width_cm) ==========
 const isWidthCmFilterActive = widthCmRange && (widthCmRange[0] > 0 || widthCmRange[1] < 200);
@@ -547,18 +554,18 @@ const matchesStatus = !isStatusFilterActive ||
          matchesPrice && 
          matchesColor &&
          matchesWidth &&
-        matchesFactory &&
-         matchesWarranty &&
-         matchesHeight &&
-         matchesVolume &&
-          matchesSeries &&      // добавить
-       matchesNetWeight &&   // добавить
-       matchesWidthCm && 
+      //   matchesFactory &&
+      //    matchesWarranty &&
+      //    matchesHeight &&
+      //    matchesVolume &&
+      //     matchesSeries &&      // добавить
+       matchesNetWeight   // добавить
+      //  matchesWidthCm && 
         //  matchesPower &&
-         matchesControlType &&
-         matchesMaterial &&
-         matchesStatus &&
-         matchesCompatibility;
+        //  matchesControlType &&
+        //  matchesMaterial &&
+        //  matchesStatus &&
+        //  matchesCompatibility;
 });
   // Вставьте это в ваш компонент, где есть filteredProducts
 

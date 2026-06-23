@@ -64,7 +64,7 @@ const ProductPage = () => {
   const { items: allProducts, loading } = useSelector(state => state.products);
   const favorites = useSelector(state => state.favorites.items);
   // Поиск товара по комбинации id + brandId
-  console.log(allProducts.filter(el => el.main_image === null));
+  // console.log(allProducts.filter(el => el.main_image === null));
   
 
   useEffect(() => {
@@ -85,8 +85,11 @@ const ProductPage = () => {
 
   const product = allProducts.find(p =>
   p.brand === brand &&
-  (p.sku?.toLowerCase() === sku || p.model?.toLowerCase() === sku)
+  (p.id === Number(sku))
 );
+console.log(sku, brand)
+
+
   
 if (isPageLoading || loading && allProducts.length === 0) {
   return <div className="container">Загрузка...</div>;
@@ -101,7 +104,7 @@ const isFavorite = favorites.some(fav => fav.id === product.id && fav.brandId ==
   // Похожие товары (по бренду или категории)
   const similarProducts = allProducts.filter(p => {
     return (p.brandId === product.brandId || p.categoryId === product.categoryId) 
-      && !(p.brand === brand && (p.sku?.toLowerCase() === sku || p.model?.toLowerCase() === sku));
+      && !(p.brand === brand);
   }).slice(0, 8);
   
   // Формируем характеристики в зависимости от бренда
@@ -132,8 +135,8 @@ const getProductSpecs = () => {
   if (product.volume) add('Объём', `${product.volume} л`, IconBottle);
 
   // Вес
-  if (product.net_weight) {
-    const w = parseFloat(product.net_weight);
+  if (product.weight) {
+    const w = parseFloat(product.weight);
     if (!isNaN(w)) add('Вес нетто', `${w} кг`, IconWeight);
   }
   if (product.gross_weight) {
