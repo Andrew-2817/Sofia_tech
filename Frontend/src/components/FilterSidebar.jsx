@@ -483,9 +483,7 @@ const normalizeControlType = (type) => {
   }, [products]);
 
   // Максимальная и минимальная цена
-  const maxProductPrice = products.length > 0 
-    ? Math.max(...products.map(p => p.price || 0))
-    : 500000;
+  const maxProductPrice = 5000000;
   
   const minProductPrice = products.length > 0 
     ? Math.min(...products.map(p => p.price || 0))

@@ -9,6 +9,7 @@ import basketIcon from '../assets/basket.svg';
 import fullfilledHeartIcon from "../assets/solid-heart.svg";
 import { API_BASE_URL_photo } from '../services/api';
 import { getDefaultProductImage } from '../data/mockData';
+import { memo } from 'react';
 
 import {
   IconBasket,
@@ -17,7 +18,7 @@ IconHeart, IconHeartFilled
 
 
 
-const ProductCard = ({ product }) => {
+const ProductCard = memo(({ product }) => {
   const dispatch = useDispatch();
   
   // ИСПРАВЛЕНО: проверка избранного по составному ключу
@@ -78,6 +79,6 @@ const ProductCard = ({ product }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ProductCard; 

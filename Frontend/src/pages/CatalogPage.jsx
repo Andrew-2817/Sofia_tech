@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback, startTransition} from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
@@ -14,168 +14,10 @@ import ImgCat2 from "../assets/cat-2.jpg"
 import ImgCat3 from "../assets/cat-3.jpg"
 import ImgCat4 from "../assets/cat-4.jpg"
 import ImgCat5 from "../assets/cat-5.jpg"
-
-const CatalogPage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { level1: level1Slug, level2: level2Slug, level3: level3Slug } = useParams();
-  const { items: allProducts, loading: productsLoading } = useSelector(state => state.products);
-  const { searchQuery, manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
-  const { tree: categories, loading: categoriesLoading } = useSelector(state => state.categories);
-const { 
-  widthRange,
-  heightRange,
-  depthRange,
-  volumeRange,
-  performanceRange,
-  noiseLevelRange,
-  mountingType,
-  controlType,
-  material,
-  compatibility,
-  powerRange,
-  inStock,
-    factory,    // добавить
-  warranty,
-      series,
-  netWeightRange,
-  widthCmRange,
-  status
-} = useSelector(state => state.filters);
+import { useDeferredValue } from 'react';
 
 
-
-  const [isPageLoading, setIsPageLoading] = useState(true);
-  const [activeLevel1, setActiveLevel1] = useState(null);
-  const [activeLevel2, setActiveLevel2] = useState(null);
-  const [activeLevel3, setActiveLevel3] = useState(null);
-  const [level1Category, setLevel1Category] = useState(null);
-  const [level2Category, setLevel2Category] = useState(null);
-  const [level2CategoriesForTabs, setLevel2CategoriesForTabs] = useState([]);
-  const [level3Categories, setLevel3Categories] = useState([]);
-  const [currentCategoryName, setCurrentCategoryName] = useState('');
-  const [currentCategoryDescription, setCurrentCategoryDescription] = useState('');
-  const [currentCategoryImage, setCurrentCategoryImage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Данные для баннеров категорий (можно вынести в отдельный файл)
-  const categoryBanners = {
-    // Категории 1 уровня
-    'large-appliances': {
-      title: 'Крупная бытовая техника',
-      description: 'Широкий выбор стиральных машин, холодильников, посудомоечных машин и другой крупной бытовой техники от ведущих производителей. Высокое качество, надежность и доступные цены.',
-      image: ImgCat1,
-      bgColor: '#7bc6cf'
-    },
-    'built-in-appliances': {
-      title: 'Встраиваемая техника',
-      description: 'Идеальное решение для современной кухни. Духовые шкафы, варочные поверхности, вытяжки и кофемашины, которые идеально впишутся в ваш интерьер.',
-      image: ImgCat2,
-      bgColor: '#ff9f43'
-    },
-    'small-appliances': {
-      title: 'Мелкая бытовая техника',
-      description: 'Кофемашины, блендеры, пылесосы и другая техника для комфортной жизни. Компактные размеры и высокая функциональность.',
-      image: ImgCat3,
-      bgColor: '#a55eea'
-    },
-    'accessories': {
-      title: 'Аксессуары',
-      description: 'Оригинальные аксессуары и комплектующие для вашей техники. Фильтры, направляющие, чистящие средства и многое другое.',
-      image: ImgCat4,
-      bgColor: '#eb4d4b'
-    },
-    'kitchen-blocks': {
-      title: 'Кухонные блоки ILVE',
-      description: 'Премиальные кухонные блоки итальянского бренда ILVE. Сочетание стиля, мощности и функциональности для вашей кухни.',
-      image: ImgCat5,
-      bgColor: '#20bf6b'
-    },
-  };
-
-// Функция для проверки принадлежности товара к категории
-const isProductInCategory = (productCategoryId, targetCategoryId, categoriesTree) => {
-  // Находим категорию товара в дереве
-  const productCategory = findCategoryById(categoriesTree, productCategoryId);
-  if (!productCategory) return false;
-  
-  // Если целевая категория - это сама категория товара
-  if (productCategoryId === targetCategoryId) return true;
-  
-  // Проверяем, является ли целевая категория родительской для категории товара
-  let currentCategory = productCategory;
-  while (currentCategory) {
-    if (currentCategory.parent_id === targetCategoryId) return true;
-    // Поднимаемся вверх по иерархии
-    currentCategory = findCategoryById(categoriesTree, currentCategory.parent_id);
-  }
-  
-  return false;
-};
-
-// Расширенная нормализация с сохранением всех серий для товара
-const extractSeriesList = (value) => {
-  if (!value || value === 'null' || value === 'undefined' || value === '') {
-    return [];
-  }
-  
-  const validSeries = [
-    'Professional Plus',
-    'Pro Line', 
-    'K-series.1',
-    'K-series.2',
-    'K-series.3',
-    'K-series.5',
-    'K-series.8',
-    'Majestic',
-    'Nostalgie',
-    'Panoramagic'
-  ];
-  
-  // Длинные описания игнорируем
-  if (value.length > 50 || value.includes('Для') || value.includes('Чугунный')) {
-    return [];
-  }
-  
-  const result = [];
-  
-  // Разбиваем по запятой
-  if (value.includes(',')) {
-    const parts = value.split(',').map(p => p.trim());
-    for (const part of parts) {
-      if (validSeries.includes(part)) {
-        result.push(part);
-      }
-    }
-  } else {
-    // Одиночное значение
-    if (validSeries.includes(value)) {
-      result.push(value);
-    } else {
-      // Поиск частичного совпадения
-      for (const series of validSeries) {
-        if (value.includes(series)) {
-          result.push(series);
-          break;
-        }
-      }
-    }
-  }
-  
-  return result;
-};
-
-// Вспомогательная функция для поиска категории по id
-const findCategoryById = (categories, id) => {
-  for (const cat of categories) {
-    if (cat.id === id) return cat;
-    if (cat.children) {
-      const found = findCategoryById(cat.children, id);
-      if (found) return found;
-    }
-  }
-  return null;
-};
+const CHUNK_SIZE = 10;
 const normalizeStatus = (status) => {
   if (!status) return null;
   const s = status.trim().toLowerCase();
@@ -192,92 +34,6 @@ const normalizeStatus = (status) => {
 
   return null; // остальное игнорируем
 };
-  // Обновление баннера при смене категории
-  const updateBanner = (category) => {
-    if (!category) return;
-    
-    const banner = categoryBanners[category.slug];
-    if (banner) {
-      setCurrentCategoryName(banner.title);
-      setCurrentCategoryDescription(banner.description);
-      setCurrentCategoryImage(banner.image);
-    } else {
-      setCurrentCategoryName(category.name);
-      setCurrentCategoryDescription(`Широкий ассортимент ${category.name.toLowerCase()} от ведущих производителей. Высокое качество и доступные цены.`);
-      setCurrentCategoryImage('');
-    }
-  };
-
-    useEffect(() => {
-    if (allProducts.length === 0 && !productsLoading) {
-      dispatch(fetchAllProducts());
-    }
-  }, [dispatch, allProducts.length, productsLoading]);
-
-  // Парсим URL при загрузке
-useEffect(() => {
-  if (categories.length === 0) return;
-
-  // Нет ни одного сегмента — сбрасываем всё
-  if (!level1Slug) {
-    setLevel1Category(null);
-    setActiveLevel1(null);
-    setLevel2Category(null);
-    setActiveLevel2(null);
-    setLevel3Categories([]);
-    setActiveLevel3(null);
-    setLevel2CategoriesForTabs([]);
-    setCurrentCategoryName('');
-    setCurrentCategoryDescription('');
-    setCurrentCategoryImage('');
-    return;
-  }
-
-  // level1
-  const foundLevel1 = categories.find(c => c.slug === level1Slug);
-  if (!foundLevel1) return;
-
-  setLevel1Category(foundLevel1);
-  setActiveLevel1(foundLevel1.id);
-  updateBanner(foundLevel1);
-  setLevel2CategoriesForTabs(foundLevel1.children || []);
-
-  // level2
-  if (!level2Slug) {
-    setLevel2Category(null);
-    setActiveLevel2(null);
-    setLevel3Categories([]);
-    setActiveLevel3(null);
-    return;
-  }
-
-  const foundLevel2 = foundLevel1.children?.find(c => c.slug === level2Slug);
-  if (!foundLevel2) return;
-
-  setLevel2Category(foundLevel2);
-  setActiveLevel2(foundLevel2.id);
-  setLevel3Categories(foundLevel2.children || []);
-
-  // level3
-  if (!level3Slug) {
-    setActiveLevel3(null);
-    return;
-  }
-
-  const foundLevel3 = foundLevel2.children?.find(c => c.slug === level3Slug);
-  if (foundLevel3) {
-    setActiveLevel3(foundLevel3.id);
-  }
-
-}, [level1Slug, level2Slug, level3Slug, categories]);
-
-useEffect(() => {
-  dispatch(resetFilters());
-}, [level1Slug, level2Slug, level3Slug]); 
-
-  // Фильтрация товаров
-  // console.log(allProducts.filter(el => el.categoryId ===293));
-
 
 const normalizeColorForFilter = (color) => {
   if (!color || color === 'null' || color === 'undefined') return null;
@@ -406,18 +162,150 @@ const normalizeControlType = (type) => {
   return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
 };
 
-// Вычисляем минимальную и максимальную цену из всех товаров
+const isProductInCategory = (productCategoryId, targetCategoryId, categoriesTree) => {
+  // Находим категорию товара в дереве
+  const productCategory = findCategoryById(categoriesTree, productCategoryId);
+  if (!productCategory) return false;
+  
+  // Если целевая категория - это сама категория товара
+  if (productCategoryId === targetCategoryId) return true;
+  
+  // Проверяем, является ли целевая категория родительской для категории товара
+  let currentCategory = productCategory;
+  while (currentCategory) {
+    if (currentCategory.parent_id === targetCategoryId) return true;
+    // Поднимаемся вверх по иерархии
+    currentCategory = findCategoryById(categoriesTree, currentCategory.parent_id);
+  }
+  
+  return false;
+};
+
+const findCategoryById = (categories, id) => {
+  for (const cat of categories) {
+    if (cat.id === id) return cat;
+    if (cat.children) {
+      const found = findCategoryById(cat.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+const extractSeriesList = (value) => {
+  if (!value || value === 'null' || value === 'undefined' || value === '') {
+    return [];
+  }
+  
+  const validSeries = [
+    'Professional Plus',
+    'Pro Line', 
+    'K-series.1',
+    'K-series.2',
+    'K-series.3',
+    'K-series.5',
+    'K-series.8',
+    'Majestic',
+    'Nostalgie',
+    'Panoramagic'
+  ];
+  
+  // Длинные описания игнорируем
+  if (value.length > 50 || value.includes('Для') || value.includes('Чугунный')) {
+    return [];
+  }
+  
+  const result = [];
+  
+  // Разбиваем по запятой
+  if (value.includes(',')) {
+    const parts = value.split(',').map(p => p.trim());
+    for (const part of parts) {
+      if (validSeries.includes(part)) {
+        result.push(part);
+      }
+    }
+  } else {
+    // Одиночное значение
+    if (validSeries.includes(value)) {
+      result.push(value);
+    } else {
+      // Поиск частичного совпадения
+      for (const series of validSeries) {
+        if (value.includes(series)) {
+          result.push(series);
+          break;
+        }
+      }
+    }
+  }
+  
+  return result;
+};
+
+const CatalogPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { level1: level1Slug, level2: level2Slug, level3: level3Slug } = useParams();
+  const { items: allProducts, loading: productsLoading } = useSelector(state => state.products);
+  const { searchQuery, manufacturer, priceRange, color, loadCapacity, energyClass } = useSelector(state => state.filters);
+  const { tree: categories, loading: categoriesLoading } = useSelector(state => state.categories);
+const { 
+  widthRange,
+  heightRange,
+  depthRange,
+  volumeRange,
+  performanceRange,
+  noiseLevelRange,
+  mountingType,
+  controlType,
+  material,
+  compatibility,
+  powerRange,
+  inStock,
+    factory,    // добавить
+  warranty,
+      series,
+  netWeightRange,
+  widthCmRange,
+  status
+} = useSelector(state => state.filters);
+
+
+
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [activeLevel1, setActiveLevel1] = useState(null);
+  const [activeLevel2, setActiveLevel2] = useState(null);
+  const [activeLevel3, setActiveLevel3] = useState(null);
+  const [level1Category, setLevel1Category] = useState(null);
+  const [level2Category, setLevel2Category] = useState(null);
+  const [level2CategoriesForTabs, setLevel2CategoriesForTabs] = useState([]);
+  const [level3Categories, setLevel3Categories] = useState([]);
+  const [currentCategoryName, setCurrentCategoryName] = useState('');
+  const [currentCategoryDescription, setCurrentCategoryDescription] = useState('');
+  const [currentCategoryImage, setCurrentCategoryImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const ITEMS_PER_PAGE = 50;
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  // В начале компонента
+  const [searchInput, setSearchInput] = useState('');
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const [chunkSize, setChunkSize] = useState(50);
+const [currentChunk, setCurrentChunk] = useState(0);
+
+
+  // Вычисляем минимальную и максимальную цену из всех товаров
 const minProductPrice = allProducts.length > 0 
   ? Math.min(...allProducts.map(p => p.price || 0))
   : 0;
 
 const maxProductPrice = allProducts.length > 0 
   ? Math.max(...allProducts.map(p => p.price || 0))
-  : 500000;
-  
-console.log(allProducts.filter(el => el.width!==0 && el.width>widthCmRange[0] && el.width<widthCmRange[1]).map(el => el.width));
+  : 5000000;
 
-const filteredProducts = allProducts.filter(product => {
+  const filteredProducts = useMemo(() => {
+  return allProducts.filter(product => {
   // ========== РАСШИРЕННЫЙ ПОИСК ==========
   let matchesSearch = true;
   if (searchQuery.trim().length > 0) {
@@ -567,6 +455,194 @@ const matchesStatus = !isStatusFilterActive ||
         //  matchesStatus &&
         //  matchesCompatibility;
 });
+}, [allProducts, searchQuery, manufacturer, priceRange, color, 
+    activeLevel1, activeLevel2, activeLevel3, 
+    netWeightRange, widthRange, widthCmRange]) 
+
+    const handleLoadMore = useCallback(() => {
+    setIsLoadingMore(true);
+    
+    // Добавляем частями
+    let added = 0;
+    const totalToAdd = Math.min(ITEMS_PER_PAGE, filteredProducts.length - visibleCount);
+    
+    const addChunk = () => {
+      const chunk = Math.min(CHUNK_SIZE, totalToAdd - added);
+      if (chunk <= 0) {
+        setIsLoadingMore(false);
+        return;
+      }
+      
+      setVisibleCount(prev => prev + chunk);
+      added += chunk;
+      
+      // Следующий чанк через 50ms
+      if (added < totalToAdd) {
+        setTimeout(addChunk, 50);
+      } else {
+        setIsLoadingMore(false);
+      }
+    };
+    
+    startTransition(() => {
+      addChunk();
+    });
+  }, [visibleCount, filteredProducts.length]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(setSearchQuery(searchInput));
+    }, 300); // ждём 300мс после последнего символа
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchQuery, manufacturer, priceRange, color, 
+      activeLevel1, activeLevel2, activeLevel3]);
+
+const visibleProducts = useMemo(() => {
+  return filteredProducts.slice(0, visibleCount);
+}, [filteredProducts, visibleCount]);
+
+  const deferredVisibleProducts = useDeferredValue(visibleProducts);
+
+  // Данные для баннеров категорий (можно вынести в отдельный файл)
+  const categoryBanners = {
+    // Категории 1 уровня
+    'large-appliances': {
+      title: 'Крупная бытовая техника',
+      description: 'Широкий выбор стиральных машин, холодильников, посудомоечных машин и другой крупной бытовой техники от ведущих производителей. Высокое качество, надежность и доступные цены.',
+      image: ImgCat1,
+      bgColor: '#7bc6cf'
+    },
+    'built-in-appliances': {
+      title: 'Встраиваемая техника',
+      description: 'Идеальное решение для современной кухни. Духовые шкафы, варочные поверхности, вытяжки и кофемашины, которые идеально впишутся в ваш интерьер.',
+      image: ImgCat2,
+      bgColor: '#ff9f43'
+    },
+    'small-appliances': {
+      title: 'Мелкая бытовая техника',
+      description: 'Кофемашины, блендеры, пылесосы и другая техника для комфортной жизни. Компактные размеры и высокая функциональность.',
+      image: ImgCat3,
+      bgColor: '#a55eea'
+    },
+    'accessories': {
+      title: 'Аксессуары',
+      description: 'Оригинальные аксессуары и комплектующие для вашей техники. Фильтры, направляющие, чистящие средства и многое другое.',
+      image: ImgCat4,
+      bgColor: '#eb4d4b'
+    },
+    'kitchen-blocks': {
+      title: 'Кухонные блоки ILVE',
+      description: 'Премиальные кухонные блоки итальянского бренда ILVE. Сочетание стиля, мощности и функциональности для вашей кухни.',
+      image: ImgCat5,
+      bgColor: '#20bf6b'
+    },
+  };
+
+// Функция для проверки принадлежности товара к категории
+
+
+// Расширенная нормализация с сохранением всех серий для товара
+
+
+// Вспомогательная функция для поиска категории по id
+
+  // Обновление баннера при смене категории
+  const updateBanner = (category) => {
+    if (!category) return;
+    
+    const banner = categoryBanners[category.slug];
+    if (banner) {
+      setCurrentCategoryName(banner.title);
+      setCurrentCategoryDescription(banner.description);
+      setCurrentCategoryImage(banner.image);
+    } else {
+      setCurrentCategoryName(category.name);
+      setCurrentCategoryDescription(`Широкий ассортимент ${category.name.toLowerCase()} от ведущих производителей. Высокое качество и доступные цены.`);
+      setCurrentCategoryImage('');
+    }
+  };
+
+    useEffect(() => {
+    if (allProducts.length === 0 && !productsLoading) {
+      dispatch(fetchAllProducts());
+    }
+  }, [dispatch, allProducts.length, productsLoading]);
+
+  // Парсим URL при загрузке
+useEffect(() => {
+  if (categories.length === 0) return;
+
+  // Нет ни одного сегмента — сбрасываем всё
+  if (!level1Slug) {
+    setLevel1Category(null);
+    setActiveLevel1(null);
+    setLevel2Category(null);
+    setActiveLevel2(null);
+    setLevel3Categories([]);
+    setActiveLevel3(null);
+    setLevel2CategoriesForTabs([]);
+    setCurrentCategoryName('');
+    setCurrentCategoryDescription('');
+    setCurrentCategoryImage('');
+    return;
+  }
+
+  // level1
+  const foundLevel1 = categories.find(c => c.slug === level1Slug);
+  if (!foundLevel1) return;
+
+  setLevel1Category(foundLevel1);
+  setActiveLevel1(foundLevel1.id);
+  updateBanner(foundLevel1);
+  setLevel2CategoriesForTabs(foundLevel1.children || []);
+
+  // level2
+  if (!level2Slug) {
+    setLevel2Category(null);
+    setActiveLevel2(null);
+    setLevel3Categories([]);
+    setActiveLevel3(null);
+    return;
+  }
+
+  const foundLevel2 = foundLevel1.children?.find(c => c.slug === level2Slug);
+  if (!foundLevel2) return;
+
+  setLevel2Category(foundLevel2);
+  setActiveLevel2(foundLevel2.id);
+  setLevel3Categories(foundLevel2.children || []);
+
+  // level3
+  if (!level3Slug) {
+    setActiveLevel3(null);
+    return;
+  }
+
+  const foundLevel3 = foundLevel2.children?.find(c => c.slug === level3Slug);
+  if (foundLevel3) {
+    setActiveLevel3(foundLevel3.id);
+  }
+
+}, [level1Slug, level2Slug, level3Slug, categories]);
+
+useEffect(() => {
+  dispatch(resetFilters());
+}, [level1Slug, level2Slug, level3Slug]); 
+
+  // Фильтрация товаров
+  // console.log(allProducts.filter(el => el.categoryId ===293));
+
+
+
+
+  
+// console.log(allProducts.filter(el => el.width!==0 && el.width>widthCmRange[0] && el.width<widthCmRange[1]).map(el => el.width));
+
+
   // Вставьте это в ваш компонент, где есть filteredProducts
 
 const analyzeFields = (products) => {
@@ -710,8 +786,8 @@ const handleBackToLevel1 = () => {
             <input
               type="text"
               placeholder="Поиск в каталоге..."
-              value={searchQuery}
-              onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
 
@@ -843,7 +919,7 @@ const handleBackToLevel1 = () => {
           </div>
 
           <div className={`${styles.productsGrid} ${isLoading ? styles.loading : ''}`}>
-            {filteredProducts.map((product, index) => (
+            {deferredVisibleProducts.map((product, index) => (
               <div 
                 key={`${product.id}_${product.brandId}`} 
                 className={styles.productItem}
@@ -853,6 +929,26 @@ const handleBackToLevel1 = () => {
               </div>
             ))}
           </div>
+            {visibleCount < filteredProducts.length && (
+              <div className={styles.loadMoreWrap}>
+                {isLoadingMore ? (
+                  <div className={styles.loadMoreSpinner}>
+                    <div className={styles.spinnerRing}></div>
+                    <span>Загружаем товары...</span>
+                  </div>
+                ) : (
+                  <button
+                    className={styles.loadMoreBtn}
+                    onClick={handleLoadMore}
+                  >
+                    Показать ещё {Math.min(ITEMS_PER_PAGE, filteredProducts.length - visibleCount)} товаров
+                    <span className={styles.loadMoreCount}>
+                      показано {visibleCount} из {filteredProducts.length}
+                    </span>
+                  </button>
+                )}
+              </div>
+            )}
 
           {filteredProducts.length === 0 && !isLoading && (
             <div className={styles.noResults}>
