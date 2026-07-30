@@ -11,6 +11,7 @@ import {
   setInStock,
   setWidthRange,
   setHeightRange,
+  setDepthRange,
   setVolumeRange,
   setPowerRange,
   setControlType,
@@ -33,7 +34,8 @@ IconTag          ,
 IconWeight        ,
 IconBuildingFactory  ,
 IconCircleCheck, IconCurrencyRubel,
-IconPalette, IconTrash, IconSettings 
+IconPalette, IconTrash,  IconBox,
+  IconRuler, IconSettings 
 } from '@tabler/icons-react';
 import trashIcon from "../assets/trash.svg";
 import colorIcon from "../assets/colors.svg";
@@ -52,6 +54,7 @@ const FilterSidebar = () => {
     widthRange,
     heightRange,
     volumeRange,
+    depthRange,
     powerRange,
     controlType,
     material,
@@ -506,7 +509,37 @@ const normalizeControlType = (type) => {
   };
 
   const netWeightBounds = getNetWeightRange();
-      const widthCmBounds = getWidthCmRange();
+  const widthCmBounds = getWidthCmRange();
+
+  const heightBounds = useMemo(() => {
+  const values = products
+    .map(p => p.height || p.height_cm || 0)
+    .filter(v => v > 0);
+  return {
+    min: values.length ? Math.floor(Math.min(...values)) : 0,
+    max: values.length ? Math.ceil(Math.max(...values)) : 200,
+  };
+}, [products]);
+
+const depthBounds = useMemo(() => {
+  const values = products
+    .map(p => p.depth || p.depth_cm || 0)
+    .filter(v => v > 0);
+  return {
+    min: values.length ? Math.floor(Math.min(...values)) : 0,
+    max: values.length ? Math.ceil(Math.max(...values)) : 100,
+  };
+}, [products]);
+
+const volumeBounds = useMemo(() => {
+  const values = products
+    .map(p => p.volume || p.capacity || 0)
+    .filter(v => v > 0);
+  return {
+    min: values.length ? Math.floor(Math.min(...values)) : 0,
+    max: values.length ? Math.ceil(Math.max(...values)) : 1000,
+  };
+}, [products]);ы
 
   // Получение доступных значений для фильтров из товаров текущей категории
 const getFilterOptions = () => {
@@ -1048,30 +1081,185 @@ case 'large-appliances':
             </div>
           </div>
 
-      {/* Активные фильтры */}
-      {(manufacturer.length > 0 || color || brand || inStock !== null || 
-        priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice) && (
-        <div className={styles.activeFilters}>
-          <h4>Активные фильтры:</h4>
-          <div className={styles.activeFilterTags}>
-            {manufacturer.map(m => (
-              <span key={m} className={styles.filterTag} onClick={() => dispatch(toggleManufacturer(m))}>
-                {m} ✕
-              </span>
-            ))}
-            {color && (
-              <span className={styles.filterTag} onClick={() => dispatch(setColor(''))}>
-                Цвет: {color} ✕
-              </span>
-            )}
-            {(priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice) && (
-              <span className={styles.filterTag} onClick={() => dispatch(setPriceRange([minProductPrice, maxProductPrice]))}>
-                {priceRange[0].toLocaleString()}₽ — {priceRange[1].toLocaleString()}₽ ✕
-              </span>
-            )}
-          </div>
-        </div>
+{/* Фильтр высоты (height) */}
+<div className={styles.filterGroup}>
+  <h4 className={styles.groupTitle}>
+    <IconArrowsVertical size={22}/> Высота (см)
+  </h4>
+  <div className={styles.dimensionInputs}>
+    <div className={styles.dimensionField}>
+      <span>от</span>
+      <input 
+        type="number" 
+        value={heightRange[0]} 
+        onChange={(e) => dispatch(setHeightRange([parseFloat(e.target.value) || 0, heightRange[1]]))}
+        min={0}
+        max={heightRange[1]}
+        step={1}
+      />
+    </div>
+    <span className={styles.dimensionSeparator}>—</span>
+    <div className={styles.dimensionField}>
+      <span>до</span>
+      <input 
+        type="number" 
+        value={heightRange[1]} 
+        onChange={(e) => dispatch(setHeightRange([heightRange[0], parseFloat(e.target.value) || 0]))}
+        min={heightRange[0]}
+        max={heightBounds.max}
+        step={1}
+      />
+    </div>
+  </div>
+  <div className={styles.dimensionRangeSlider}>
+    <input 
+      type="range" 
+      min={0} 
+      max={heightBounds.max} 
+      step={1}
+      value={heightRange[0]} 
+      onChange={(e) => dispatch(setHeightRange([parseFloat(e.target.value), heightRange[1]]))}
+    />
+    <input 
+      type="range" 
+      min={0} 
+      max={heightBounds.max} 
+      step={1}
+      value={heightRange[1]} 
+      onChange={(e) => dispatch(setHeightRange([heightRange[0], parseFloat(e.target.value)]))}
+    />
+  </div>
+  <div className={styles.dimensionHint}>
+    <span>от {heightRange[0]} см</span>
+    <span>до {heightRange[1]} см</span>
+  </div>
+</div>
+
+{/* Фильтр глубины (depth) */}
+<div className={styles.filterGroup}>
+  <h4 className={styles.groupTitle}>
+    <IconArrowsHorizontal size={22}/> Глубина (см)
+  </h4>
+  <div className={styles.dimensionInputs}>
+    <div className={styles.dimensionField}>
+      <span>от</span>
+      <input 
+        type="number" 
+        value={depthRange[0]} 
+        onChange={(e) => dispatch(setDepthRange([parseFloat(e.target.value) || 0, depthRange[1]]))}
+        min={0}
+        max={depthRange[1]}
+        step={1}
+      />
+    </div>
+    <span className={styles.dimensionSeparator}>—</span>
+    <div className={styles.dimensionField}>
+      <span>до</span>
+      <input 
+        type="number" 
+        value={depthRange[1]} 
+        onChange={(e) => dispatch(setDepthRange([depthRange[0], parseFloat(e.target.value) || 0]))}
+        min={depthRange[0]}
+        max={100}
+        step={1}
+      />
+    </div>
+  </div>
+  <div className={styles.dimensionRangeSlider}>
+    <input 
+      type="range" 
+      min={0} 
+      max={100} 
+      step={1}
+      value={depthRange[0]} 
+      onChange={(e) => dispatch(setDepthRange([parseFloat(e.target.value), depthRange[1]]))}
+    />
+    <input 
+      type="range" 
+      min={0} 
+      max={100} 
+      step={1}
+      value={depthRange[1]} 
+      onChange={(e) => dispatch(setDepthRange([depthRange[0], parseFloat(e.target.value)]))}
+    />
+  </div>
+  <div className={styles.dimensionHint}>
+    <span>от {depthRange[0]} см</span>
+    <span>до {depthRange[1]} см</span>
+  </div>
+</div>
+
+
+{/* Активные фильтры */}
+{(manufacturer.length > 0 || color || brand || inStock !== null || 
+  priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice ||
+  widthCmRange[0] > widthCmBounds.min || widthCmRange[1] < widthCmBounds.max ||
+  heightRange[0] > heightBounds.min || heightRange[1] < heightBounds.max ||
+  depthRange[0] > 0 || depthRange[1] < 100 ||
+  (netWeightRange[0] > netWeightBounds.min || netWeightRange[1] < netWeightBounds.max)) && (
+  <div className={styles.activeFilters}>
+    <h4>Активные фильтры:</h4>
+    <div className={styles.activeFilterTags}>
+      
+      {/* Бренд/Производитель */}
+      {manufacturer.map(m => (
+        <span key={m} className={styles.filterTag} onClick={() => dispatch(toggleManufacturer(m))}>
+          {m} ✕
+        </span>
+      ))}
+      
+      {/* Цвет */}
+      {color && (
+        <span className={styles.filterTag} onClick={() => dispatch(setColor(''))}>
+          Цвет: {color} ✕
+        </span>
       )}
+      
+      {/* Цена */}
+      {(priceRange[0] > minProductPrice || priceRange[1] < maxProductPrice) && (
+        <span className={styles.filterTag} onClick={() => dispatch(setPriceRange([minProductPrice, maxProductPrice]))}>
+          {priceRange[0].toLocaleString()}₽ — {priceRange[1].toLocaleString()}₽ ✕
+        </span>
+      )}
+      
+      {/* Ширина (см) */}
+      {(widthCmRange[0] > widthCmBounds.min || widthCmRange[1] < widthCmBounds.max) && (
+        <span className={styles.filterTag} onClick={() => dispatch(setWidthCmRange([widthCmBounds.min, widthCmBounds.max]))}>
+          Ширина: {widthCmRange[0]}–{widthCmRange[1]} см ✕
+        </span>
+      )}
+      
+      {/* Высота */}
+      {(heightRange[0] > heightBounds.min || heightRange[1] < heightBounds.max) && (
+        <span className={styles.filterTag} onClick={() => dispatch(setHeightRange([heightBounds.min, heightBounds.max]))}>
+          Высота: {heightRange[0]}–{heightRange[1]} см ✕
+        </span>
+      )}
+      
+      {/* Глубина */}
+      {(depthRange[0] > 0 || depthRange[1] < 100) && (
+        <span className={styles.filterTag} onClick={() => dispatch(setDepthRange([depthBounds.min, depthBounds.max]))}>
+          Глубина: {depthRange[0]}–{depthRange[1]} см ✕
+        </span>
+      )}
+      
+      {/* Объем */}
+      {(volumeRange[0] > volumeBounds.min || volumeRange[1] < volumeBounds.max) && (
+        <span className={styles.filterTag} onClick={() => dispatch(setVolumeRange([volumeBounds.min, volumeBounds.max]))}>
+          Объем: {volumeRange[0]}–{volumeRange[1]} л ✕
+        </span>
+      )}
+      
+      {/* Вес нетто */}
+      {(netWeightRange[0] > netWeightBounds.min || netWeightRange[1] < netWeightBounds.max) && (
+        <span className={styles.filterTag} onClick={() => dispatch(setNetWeightRange([netWeightBounds.min, netWeightBounds.max]))}>
+          Вес: {netWeightRange[0]}–{netWeightRange[1]} кг ✕
+        </span>
+      )}
+            
+    </div>
+  </div>
+)}
     </aside>
   );
 };

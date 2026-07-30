@@ -61,8 +61,8 @@ export const fetchAllProducts = createAsyncThunk(
         description: product.description || null,
         color: product.color || null,
         width: product.width || null,
-        height: product.height || null,
-        depth: product.depth || null,
+        height: product.height*100 || null,
+        depth: product.depth*100 || null, 
         weight: product.weight || null,
         
         // Вспомогательные поля (вычисляемые из динамических брендов)

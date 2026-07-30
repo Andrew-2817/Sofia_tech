@@ -294,11 +294,44 @@ const {
   const [chunkSize, setChunkSize] = useState(50);
 const [currentChunk, setCurrentChunk] = useState(0);
 
+const heightBounds = useMemo(() => {
+  const values = allProducts
+    .map(p => p.height || p.height_cm || 0)
+    .filter(v => v > 0 && v < 500);
+  return {
+    min: values.length ? Math.floor(Math.min(...values)) : 0,
+    max: values.length ? Math.ceil(Math.max(...values)) : 200,
+  };
+}, [allProducts]);
+
+const depthBounds = useMemo(() => {
+  const values = allProducts
+    .map(p => p.depth || p.depth_cm || 0)
+    .filter(v => v > 0 && v < 500);
+  return {
+    min: values.length ? Math.floor(Math.min(...values)) : 0,
+    max: values.length ? Math.ceil(Math.max(...values)) : 100,
+  };
+}, [allProducts]);
+
+const volumeBounds = useMemo(() => {
+  const values = allProducts
+    .map(p => p.volume || p.capacity || 0)
+    .filter(v => v > 0 && v < 10000);
+  return {
+    min: values.length ? Math.floor(Math.min(...values)) : 0,
+    max: values.length ? Math.ceil(Math.max(...values)) : 1000,
+  };
+}, [allProducts]);
+
 
   // Вычисляем минимальную и максимальную цену из всех товаров
 const minProductPrice = allProducts.length > 0 
   ? Math.min(...allProducts.map(p => p.price || 0))
   : 0;
+
+  console.log(heightRange, volumeRange, depthRange, heightBounds.min >0);
+  
 
 const maxProductPrice = allProducts.length > 0 
   ? Math.max(...allProducts.map(p => p.price || 0))
@@ -373,11 +406,11 @@ const matchesWidth = !isWidthFilterActive ||
   // console.log(product.width);
   
   
-  const isHeightFilterActive = heightRange && heightRange[1] !== 0 && heightRange[1] !== 200;
-  const matchesHeight = !isHeightFilterActive || (product.height && product.height <= heightRange[1]);
+  // const isHeightFilterActive = heightRange && heightRange[1] !== 0 && heightRange[1] !== 200;
+  // const matchesHeight = !isHeightFilterActive || (product.height && product.height <= heightRange[1]);
   
-  const isVolumeFilterActive = volumeRange && volumeRange[1] !== 0 && volumeRange[1] !== 1000;
-  const matchesVolume = !isVolumeFilterActive || (product.volume && product.volume <= volumeRange[1]);
+  // const isVolumeFilterActive = volumeRange && volumeRange[1] !== 0 && volumeRange[1] !== 1000;
+  // const matchesVolume = !isVolumeFilterActive || (product.volume && product.volume <= volumeRange[1]);
   // console.log(product.volume);
   
   
@@ -427,6 +460,27 @@ const isWidthCmFilterActive = widthCmRange && (widthCmRange[0] > 0 || widthCmRan
 const matchesWidthCm = !isWidthCmFilterActive || 
   (product.width_cm >= widthCmRange[0] && product.width_cm <= widthCmRange[1]);
 // В filteredProducts
+
+const isHeightFilterActive = heightRange && (heightRange[0] > 0 || heightRange[1] < 1000);
+
+const matchesHeight = !isHeightFilterActive || 
+  (product.height && product.height >= heightRange[0] && product.height <= heightRange[1]);
+// product.height && console.log(product.height, matchesHeight);  
+
+
+// ========== ФИЛЬТР ГЛУБИНЫ ==========
+const isDepthFilterActive = depthRange && (depthRange[0] > 0 || depthRange[1] < 100);
+
+const matchesDepth = !isDepthFilterActive || 
+(product.depth && product.depth >= depthRange[0] && product.depth <= depthRange[1]);
+product.depth && console.log(matchesDepth);
+      
+// ========== ФИЛЬТР ОБЪЕМА ==========
+const isVolumeFilterActive = volumeRange && (volumeRange[0] > volumeBounds.min || volumeRange[1] < volumeBounds.max);
+const matchesVolume = !isVolumeFilterActive || 
+  (product.volume && product.volume >= volumeRange[0] && product.volume <= volumeRange[1]);
+
+
 const isStatusFilterActive = status && status.length > 0;
 const matchesStatus = !isStatusFilterActive || 
   status.includes(normalizeStatus(product.status));
@@ -442,6 +496,9 @@ const matchesStatus = !isStatusFilterActive ||
          matchesPrice && 
          matchesColor &&
          matchesWidth &&
+         matchesHeight &&      // добавить
+         matchesDepth &&       // добавить
+        //  matchesVolume &&      // добавить
       //   matchesFactory &&
       //    matchesWarranty &&
       //    matchesHeight &&
@@ -457,7 +514,7 @@ const matchesStatus = !isStatusFilterActive ||
 });
 }, [allProducts, searchQuery, manufacturer, priceRange, color, 
     activeLevel1, activeLevel2, activeLevel3, 
-    netWeightRange, widthRange, widthCmRange]) 
+    netWeightRange, widthRange, widthCmRange, heightRange, depthRange]) 
 
     const handleLoadMore = useCallback(() => {
     setIsLoadingMore(true);

@@ -6,7 +6,7 @@ const filtersSlice = createSlice({
     searchQuery: '',
     category: 'all',
     manufacturer: [],
-    priceRange: [0, 500000],
+    priceRange: [0, 5000000],
     color: '',
     loadCapacity: '',
     energyClass: '',
@@ -14,7 +14,7 @@ const filtersSlice = createSlice({
     inStock: null,
     // Новые динамические фильтры
     widthRange: [0, 200],      // ширина в см
-    heightRange: [0, 200],     // высота в см
+    heightRange: [0, 1000],     // высота в см
     depthRange: [0, 100],      // глубина в см
     volumeRange: [0, 1000],    // объем в литрах
     performanceRange: [0, 1500], // производительность м³/ч
@@ -155,7 +155,7 @@ const filtersSlice = createSlice({
       state.searchQuery = '';
       state.category = 'all';
       state.manufacturer = [];
-      state.priceRange = [0, 500000];
+      state.priceRange = [0, 5000000];
       state.color = '';
       state.loadCapacity = '';
       state.energyClass = '';
@@ -163,7 +163,7 @@ const filtersSlice = createSlice({
       state.inStock = null;
       // Сброс динамических фильтров
       state.widthRange = [0, 200];
-      state.heightRange = [0, 200];
+      state.heightRange = [0, 1000];
       state.depthRange = [0, 100];
       state.volumeRange = [0, 1000];
       state.performanceRange = [0, 1500];
