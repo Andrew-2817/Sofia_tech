@@ -58,6 +58,7 @@ const CooperationPage = () => {
             <div className={styles.photoOverlay} />
             <img
               className={styles.photo}
+              loading="lazy"
               src={copperImg}
               alt="Дизайнеры за работой"
             />

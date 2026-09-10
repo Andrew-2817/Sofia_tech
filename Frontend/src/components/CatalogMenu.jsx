@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+// CatalogMenu.jsx
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { categories } from '../data/mockData';
 import styles from './CatalogMenu.module.css';
-import crossIcon from '../assets/cross.svg'
-import fireIcon from "../assets/fire.svg"
+import crossIcon from '../assets/cross.svg';
 import { useSelector } from 'react-redux';
 import {
   IconHome, IconTool, IconBolt, IconPlant,
@@ -11,15 +10,62 @@ import {
   IconApple, IconSportBillard, IconPackage, IconFireHydrant
 } from '@tabler/icons-react';
 
+// 1. КЕШИРОВАНИЕ ИКОНОК (вынесено из компонента)
+const CATEGORY_ICONS = {
+  1: IconHome,
+  2: IconTool,
+  3: IconBolt,
+  4: IconPlant,
+  5: IconCooker,
+};
+const DEFAULT_ICON = IconPackage;
+
 const CatalogMenu = ({ isOpen, onClose }) => {
   const [activeLevel1, setActiveLevel1] = useState(1);
   const { tree: categories, loading } = useSelector(state => state.categories);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
-  const level1Categories = categories.filter(cat => cat.level === 1);
-  console.log(level1Categories);
-  
+  // 2. КЕШИРОВАНИЕ КАТЕГОРИЙ 1 УРОВНЯ
+  const level1Categories = useMemo(() => {
+    return categories.filter(cat => cat.level === 1);
+  }, [categories]);
+
+  // 3. КЕШИРОВАНИЕ АКТИВНОЙ КАТЕГОРИИ
+  const activeCategory = useMemo(() => {
+    return level1Categories.find(c => c.id === activeLevel1) || level1Categories[0];
+  }, [level1Categories, activeLevel1]);
+
+  // 4. КЕШИРОВАНИЕ КАТЕГОРИЙ 2 УРОВНЯ
+  const level2Categories = useMemo(() => {
+    return activeCategory?.children || [];
+  }, [activeCategory]);
+
+  // 5. КЕШИРОВАНИЕ ПОЛУЧЕНИЯ ИКОНКИ
+  const getCategoryIcon = useCallback((category) => {
+    return CATEGORY_ICONS[category.id] || CATEGORY_ICONS[category.slug] || DEFAULT_ICON;
+  }, []);
+
+  // 6. КЕШИРОВАНИЕ ФУНКЦИЙ НАВИГАЦИИ
+  const handleNavigateToLevel1 = useCallback((level1Category) => {
+    navigate(`/catalog/${level1Category.slug}`);
+    onClose();
+  }, [navigate, onClose]);
+
+  const handleNavigateToLevel2 = useCallback((level2Category, level1Category) => {
+    navigate(`/catalog/${level1Category.slug}/${level2Category.slug}`);
+    onClose();
+  }, [navigate, onClose]);
+
+  const handleNavigateToLevel3 = useCallback((level3Category, level2Category, level1Category) => {
+    navigate(`/catalog/${level1Category.slug}/${level2Category.slug}/${level3Category.slug}`);
+    onClose();
+  }, [navigate, onClose]);
+
+  // 7. КЕШИРОВАНИЕ ОБРАБОТЧИКА КЛИКА
+  const handleLevel1Click = useCallback((category) => {
+    setActiveLevel1(category.id);
+  }, []);
 
   // Закрытие по клику вне
   useEffect(() => {
@@ -40,24 +86,6 @@ const CatalogMenu = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
-// Маппинг — дополни под свои slug/id
-const CATEGORY_ICONS = {
-  1: IconHome,
-  2: IconTool,
-  3: IconBolt,
-  4: IconPlant,
-  5: IconCooker,
-};
-
-const IconCatalog = IconLayoutGrid
-const Iconlevel1 = activeLevel1 && CATEGORY_ICONS[activeLevel1];
-
-const getCategoryIcon = (category) => {
-  return CATEGORY_ICONS[category.slug]
-      || CATEGORY_ICONS[category.id]
-      || IconPackage; // fallback
-};
-
   // Закрытие по Escape
   useEffect(() => {
     const handleEsc = (event) => {
@@ -75,29 +103,6 @@ const getCategoryIcon = (category) => {
     };
   }, [isOpen, onClose]);
 
-  // Обработка клика по категории 1 уровня
-  const handleLevel1Click = (category) => {
-    setActiveLevel1(category.id);
-  };
-
-  // Переход на страницу каталога с категорией 1 уровня
-// В CatalogMenu.jsx
-
-const handleNavigateToLevel1 = (level1Category) => {
-  navigate(`/catalog/${level1Category.slug}`);
-  onClose();
-};
-
-const handleNavigateToLevel2 = (level2Category, level1Category) => {
-  navigate(`/catalog/${level1Category.slug}/${level2Category.slug}`);
-  onClose();
-};
-
-const handleNavigateToLevel3 = (level3Category, level2Category, level1Category) => {
-  navigate(`/catalog/${level1Category.slug}/${level2Category.slug}/${level3Category.slug}`);
-  onClose();
-};
-
   if (!isOpen) return null;
 
   if (loading) {
@@ -113,14 +118,12 @@ const handleNavigateToLevel3 = (level3Category, level2Category, level1Category) 
     );
   }
 
-  const activeCategory = level1Categories.find(c => c.id === activeLevel1) || level1Categories[0];
-  const level2Categories = activeCategory?.children || [];
   return (
     <div className={styles.overlay}>
       <div className={styles.menuContainer} ref={menuRef}>
         <div className={styles.header}>
           <h2>
-            <IconCatalog size={22}/>
+            <IconLayoutGrid size={22}/>
             <p>Каталог товаров</p>
           </h2>
           <button className={styles.closeBtn} onClick={onClose}>
@@ -132,7 +135,7 @@ const handleNavigateToLevel3 = (level3Category, level2Category, level1Category) 
           {/* Левая колонка - категории 1 уровня */}
           <div className={styles.level1Column}>
             <div className={styles.level1List}>
-              {categories.map(category => {
+              {level1Categories.map(category => {
                 const Icon = getCategoryIcon(category);
                 return (
                   <div
@@ -156,12 +159,12 @@ const handleNavigateToLevel3 = (level3Category, level2Category, level1Category) 
             </div>
           </div>
 
-          {/* Правая колонка - категории 2 и 3 уровня в сетке */}
+          {/* Правая колонка - категории 2 и 3 уровня */}
           <div className={styles.rightColumn}>
             <div className={styles.rightHeader}>
               <h3>
-                <Iconlevel1 size={22}/>
-                <p>{activeCategory.name}</p>
+                <IconHome size={22}/>
+                <p>{activeCategory?.name}</p>
               </h3>
               <button 
                 className={styles.showAllBtn}
@@ -172,33 +175,36 @@ const handleNavigateToLevel3 = (level3Category, level2Category, level1Category) 
             </div>
 
             <div className={styles.level2Grid}>
-              {level2Categories.map(level2 => (
-                <div key={level2.id} className={styles.level2Card}>
-                  <div 
-                    className={styles.level2Title}
-                    onClick={() => handleNavigateToLevel2(level2, activeCategory)}
-                  >
-                    <span className={styles.level2TitleIcon}></span>
-                    <span className={styles.level2TitleName}>{level2.name}</span>
-                    <span className={styles.level2TitleArrow}>→</span>
-                  </div>
-                  
-                  {level2.children && level2.children.length > 0 && (
-                    <div className={styles.level3List}>
-                      {level2.children.map(level3 => (
-                        <div
-                          key={level3.id}
-                          className={styles.level3Item}
-                          onClick={() => handleNavigateToLevel3(level3, level2, activeCategory)}
-                        >
-                          <span className={styles.level3Bullet}>•</span>
-                          <span className={styles.level3Name}>{level3.name}</span>
-                        </div>
-                      ))}
+              {level2Categories.map(level2 => {
+                const Icon = getCategoryIcon(level2);
+                return (
+                  <div key={level2.id} className={styles.level2Card}>
+                    <div 
+                      className={styles.level2Title}
+                      onClick={() => handleNavigateToLevel2(level2, activeCategory)}
+                    >
+                      <Icon size={20} className={styles.level2TitleIcon} />
+                      <span className={styles.level2TitleName}>{level2.name}</span>
+                      <span className={styles.level2TitleArrow}>→</span>
                     </div>
-                  )}
-                </div>
-              ))}
+                    
+                    {level2.children && level2.children.length > 0 && (
+                      <div className={styles.level3List}>
+                        {level2.children.map(level3 => (
+                          <div
+                            key={level3.id}
+                            className={styles.level3Item}
+                            onClick={() => handleNavigateToLevel3(level3, level2, activeCategory)}
+                          >
+                            <span className={styles.level3Bullet}>•</span>
+                            <span className={styles.level3Name}>{level3.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {level2Categories.length === 0 && (

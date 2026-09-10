@@ -1,14 +1,35 @@
 // store/slices/authSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-// Восстановление состояния из localStorage
+// ========== УТИЛИТЫ ==========
+const TOKEN_KEY = 'access_token';
+const USER_KEY = 'user';
+
+const saveUserToStorage = (user, token) => {
+  try {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem(TOKEN_KEY, token);
+  } catch (error) {
+    console.error('Ошибка сохранения пользователя:', error);
+  }
+};
+
+const clearUserStorage = () => {
+  try {
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+  } catch (error) {
+    console.error('Ошибка очистки хранилища:', error);
+  }
+};
+
 const loadUserFromStorage = () => {
   try {
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('access_token');
+    const user = localStorage.getItem(USER_KEY);
+    const token = localStorage.getItem(TOKEN_KEY);
     if (user && token) {
       return {
         isLoggedIn: true,
@@ -18,7 +39,7 @@ const loadUserFromStorage = () => {
       };
     }
   } catch (error) {
-    console.error('Ошибка загрузки пользователя из localStorage:', error);
+    console.error('Ошибка загрузки пользователя:', error);
   }
   return {
     isLoggedIn: false,
@@ -28,12 +49,12 @@ const loadUserFromStorage = () => {
   };
 };
 
+// ========== THUNK ==========
 // Регистрация
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
     try {
-      // Отправляем только name, email, password (как ожидает бэкенд)
       const response = await axios.post(`${API_URL}/register`, {
         name: userData.name,
         email: userData.email,
@@ -41,11 +62,9 @@ export const register = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      // Обработка ошибки 409 (Conflict)
       if (error.response?.status === 409) {
         return rejectWithValue('Пользователь с таким email уже существует');
       }
-      // Обработка ошибки 422 (Validation Error)
       if (error.response?.status === 422) {
         const detail = error.response?.data?.detail;
         if (Array.isArray(detail)) {
@@ -77,48 +96,59 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// Получение профиля пользователя
+// Получение профиля
 export const fetchUserProfile = createAsyncThunk(
   'auth/fetchProfile',
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('access_token');
-      
+      const token = localStorage.getItem(TOKEN_KEY);
       if (!token) {
         return rejectWithValue('Нет токена авторизации');
       }
       
       const response = await axios.get(`${API_URL}/user/profile`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error) {
+      // Если токен невалидный — очищаем хранилище
+      if (error.response?.status === 401) {
+        clearUserStorage();
+        return rejectWithValue('Сессия истекла, войдите заново');
+      }
       return rejectWithValue(error.response?.data?.detail || 'Ошибка загрузки профиля');
     }
   }
 );
 
-// Обновление профиля пользователя
+// Обновление профиля
 export const updateUserProfile = createAsyncThunk(
   'auth/updateProfile',
   async (userData, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        return rejectWithValue('Нет токена авторизации');
+      }
+      
       const response = await axios.put(`${API_URL}/user/profile`, userData, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
       return response.data.user;
     } catch (error) {
+      if (error.response?.status === 401) {
+        clearUserStorage();
+        return rejectWithValue('Сессия истекла, войдите заново');
+      }
       return rejectWithValue(error.response?.data?.detail || 'Ошибка обновления профиля');
     }
   }
 );
 
+// ========== SLICE ==========
 const authSlice = createSlice({
   name: 'auth',
   initialState: loadUserFromStorage(),
@@ -127,8 +157,7 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
       state.error = null;
-      localStorage.removeItem('user');
-      localStorage.removeItem('access_token');
+      clearUserStorage();
     },
     clearError: (state) => {
       state.error = null;
@@ -146,13 +175,13 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.user = action.payload.user;
         state.error = null;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-        localStorage.setItem('access_token', action.payload.access_token);
+        saveUserToStorage(action.payload.user, action.payload.access_token);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+      
       // Логин
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -163,13 +192,13 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.user = action.payload.user;
         state.error = null;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-        localStorage.setItem('access_token', action.payload.access_token);
+        saveUserToStorage(action.payload.user, action.payload.access_token);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+      
       // Получение профиля
       .addCase(fetchUserProfile.pending, (state) => {
         state.loading = true;
@@ -178,12 +207,19 @@ const authSlice = createSlice({
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        localStorage.setItem('user', JSON.stringify(action.payload));
+        // Обновляем только user, токен остаётся
+        localStorage.setItem(USER_KEY, JSON.stringify(action.payload));
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        // Если сессия истекла — разлогиниваем
+        if (action.payload === 'Сессия истекла, войдите заново') {
+          state.isLoggedIn = false;
+          state.user = null;
+        }
       })
+      
       // Обновление профиля
       .addCase(updateUserProfile.pending, (state) => {
         state.loading = true;
@@ -192,14 +228,54 @@ const authSlice = createSlice({
       .addCase(updateUserProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
-        localStorage.setItem('user', JSON.stringify(action.payload));
+        localStorage.setItem(USER_KEY, JSON.stringify(action.payload));
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        if (action.payload === 'Сессия истекла, войдите заново') {
+          state.isLoggedIn = false;
+          state.user = null;
+        }
       });
   },
 });
 
+// ========== МЕМОИЗИРОВАННЫЕ СЕЛЕКТОРЫ ==========
+const selectAuthState = (state) => state.auth;
+
+// Базовые селекторы
+export const selectUser = (state) => state.auth.user;
+export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
+export const selectAuthLoading = (state) => state.auth.loading;
+export const selectAuthError = (state) => state.auth.error;
+
+// Мемоизированные селекторы
+export const selectUserName = createSelector(
+  [selectUser],
+  (user) => user?.name || null
+);
+
+export const selectUserEmail = createSelector(
+  [selectUser],
+  (user) => user?.email || null
+);
+
+export const selectUserPhone = createSelector(
+  [selectUser],
+  (user) => user?.phone || null
+);
+
+export const selectUserAddress = createSelector(
+  [selectUser],
+  (user) => user?.address || null
+);
+
+export const selectIsAdmin = createSelector(
+  [selectUser],
+  (user) => user?.is_admin || false
+);
+
+// ========== ЭКСПОРТ ==========
 export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer;

@@ -96,17 +96,17 @@ const ProfilePage = () => {
     }
   }, [user]);
 
-const handleLogout = async () => {
-  setIsLoggingOut(true);
-  dispatch(logout());
-  setIsLoggingOut(false);
-};
+  const handleLogout = useCallback(async () => {
+    setIsLoggingOut(true);
+    await dispatch(logout());
+    setIsLoggingOut(false);
+  }, [dispatch]);
 
-  const handleEditClick = () => {
+  const handleEditClick = useCallback(() => {
     setIsEditing(true);
-  };
+  }, []);
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setIsEditing(false);
     if (user) {
       setEditForm({
@@ -116,21 +116,21 @@ const handleLogout = async () => {
         address: user.address || ''
       });
     }
-  };
+  }, [user]);
 
-  const handleInputChange = (e) => {
-    setEditForm({
-      ...editForm,
+  const handleInputChange = useCallback((e) => {
+    setEditForm(prev => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
-  };
+    }));
+  }, []);
 
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = useCallback(async () => {
     const result = await dispatch(updateUserProfile(editForm));
     if (result.meta.requestStatus === 'fulfilled') {
       setIsEditing(false);
     }
-  };
+  }, [dispatch, editForm]);
 
   // Форматирование даты
   const formatDate = (dateString) => {
@@ -549,6 +549,7 @@ const handleLogout = async () => {
                 <img 
                   src={`${API_BASE_URL_photo}${product.main_image}` || `${API_BASE_URL_photo}${product.image}`} 
                   alt={product.name} 
+                  loading="lazy"
                   onClick={() => navigate(`/product/${product.brand_id}/${product.id}`)}
                   style={{ cursor: 'pointer' }}
                 />

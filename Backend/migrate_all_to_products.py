@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
+
 """Миграция всех товаров из таблиц брендов в общую таблицу products"""
 
 import sys
 from pathlib import Path
 
-# Добавляем путь к проекту
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
@@ -27,126 +26,68 @@ from app.models import Product, Brand, Category
 from decimal import Decimal
 from datetime import datetime, date, timedelta
 
-def convert_value(value):
-    """Конвертирует значение в подходящий формат"""
-    if value is None:
-        return None
-    if isinstance(value, (Decimal, float)):
-        return float(value)
-    if isinstance(value, (datetime, date)):
-        return value.isoformat()
-    if isinstance(value, timedelta):
-        return str(value)
-    return value
-
+# ========== УТИЛИТЫ ==========
 def get_sku_from_product(model_obj, brand_name):
-    """Извлекает SKU из товара по приоритету"""
-    sku = getattr(model_obj, 'sku', None)
-    if sku:
-        return sku
     
-    sku = getattr(model_obj, 'model', None)
-    if sku:
-        return sku
-    
-    sku = getattr(model_obj, 'manufacturer_code', None)
-    if sku:
-        return sku
-    
-    sku = getattr(model_obj, 'actual_code', None)
-    if sku:
-        return sku
-    
-    sku = getattr(model_obj, 'ean', None)
-    if sku:
-        return sku
-    
-    return f"{brand_name}_{model_obj.id}"
+    sku = getattr(model_obj, 'sku', None) or getattr(model_obj, 'actual_code', None)
+    if not sku:
+        sku = getattr(model_obj, 'manufacturer_code', None)
+    if not sku:
+        sku = getattr(model_obj, 'ean', None)
+    return sku or f"{brand_name}_{model_obj.id}"
 
 def get_price_from_product(model_obj):
-    """Извлекает цену из товара по приоритету"""
     price = getattr(model_obj, 'price', None)
-    if price is not None:
-        return float(price)
-    
-    price = getattr(model_obj, 'price_public', None)
-    if price is not None:
-        return float(price)
-    
-    price = getattr(model_obj, 'price_retail', None)
-    if price is not None:
-        return float(price)
-    
-    price = getattr(model_obj, 'price_wholesale', None)
-    if price is not None:
-        return float(price)
-    
-    return None
-
-def get_description_from_product(model_obj):
-    """Извлекает описание из товара"""
-    description = getattr(model_obj, 'description', None)
-    if description:
-        return description
-    
-    description = getattr(model_obj, 'Описание', None)
-    if description:
-        return description
-    
-    return None
-
-def get_color_from_product(model_obj):
-    """Извлекает цвет из товара"""
-    color = getattr(model_obj, 'color', None)
-    if color:
-        return color
-    
-    color = getattr(model_obj, 'decor_color', None)
-    if color:
-        return color
-    
-    return None
-
-def get_dimension_from_product(model_obj, field_name):
-    """Извлекает размерность из товара"""
-    value = getattr(model_obj, field_name, None)
-    if value is not None:
-        try:
-            return float(value)
-        except (ValueError, TypeError):
-            return None
-    return None
+    if price is None:
+        price = getattr(model_obj, 'price_public', None)
+    if price is None:
+        price = getattr(model_obj, 'price_retail', None)
+    if price is None:
+        price = getattr(model_obj, 'price_wholesale', None)
+    return float(price) if price is not None else None
 
 def get_name_from_product(model_obj):
-    """Извлекает название из товара"""
-    name = getattr(model_obj, 'name', None)
-    if name:
-        return name
-    
-    name = getattr(model_obj, 'Название', None)
-    if name:
-        return name
-    
-    name = getattr(model_obj, 'Наименование', None)
-    if name:
-        return name
-    
+    name = getattr(model_obj, 'name', None) or getattr(model_obj, 'Название', None)
+    return name or getattr(model_obj, 'Наименование', None)
+
+def get_dimension_from_product(model_obj, *fields):
+    for field in fields:
+        value = getattr(model_obj, field, None)
+        if value is not None:
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                continue
     return None
 
+# ========== ПОДКЛЮЧЕНИЕ К БД ==========
 db = SessionLocal()
 
+# ========== ОТКАТЫВАЕМ ТРАНЗАКЦИИ ==========
+db.rollback()
+
+# ========== НАХОДИМ МАКСИМАЛЬНЫЙ ID ==========
+max_id_result = db.query(Product.id).order_by(Product.id.desc()).first()
+max_id = max_id_result[0] if max_id_result else 0
+print(f"📊 Текущий максимальный ID в таблице products: {max_id}")
+
+# ========== СЧЁТЧИК ДЛЯ НОВЫХ ID ==========
+next_id = max_id + 1
+print(f"📊 Следующий ID будет: {next_id}")
+
+# ========== МОДЕЛИ ДЛЯ МИГРАЦИИ ==========
 models = [
-    (BrandtProduct, 'Brandt'),
-    (LiebherrProduct, 'Liebherr'),
-    (DedietrichProduct, 'Dedietrich'),
-    (FalmecProduct, 'Falmec'),
-    (GraudeProduct, 'Graude'),
-    (HomeierProduct, 'Homeier'),
-    (KuppersbuschProduct, 'Kuppersbusch'),
-    (NivonaProduct, 'Nivona'),
-    (SchulthessProduct, 'Schulthess'),
-    (TekaProduct, 'Teka'),
-    (BonkrasherProduct, 'Bonkrasher'),
+    # (BrandtProduct, 'Brandt'),
+    # (LiebherrProduct, 'Liebherr'),
+    # (DedietrichProduct, 'Dedietrich'),
+    # (FalmecProduct, 'Falmec'),
+    # (GraudeProduct, 'Graude'),
+    # (HomeierProduct, 'Homeier'),
+    # (KuppersbuschProduct, 'Kuppersbusch'),
+    # (NivonaProduct, 'Nivona'),
+    # (SchulthessProduct, 'Schulthess'),
+    # (TekaProduct, 'Teka'),
+    # (BonkrasherProduct, 'Bonkrasher'),
     (ElicaProduct, 'Elica'),
 ]
 
@@ -165,52 +106,44 @@ for model, brand_name in models:
 
     brand_id = brand_map.get(brand_name)
     if not brand_id:
-        print(f"⚠️ Бренд '{brand_name}' не найден, товары из {model.__name__} пропущены.")
+        print(f"⚠️ Бренд '{brand_name}' не найден, пропущено.")
         continue
 
-    print(f"\n📦 Обработка {len(items)} товаров из {model.__name__} (бренд '{brand_name}', id={brand_id})")
+    print(f"\n📦 Обработка {len(items)} товаров из {model.__name__} (бренд '{brand_name}')")
 
     for old in items:
         try:
-            # Получаем SKU
             sku = get_sku_from_product(old, brand_name)
             
-            # Проверяем на дубликаты
-            existing = db.query(Product).filter(Product.sku == sku).first()
+            # Проверка дубликатов по brand_id + sku
+            existing = db.query(Product).filter(
+                Product.brand_id == brand_id,
+                Product.sku == sku
+            ).first()
+            
             if existing:
                 skipped += 1
                 continue
 
-            # Получаем название
             name = get_name_from_product(old)
             if not name:
-                print(f"  ⚠️ Пропущен товар {old.id} из {model.__name__}: нет названия")
                 skipped += 1
                 continue
 
-            # Получаем цену
             price = get_price_from_product(old)
-
-            # Получаем категорию
             cat_id = getattr(old, 'category_id', None)
-            if cat_id is not None:
-                cat_exists = db.query(Category).filter(Category.id == cat_id).first()
-                if not cat_exists:
-                    print(f"  ⚠️ Категория id={cat_id} не найдена для {sku}, будет NULL")
-                    cat_id = None
-
-            # Извлекаем поля для новой структуры
-            description = get_description_from_product(old)
-            color = get_color_from_product(old)
             
-            # Извлекаем размеры (пробуем разные варианты названий полей)
-            width = get_dimension_from_product(old, 'width') or get_dimension_from_product(old, 'width_cm')
-            height = get_dimension_from_product(old, 'height') or get_dimension_from_product(old, 'height_cm')
-            depth = get_dimension_from_product(old, 'depth') or get_dimension_from_product(old, 'depth_cm')
-            weight = get_dimension_from_product(old, 'weight') or get_dimension_from_product(old, 'net_weight') or get_dimension_from_product(old, 'gross_weight')
+            description = getattr(old, 'description', None) or getattr(old, 'Описание', None)
+            color = getattr(old, 'color', None) or getattr(old, 'decor_color', None)
+            
+            width = get_dimension_from_product(old, 'width', 'width_cm')
+            height = get_dimension_from_product(old, 'height', 'height_cm')
+            depth = get_dimension_from_product(old, 'depth', 'depth_cm')
+            weight = get_dimension_from_product(old, 'weight', 'net_weight', 'gross_weight')
 
-            # Создаем новый товар
+            # ========== ГЛАВНОЕ: УСТАНАВЛИВАЕМ ID ВРУЧНУЮ ==========
             new_product = Product(
+                id=next_id,  # ← Устанавливаем ID вручную
                 brand_id=brand_id,
                 category_id=cat_id,
                 name=name,
@@ -227,26 +160,28 @@ for model, brand_name in models:
             
             db.add(new_product)
             total += 1
+            next_id += 1  # ← Увеличиваем счётчик
             
-            if total % 100 == 0:
+            if total % 50 == 0:
                 db.commit()
-                print(f"  ✅ Зафиксировано {total} товаров...")
+                print(f"  ✅ Зафиксировано {total} товаров (следующий ID: {next_id})...")
                 
         except Exception as e:
             errors += 1
-            print(f"  ❌ Ошибка при переносе товара {old.id} из {model.__name__}: {e}")
+            print(f"  ❌ Ошибка: {e}")
             db.rollback()
-            continue
+            # Не увеличиваем next_id при ошибке
 
     db.commit()
     print(f"  ✅ Завершён перенос для {model.__name__}")
 
 db.commit()
 print(f"\n" + "=" * 70)
-print("📊 РЕЗУЛЬТАТ МИГРАЦИИ:")
+print("📊 РЕЗУЛЬТАТ:")
 print("=" * 70)
-print(f"   ✅ Перенесено товаров: {total}")
-print(f"   ⏭️ Пропущено дубликатов: {skipped}")
+print(f"   ✅ Перенесено: {total}")
+print(f"   ⏭️ Пропущено: {skipped}")
 print(f"   ❌ Ошибок: {errors}")
+print(f"   📊 Последний ID: {next_id - 1}")
 print("=" * 70)
 db.close()

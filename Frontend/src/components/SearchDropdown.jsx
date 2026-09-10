@@ -1,13 +1,42 @@
 // components/SearchDropdown.jsx
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setSearchQuery } from '../store/slices/filtersSlice';
 import { API_BASE_URL_photo } from '../services/api';
+import { getDefaultProductImage } from '../data/mockData';
 import styles from './SearchDropdown.module.css';
 import searchIcon from '../assets/search.svg';
 import crossIcon from '../assets/cross.svg';
-import { getDefaultProductImage } from '../data/mockData';
+
+// 1. ВЫНЕСЕНО ИЗ КОМПОНЕНТА (константы)
+const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/60x60?text=No+Image';
+
+// 2. КЕШИРОВАНИЕ ПОЛУЧЕНИЯ URL
+const getImageUrl = (product) => {
+  if (product.main_image) {
+    return `${API_BASE_URL_photo}${product.main_image}`;
+  }
+  if (product.image) {
+    return product.image;
+  }
+  return getDefaultProductImage(product.categoryId) || PLACEHOLDER_IMAGE;
+};
+
+// 3. КЕШИРОВАНИЕ ПОЛУЧЕНИЯ НАЗВАНИЯ БРЕНДА
+const getBrandName = (product) => {
+  if (product.brandName) return product.brandName;
+  if (product.brandId === 1) return 'Homeier';
+  if (product.brandId === 2) return 'Brandt';
+  if (product.brand_id === 1) return 'Homeier';
+  if (product.brand_id === 2) return 'Brandt';
+  return 'Товар';
+};
+
+// 4. КЕШИРОВАНИЕ ОБРЕЗКИ НАЗВАНИЯ
+const truncateName = (name, maxLength = 100) => {
+  return name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
+};
 
 const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }) => {
   const dropdownRef = useRef(null);
@@ -48,44 +77,26 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
-
-  const handleShowAllResults = () => {
+  // 5. КЕШИРОВАНИЕ ФУНКЦИЙ
+  const handleShowAllResults = useCallback(() => {
     dispatch(setSearchQuery(searchTerm));
     navigate('/catalog');
     onClose();
-  };
+  }, [dispatch, searchTerm, navigate, onClose]);
 
-  const handleProductClick = (product) => {
+  const handleProductClick = useCallback((product) => {
     if (onProductClick) {
-      console.log(product);
       onProductClick(product);
     } else {
-      
-      // Используем brand_id и id для перехода
       navigate(`/product/${product.brandId}/${product.id}`);
       onClose();
     }
-  };
+  }, [onProductClick, navigate, onClose]);
 
-  // Получение URL изображения
-  const getImageUrl = (product) => {
-    if (product.main_image) {
-      return `${API_BASE_URL_photo}${product.main_image}`;
-    }
-    if (product.image) {
-      return product.image;
-    }
-    return 'https://via.placeholder.com/60x60?text=No+Image';
-  };
+  if (!isOpen) return null;
 
-  // Получение названия бренда
-  const getBrandName = (product) => {
-    if (product.brandName) return product.brandName;
-    if (product.brand_id === 1) return 'Homeier';
-    if (product.brand_id === 2) return 'Brandt';
-    return 'Товар';
-  };
+  // 6. ПОДГОТОВКА ДАННЫХ ДЛЯ РЕНДЕРА (если нужно)
+  const hasResults = results.length > 0;
 
   return (
     <div className={styles.dropdown} ref={dropdownRef}>
@@ -101,7 +112,7 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
         </button>
       </div>
 
-      {results.length > 0 ? (
+      {hasResults ? (
         <>
           <div className={styles.resultsList}>
             {results.map((product, index) => (
@@ -113,11 +124,12 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
               >
                 <div className={styles.imageWrapper}>
                   <img 
-                    src={product.main_image!= null 
-                          ? `${API_BASE_URL_photo}${product.main_image}`
-                          : getDefaultProductImage(product.categoryId)} 
+                    src={getImageUrl(product)} 
                     alt={product.name} 
                     className={styles.productImage} 
+                    loading="lazy"
+                    width={60}
+                    height={60}
                   />
                   {product.isNew && <span className={styles.newBadge}>NEW</span>}
                 </div>
@@ -129,15 +141,15 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
                       {product.groupLevel1 || product.model || 'Бытовая техника'}
                     </span>
                   </div>
-                    <h4 className={styles.name}>
-                      {product.name.length > 100 ? product.name.slice(0, 100) + '...' : product.name}
-                    </h4>
+                  <h4 className={styles.name}>
+                    {truncateName(product.name)}
+                  </h4>
                   <div className={styles.productFooter}>
                     <span className={styles.price}>{product.price.toLocaleString()} ₽</span>
                     <button 
                       className={styles.quickViewBtn}
                       onClick={(e) => {
-                        // e.stopPropagation();
+                        e.stopPropagation();
                         handleProductClick(product);
                       }}
                     >
@@ -158,7 +170,6 @@ const SearchDropdown = ({ searchTerm, results, isOpen, onClose, onProductClick }
         </>
       ) : (
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>🔍</div>
           <h3>Ничего не найдено</h3>
           <p>По запросу <strong>"{searchTerm}"</strong> ничего не найдено</p>
           <small>Попробуйте изменить или сократить поисковый запрос</small>

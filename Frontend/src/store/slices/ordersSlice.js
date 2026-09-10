@@ -1,127 +1,130 @@
 // store/slices/ordersSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+// ========== УТИЛИТЫ ==========
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('access_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+const handleApiError = (error, defaultMessage) => {
+  return error.response?.data?.detail || defaultMessage;
+};
+
+// ========== THUNK ==========
 // Создание заказа
 export const createOrder = createAsyncThunk(
   'orders/create',
-  async (orderData, { rejectWithValue, getState }) => {
+  async (orderData, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('access_token');
-      
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-      
-      const response = await axios.post(`${API_URL}/orders/`, orderData, { headers });
+      const response = await axios.post(
+        `${API_URL}/orders/`,
+        orderData,
+        { headers: getAuthHeaders() }
+      );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Ошибка оформления заказа');
+      return rejectWithValue(handleApiError(error, 'Ошибка оформления заказа'));
     }
   }
 );
 
-// ========== ДОБАВЛЕНО: Получение заказов текущего пользователя ==========
+// Получение заказов пользователя
 export const fetchUserOrders = createAsyncThunk(
   'orders/fetchUserOrders',
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('access_token');
-      
       if (!token) {
         return rejectWithValue('Нет токена авторизации');
       }
       
-      const response = await axios.get(`${API_URL}/orders/my`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.get(
+        `${API_URL}/orders/my`,
+        { headers: getAuthHeaders() }
+      );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Ошибка загрузки заказов');
+      return rejectWithValue(handleApiError(error, 'Ошибка загрузки заказов'));
     }
   }
 );
 
-// ========== ДОБАВЛЕНО: Получение конкретного заказа по ID ==========
+// Получение конкретного заказа
 export const fetchOrderById = createAsyncThunk(
   'orders/fetchOrderById',
   async (orderId, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('access_token');
-      
       if (!token) {
         return rejectWithValue('Нет токена авторизации');
       }
       
-      const response = await axios.get(`${API_URL}/orders/${orderId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.get(
+        `${API_URL}/orders/${orderId}`,
+        { headers: getAuthHeaders() }
+      );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Ошибка загрузки заказа');
+      return rejectWithValue(handleApiError(error, 'Ошибка загрузки заказа'));
     }
   }
 );
 
-// ========== ДОБАВЛЕНО: Отмена заказа ==========
+// Отмена заказа
 export const cancelOrder = createAsyncThunk(
   'orders/cancelOrder',
   async (orderId, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('access_token');
-      
       if (!token) {
         return rejectWithValue('Нет токена авторизации');
       }
       
-      const response = await axios.put(`${API_URL}/orders/${orderId}/cancel`, {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.put(
+        `${API_URL}/orders/${orderId}/cancel`,
+        {},
+        { headers: getAuthHeaders() }
+      );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Ошибка отмены заказа');
+      return rejectWithValue(handleApiError(error, 'Ошибка отмены заказа'));
     }
   }
 );
 
-// ========== ДОБАВЛЕНО: Повтор заказа ==========
+// Повтор заказа
 export const reorder = createAsyncThunk(
   'orders/reorder',
   async (orderId, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('access_token');
-      
       if (!token) {
         return rejectWithValue('Нет токена авторизации');
       }
       
-      const response = await axios.post(`${API_URL}/orders/${orderId}/reorder`, {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.post(
+        `${API_URL}/orders/${orderId}/reorder`,
+        {},
+        { headers: getAuthHeaders() }
+      );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Ошибка повторения заказа');
+      return rejectWithValue(handleApiError(error, 'Ошибка повторения заказа'));
     }
   }
 );
 
+// ========== SLICE ==========
 const ordersSlice = createSlice({
   name: 'orders',
   initialState: {
-    items: [],           // список заказов пользователя
-    currentOrder: null,  // текущий созданный заказ
-    selectedOrder: null, // выбранный заказ для просмотра
+    items: [],
+    currentOrder: null,
+    selectedOrder: null,
     loading: false,
     error: null,
     success: false,
@@ -142,7 +145,7 @@ const ordersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Создание заказа
+      // createOrder
       .addCase(createOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -160,7 +163,7 @@ const ordersSlice = createSlice({
         state.success = false;
       })
       
-      // Получение списка заказов
+      // fetchUserOrders
       .addCase(fetchUserOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -175,7 +178,7 @@ const ordersSlice = createSlice({
         state.error = action.payload;
       })
       
-      // Получение конкретного заказа
+      // fetchOrderById
       .addCase(fetchOrderById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -190,19 +193,18 @@ const ordersSlice = createSlice({
         state.error = action.payload;
       })
       
-      // Отмена заказа
+      // cancelOrder
       .addCase(cancelOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(cancelOrder.fulfilled, (state, action) => {
         state.loading = false;
-        // Обновляем статус заказа в списке
         const index = state.items.findIndex(item => item.id === action.payload.id);
         if (index !== -1) {
           state.items[index] = action.payload;
         }
-        if (state.selectedOrder && state.selectedOrder.id === action.payload.id) {
+        if (state.selectedOrder?.id === action.payload.id) {
           state.selectedOrder = action.payload;
         }
         state.error = null;
@@ -212,7 +214,7 @@ const ordersSlice = createSlice({
         state.error = action.payload;
       })
       
-      // Повтор заказа
+      // reorder
       .addCase(reorder.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -230,10 +232,59 @@ const ordersSlice = createSlice({
   },
 });
 
-export const { 
-  clearOrderState, 
-  clearOrders, 
-  clearSelectedOrder 
-} = ordersSlice.actions;
+// ========== МЕМОИЗИРОВАННЫЕ СЕЛЕКТОРЫ ==========
+const selectOrdersState = (state) => state.orders;
 
+// Базовые селекторы
+export const selectOrders = (state) => state.orders.items || [];
+export const selectCurrentOrder = (state) => state.orders.currentOrder;
+export const selectSelectedOrder = (state) => state.orders.selectedOrder;
+export const selectOrdersLoading = (state) => state.orders.loading;
+export const selectOrdersError = (state) => state.orders.error;
+export const selectOrdersSuccess = (state) => state.orders.success;
+
+// Мемоизированные селекторы
+export const selectOrdersCount = createSelector(
+  [selectOrders],
+  (orders) => orders.length
+);
+
+export const selectOrdersByStatus = createSelector(
+  [selectOrders, (_, status) => status],
+  (orders, status) => orders.filter(order => order.status === status)
+);
+
+export const selectOrdersCountByStatus = createSelector(
+  [selectOrdersByStatus],
+  (filteredOrders) => filteredOrders.length
+);
+
+export const selectOrderById = createSelector(
+  [selectOrders, (_, orderId) => orderId],
+  (orders, orderId) => orders.find(order => order.id === orderId)
+);
+
+export const selectRecentOrders = createSelector(
+  [selectOrders, (_, limit) => limit],
+  (orders, limit = 5) => {
+    return [...orders]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, limit);
+  }
+);
+
+export const selectTotalSpent = createSelector(
+  [selectOrders],
+  (orders) => orders.reduce((sum, order) => sum + (order.total_amount || 0), 0)
+);
+
+export const selectActiveOrders = createSelector(
+  [selectOrders],
+  (orders) => orders.filter(order => 
+    order.status !== 'delivered' && order.status !== 'cancelled'
+  )
+);
+
+// ========== ЭКСПОРТ ==========
+export const { clearOrderState, clearOrders, clearSelectedOrder } = ordersSlice.actions;
 export default ordersSlice.reducer;

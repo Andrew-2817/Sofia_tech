@@ -1,5 +1,5 @@
-// Header.jsx - исправленная версия
-import { useState, useRef, useEffect } from 'react';
+// Header.jsx - оптимизированная версия
+import { useState, useRef, useEffect, useMemo, useCallback, useDeferredValue } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -14,73 +14,90 @@ import searchIcon from '../assets/search.svg';
 import heartIcon from '../assets/heart.svg';
 import basketIcon from '../assets/basket.svg';
 import LoadingSpinner from '../components/LoadingSpinner';
-import profileIcon from '../assets/profile.svg'
-import { getDefaultProductImage } from '../data/mockData';
+import profileIcon from '../assets/profile.svg';
 
 import {
-  IconFlame ,     // Огонь
-IconMail   ,    // Почта
-IconPhone  ,    // Телефон
-IconMapPin ,    // Адрес
-IconTag  ,
-IconUser    ,    // Получатель
-IconEdit   ,     // Редактировать
-IconBasket,
-IconHeart
+  IconFlame, IconMail, IconPhone, IconMapPin, IconTag,
+  IconUser, IconEdit, IconBasket, IconHeart
 } from '@tabler/icons-react';
-
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // ========== СОСТОЯНИЯ ==========
   const [search, setSearch] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [showCatalogMenu, setShowCatalogMenu] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
   const [showCartModal, setShowCartModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
   
   const searchContainerRef = useRef(null);
   const searchInputRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
   
-  const location = useLocation();
-  
+  // ========== REDUX ==========
   const { tree: categories, loading } = useSelector(state => state.categories);
   const cartItemsCount = useSelector(state => state.cart.items.reduce((acc, item) => acc + item.quantity, 0));
   const favoritesCount = useSelector(state => state.favorites.items.length);
   const { isLoggedIn, user } = useSelector(state => state.auth);
   const allProducts = useSelector(state => state.products.items);
 
+  // 1. КЕШИРОВАНИЕ КАТЕГОРИЙ
+  const level1Categories = useMemo(() => {
+    return categories.filter(cat => cat.level === 1);
+  }, [categories]);
+
+  const topCategories = useMemo(() => {
+    return level1Categories.slice(0, 5);
+  }, [level1Categories]);
+
+  // 2. ДЕБАУНС ДЛЯ ПОИСКА (задержка 300мс)
   useEffect(() => {
-    if (search.trim().length > 0) {
-      const lowerSearch = search.toLowerCase().trim();
-      
-      const results = allProducts.filter(product => {
-        const matchesName = product.name?.toLowerCase().includes(lowerSearch);
-        const matchesDescription = product.description?.toLowerCase().includes(lowerSearch);
-        const matchesSku = product.sku?.toLowerCase().includes(lowerSearch);
-        const matchesModel = product.model?.toLowerCase().includes(lowerSearch);
-        const matchesGroupLevel = product.group_level_1?.toLowerCase().includes(lowerSearch);
-        const matchesComment = product.comment?.toLowerCase().includes(lowerSearch);
-        
-        return matchesName || matchesDescription || matchesSku || matchesModel || matchesGroupLevel || matchesComment;
-      });
-      
-      setSearchResults(results.slice(0, 10));
-    } else {
-      setSearchResults(allProducts);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
     }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      if (search.trim().length > 0) {
+        const lowerSearch = search.toLowerCase().trim();
+        
+        const results = allProducts.filter(product => {
+          const matchesName = product.name?.toLowerCase().includes(lowerSearch);
+          const matchesDescription = product.description?.toLowerCase().includes(lowerSearch);
+          const matchesSku = product.sku?.toLowerCase().includes(lowerSearch);
+          const matchesModel = product.model?.toLowerCase().includes(lowerSearch);
+          const matchesGroupLevel = product.group_level_1?.toLowerCase().includes(lowerSearch);
+          const matchesComment = product.comment?.toLowerCase().includes(lowerSearch);
+          
+          return matchesName || matchesDescription || matchesSku || matchesModel || 
+                 matchesGroupLevel || matchesComment;
+        });
+        
+        setSearchResults(results.slice(0, 10));
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
   }, [search, allProducts]);
 
-
+  // 3. СБРОС ФИЛЬТРОВ ПРИ СМЕНЕ КАТЕГОРИИ
   useEffect(() => {
-  // При изменении категории в URL сбрасываем фильтры
-  dispatch(resetFilters());
-}, [location.search]);      
+    dispatch(resetFilters());
+  }, [location.search, dispatch]);
 
-  const handleSearchChange = (e) => {
+  // 4. КЕШИРОВАНИЕ ФУНКЦИЙ
+  const handleSearchChange = useCallback((e) => {
     const value = e.target.value;
     setSearch(value);
     if (value.trim().length > 0) {
@@ -88,44 +105,45 @@ const Header = () => {
     } else {
       setShowSearchResults(false);
     }
-  };
+  }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     setIsLoggingOut(true);
     await dispatch(logout());
     navigate('/');
     setIsLoggingOut(false);
-  };
+  }, [dispatch, navigate]);
 
-  const handleFocus = () => {
+  const handleFocus = useCallback(() => {
     setShowSearchResults(true);
-  };
+  }, []);
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = useCallback((e) => {
     e.preventDefault();
     if (search.trim()) {
       dispatch(setSearchQuery(search));
       navigate('/catalog');
       setShowSearchResults(false);
     }
-  };
+  }, [search, dispatch, navigate]);
 
-  const handleProductClick = (product) => {
+  const handleProductClick = useCallback((product) => {
     navigate(`/product/${product.brand}/${product.sku?.toLowerCase() || product.model?.toLowerCase()}`);
     setShowSearchResults(false);
     setSearch('');
-  };
+  }, [navigate]);
 
-  const handleClearSearch = () => {
+  const handleClearSearch = useCallback(() => {
     setSearch('');
     setShowSearchResults(false);
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
-  };
+  }, []);
 
-  const level1Categories = categories.filter(cat => cat.level === 1);
-  const topCategories = level1Categories.slice(0, 5);
+  const handleCategoryClick = useCallback((slug) => {
+    navigate(`/catalog/${slug}`);
+  }, [navigate]);
 
   if (isLoggingOut) {
     return <LoadingSpinner text="Выход из аккаунта..." />;
@@ -212,10 +230,7 @@ const Header = () => {
               <button
                 key={cat.id}
                 className={styles.categoryLink}
-                onClick={() => {
-                  navigate(`/catalog/${cat.slug}`)
-                }
-                }
+                onClick={() => handleCategoryClick(cat.slug)}
               >
                 {cat.name}
               </button>

@@ -1,80 +1,108 @@
-import { createSlice } from '@reduxjs/toolkit';
+// store/slices/filtersSlice.js
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
+// ========== КОНСТАНТЫ (вынесены для переиспользования) ==========
+const DEFAULT_FILTERS = {
+  searchQuery: '',
+  category: 'all',
+  manufacturer: [],
+  priceRange: [0, 5000000],
+  color: '',
+  loadCapacity: '',
+  energyClass: '',
+  brand: null,
+  inStock: null,
+  widthRange: [0, 200],
+  heightRange: [0, 1000],
+  depthRange: [0, 100],
+  volumeRange: [0, 1000],
+  performanceRange: [0, 1500],
+  noiseLevelRange: [0, 70],
+  mountingType: '',
+  controlType: '',
+  material: '',
+  compatibility: [],
+  powerRange: [0, 5000],
+  factory: [],
+  warranty: [],
+  series: [],
+  netWeightRange: [0, 100],
+  widthCmRange: [0, 200],
+  status: [],
+};
+
+// ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+const toggleArrayItem = (arr, item) => {
+  return arr.includes(item) 
+    ? arr.filter(v => v !== item)
+    : [...arr, item];
+};
+
+const isFilterActive = (filter) => {
+  if (Array.isArray(filter)) {
+    return filter.length > 0;
+  }
+  if (typeof filter === 'string') {
+    return filter !== '' && filter !== 'all';
+  }
+  if (typeof filter === 'boolean' || filter === null) {
+    return filter !== null;
+  }
+  if (typeof filter === 'object' && filter !== null) {
+    // Для диапазонов [min, max]
+    if (Array.isArray(filter) && filter.length === 2) {
+      return filter[0] > 0 || filter[1] > 0;
+    }
+    return Object.values(filter).some(v => v !== null && v !== undefined && v !== '');
+  }
+  return !!filter;
+};
+
+// ========== SLICE ==========
 const filtersSlice = createSlice({
   name: 'filters',
-  initialState: {
-    searchQuery: '',
-    category: 'all',
-    manufacturer: [],
-    priceRange: [0, 5000000],
-    color: '',
-    loadCapacity: '',
-    energyClass: '',
-    brand: null,
-    inStock: null,
-    // Новые динамические фильтры
-    widthRange: [0, 200],      // ширина в см
-    heightRange: [0, 1000],     // высота в см
-    depthRange: [0, 100],      // глубина в см
-    volumeRange: [0, 1000],    // объем в литрах
-    performanceRange: [0, 1500], // производительность м³/ч
-    noiseLevelRange: [0, 70],    // уровень шума дБ
-    mountingType: '',            // тип монтажа
-    controlType: '',             // тип управления
-    material: '',                // материал
-    compatibility: [],           // совместимость с брендами
-    powerRange: [0, 5000],       // мощность в Вт
-      factory: [],      // добавить
-  warranty: [],
-    series: [],        // Серия (K-series.1, K-series.2 и т.д.)
-  netWeightRange: [0, 100], // Вес нетто в кг
-  widthCmRange: [0, 200],
-  status: []   // Ширина в см      
-  },
+  initialState: DEFAULT_FILTERS,
   reducers: {
+    // Поиск
     setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;
     },
     setCategory: (state, action) => {
       state.category = action.payload;
     },
+    
+    // Производители
     toggleManufacturer: (state, action) => {
-      const manufacturer = action.payload;
-      if (state.manufacturer.includes(manufacturer)) {
-        state.manufacturer = state.manufacturer.filter(m => m !== manufacturer);
-      } else {
-        state.manufacturer.push(manufacturer);
-      }
+      state.manufacturer = toggleArrayItem(state.manufacturer, action.payload);
     },
+    
+    // Цена
     setPriceRange: (state, action) => {
       state.priceRange = action.payload;
     },
+    
+    // Цвет
     setColor: (state, action) => {
       state.color = action.payload;
     },
+    
+    // Устаревшие (можно оставить для совместимости)
     setLoadCapacity: (state, action) => {
       state.loadCapacity = action.payload;
     },
     setEnergyClass: (state, action) => {
       state.energyClass = action.payload;
     },
+    
+    // Бренд и наличие
     setBrand: (state, action) => {
       state.brand = action.payload;
     },
     setInStock: (state, action) => {
       state.inStock = action.payload;
     },
-        // Добавляем reducer для статуса
-    setStatus: (state, action) => {
-      const value = action.payload;
-      if (state.status.includes(value)) {
-        state.status = state.status.filter(v => v !== value);
-      } else {
-        state.status.push(value);
-      }
-    },
     
-    // Новые редьюсеры для динамических фильтров
+    // ===== ДИНАМИЧЕСКИЕ ФИЛЬТРЫ =====
     setWidthRange: (state, action) => {
       state.widthRange = action.payload;
     },
@@ -103,92 +131,146 @@ const filtersSlice = createSlice({
       state.material = action.payload;
     },
     toggleCompatibility: (state, action) => {
-      const brand = action.payload;
-      if (state.compatibility.includes(brand)) {
-        state.compatibility = state.compatibility.filter(b => b !== brand);
-      } else {
-        state.compatibility.push(brand);
-      }
+      state.compatibility = toggleArrayItem(state.compatibility, action.payload);
     },
     setPowerRange: (state, action) => {
       state.powerRange = action.payload;
     },
-    setFilters: (state, action) => {
-      return { ...state, ...action.payload };
-    },
-        setFactory: (state, action) => {
-      const value = action.payload;
-      if (state.factory.includes(value)) {
-        state.factory = state.factory.filter(v => v !== value);
-      } else {
-        state.factory.push(value);
-      }
+    
+    // ===== СПЕЦИФИЧЕСКИЕ ФИЛЬТРЫ =====
+    setFactory: (state, action) => {
+      state.factory = toggleArrayItem(state.factory, action.payload);
     },
     setWarranty: (state, action) => {
-      const value = action.payload;
-      if (state.warranty.includes(value)) {
-        state.warranty = state.warranty.filter(v => v !== value);
-      } else {
-        state.warranty.push(value);
-      }
+      state.warranty = toggleArrayItem(state.warranty, action.payload);
     },
-        // Добавить фильтр по серии
     setSeries: (state, action) => {
-      const value = action.payload;
-      if (state.series.includes(value)) {
-        state.series = state.series.filter(v => v !== value);
-      } else {
-        state.series.push(value);
-      }
+      state.series = toggleArrayItem(state.series, action.payload);
     },
-    
-    // Добавить фильтр по весу нетто
     setNetWeightRange: (state, action) => {
       state.netWeightRange = action.payload;
     },
-    
-    // Добавить фильтр по ширине в см
     setWidthCmRange: (state, action) => {
       state.widthCmRange = action.payload;
     },
+    setStatus: (state, action) => {
+      state.status = toggleArrayItem(state.status, action.payload);
+    },
+    
+    // Массовое обновление
+    setFilters: (state, action) => {
+      return { ...state, ...action.payload };
+    },
+    
+    // Сброс всех фильтров
     resetFilters: (state) => {
-      state.searchQuery = '';
-      state.category = 'all';
-      state.manufacturer = [];
-      state.priceRange = [0, 5000000];
-      state.color = '';
-      state.loadCapacity = '';
-      state.energyClass = '';
-      state.brand = null;
-      state.inStock = null;
-      // Сброс динамических фильтров
-      state.widthRange = [0, 200];
-      state.heightRange = [0, 1000];
-      state.depthRange = [0, 100];
-      state.volumeRange = [0, 1000];
-      state.performanceRange = [0, 1500];
-      state.noiseLevelRange = [0, 70];
-      state.mountingType = '';
-      state.controlType = '';
-      state.material = '';
-      state.compatibility = [];
-      state.powerRange = [0, 5000];
-           state.factory = [];
-      state.warranty = [];
-           state.series = [];
-      state.netWeightRange = [0, 100];
-      state.widthCmRange = [0, 200];
-      state.status = []; 
+      return { ...DEFAULT_FILTERS };
     },
   },
 });
 
-export const { 
-  setSearchQuery, 
-  setCategory, 
-  toggleManufacturer, 
-  setPriceRange, 
-  setColor, 
+// ========== МЕМОИЗИРОВАННЫЕ СЕЛЕКТОРЫ ==========
+const selectFiltersState = (state) => state.filters;
+
+// Базовые селекторы
+export const selectSearchQuery = (state) => state.filters.searchQuery;
+export const selectCategory = (state) => state.filters.category;
+export const selectManufacturer = (state) => state.filters.manufacturer;
+export const selectPriceRange = (state) => state.filters.priceRange;
+export const selectColor = (state) => state.filters.color;
+export const selectBrand = (state) => state.filters.brand;
+export const selectInStock = (state) => state.filters.inStock;
+
+// Мемоизированный селектор — активные фильтры
+export const selectActiveFilters = createSelector(
+  [selectFiltersState],
+  (filters) => {
+    const active = [];
+    
+    if (filters.manufacturer.length > 0) {
+      active.push({ type: 'manufacturer', values: filters.manufacturer });
+    }
+    if (filters.color) {
+      active.push({ type: 'color', value: filters.color });
+    }
+    if (filters.brand) {
+      active.push({ type: 'brand', value: filters.brand });
+    }
+    if (filters.inStock !== null) {
+      active.push({ type: 'inStock', value: filters.inStock });
+    }
+    if (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000) {
+      active.push({ type: 'priceRange', values: filters.priceRange });
+    }
+    if (filters.widthCmRange[0] > 0 || filters.widthCmRange[1] < 200) {
+      active.push({ type: 'widthCmRange', values: filters.widthCmRange });
+    }
+    if (filters.heightRange[0] > 0 || filters.heightRange[1] < 1000) {
+      active.push({ type: 'heightRange', values: filters.heightRange });
+    }
+    if (filters.depthRange[0] > 0 || filters.depthRange[1] < 100) {
+      active.push({ type: 'depthRange', values: filters.depthRange });
+    }
+    if (filters.volumeRange[0] > 0 || filters.volumeRange[1] < 1000) {
+      active.push({ type: 'volumeRange', values: filters.volumeRange });
+    }
+    if (filters.controlType) {
+      active.push({ type: 'controlType', value: filters.controlType });
+    }
+    if (filters.mountingType) {
+      active.push({ type: 'mountingType', value: filters.mountingType });
+    }
+    if (filters.material) {
+      active.push({ type: 'material', value: filters.material });
+    }
+    if (filters.compatibility.length > 0) {
+      active.push({ type: 'compatibility', values: filters.compatibility });
+    }
+    if (filters.factory.length > 0) {
+      active.push({ type: 'factory', values: filters.factory });
+    }
+    if (filters.warranty.length > 0) {
+      active.push({ type: 'warranty', values: filters.warranty });
+    }
+    if (filters.series.length > 0) {
+      active.push({ type: 'series', values: filters.series });
+    }
+    if (filters.status.length > 0) {
+      active.push({ type: 'status', values: filters.status });
+    }
+    if (filters.netWeightRange[0] > 0 || filters.netWeightRange[1] < 100) {
+      active.push({ type: 'netWeightRange', values: filters.netWeightRange });
+    }
+    
+    return active;
+  }
+);
+
+// Мемоизированный селектор — количество активных фильтров
+export const selectActiveFiltersCount = createSelector(
+  [selectActiveFilters],
+  (activeFilters) => activeFilters.length
+);
+
+// Мемоизированный селектор — есть ли активные фильтры
+export const selectHasActiveFilters = createSelector(
+  [selectActiveFiltersCount],
+  (count) => count > 0
+);
+
+// Мемоизированный селектор — все фильтры в виде объекта
+export const selectAllFilters = createSelector(
+  [selectFiltersState],
+  (filters) => ({ ...filters })
+);
+
+// ========== ЭКСПОРТ ==========
+export const {
+  setSearchQuery,
+  setCategory,
+  toggleManufacturer,
+  setPriceRange,
+  setColor,
   setLoadCapacity,
   setEnergyClass,
   setBrand,
@@ -206,12 +288,12 @@ export const {
   setPowerRange,
   setFilters,
   resetFilters,
-    setFactory, 
+  setFactory,
   setWarranty,
-    setSeries, 
-  setNetWeightRange, 
+  setSeries,
+  setNetWeightRange,
   setWidthCmRange,
-  setStatus
+  setStatus,
 } = filtersSlice.actions;
 
 export default filtersSlice.reducer;

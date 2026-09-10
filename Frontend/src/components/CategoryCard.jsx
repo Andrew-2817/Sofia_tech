@@ -1,86 +1,60 @@
-import { useDispatch } from 'react-redux';
+// components/CategoryCard.jsx
 import { useNavigate } from 'react-router-dom';
 import styles from './CategoryCard.module.css';
-import categoryImg1 from "../assets/category.png"
-import categoryImg2 from "../assets/Рисунок2.png"
-import categoryImg3 from "../assets/Рисунок3.png"
-import categoryImg4 from "../assets/Рисунок4.png"
-import categoryImg5 from "../assets/Рисунок5.png"
+import { memo, useCallback, useMemo } from 'react';
+import categoryImg1 from "../assets/category.png";
+import categoryImg2 from "../assets/Рисунок2.png";
+import categoryImg3 from "../assets/Рисунок3.png";
+import categoryImg4 from "../assets/Рисунок4.png";
+import categoryImg5 from "../assets/Рисунок5.png";
 
-const CategoryCard = ({ category }) => {
-  const dispatch = useDispatch();
+// Константы вынесены из компонента
+const CATEGORY_IMAGES = {
+  1: categoryImg1,
+  2: categoryImg2,
+  3: categoryImg3,
+  4: categoryImg4,
+  5: categoryImg5,
+};
+const DEFAULT_IMAGE = categoryImg1;
+
+const CategoryCard = memo(({ category }) => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    navigate(`/catalog?level1=${category.slug}`);
-  };
+  // 1. НАВИГАЦИЯ В КАТАЛОГ С УРОВНЕМ 1 (исправлено)
+  const handleClick = useCallback(() => {
+    navigate(`/catalog/${category.slug}`);
+  }, [navigate, category.slug]);
 
-  // Иконка для категории
-  const getCategoryIcon = () => {
-    switch(category.id) {
-      case 1: return '🏠';
-      case 2: return '🔧';
-      case 3: return '⚡';
-      case 4: return '🔌';
-      case 5: return '🍳';
-      default: return '📦';
-    }
-  };
+  // 2. КЕШИРОВАНИЕ ФОНА
+  const backgroundImage = useMemo(() => {
+    return CATEGORY_IMAGES[category.id] || DEFAULT_IMAGE;
+  }, [category.id]);
 
-  // Фоновые изображения для категорий (можно вынести в отдельный файл)
-  const getBackgroundImage = () => {
-    switch(category.id) {
-      case 1:
-        return categoryImg1;
-      case 2:
-        return categoryImg2;
-      case 3:
-        return categoryImg3;
-      case 4:
-        return categoryImg4;
-      case 5:
-        return categoryImg5;
-      default:
-        return categoryImg1;
-    }
-  };
+  const cardStyle = useMemo(() => ({
+    backgroundImage: `linear-gradient(135deg, rgba(0,0,0,0.45), rgba(0,0,0,0.3)), url(${backgroundImage})`
+  }), [backgroundImage]);
 
-  // Цвет акцента для категории
-  const getCategoryColor = () => {
-    switch(category.id) {
-      case 1: return '#7bc6cf';
-      case 2: return '#ff9f43';
-      case 3: return '#a55eea';
-      case 4: return '#eb4d4b';
-      case 5: return '#20bf6b';
-      default: return '#7bc6cf';
-    }
-  };
+  const childrenCount = category.children?.length || 0;
 
   return (
     <div 
       className={styles.card} 
       onClick={handleClick}
-      style={{
-        backgroundImage: `linear-gradient(135deg, rgba(0,0,0,0.45), rgba(0,0,0,0.3)), url(${getBackgroundImage()})`
-      }}
+      style={cardStyle}
     >
       <div className={styles.overlay}></div>
       <div className={styles.content}>
-        {/* <div 
-          className={styles.iconWrapper}
-          style={{ background: `linear-gradient(135deg, ${getCategoryColor()}40, ${getCategoryColor()}20)` }}
-        >
-          <div className={styles.icon}>{getCategoryIcon()}</div>
-        </div> */}
         <h3 className={styles.title}>{category.name}</h3>
         <div className={styles.count}>
-          {category.children?.length || 0} подкатегорий
+          {childrenCount} подкатегорий
         </div>
         <div className={styles.arrow}>→</div>
       </div>
     </div>
   );
-};
+});
+
+CategoryCard.displayName = 'CategoryCard';
 
 export default CategoryCard;

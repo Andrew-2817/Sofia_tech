@@ -1,0 +1,49 @@
+# public/robots.txt
+
+User-agent: *
+Allow: /
+
+# Запрет для админских и служебных страниц
+Disallow: /admin/
+Disallow: /api/
+Disallow: /profile/
+Disallow: /cart/
+Disallow: /favorites/
+Disallow: /auth/
+
+# Запрет дублирующихся страниц с параметрами
+Disallow: /*?page=
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?order=
+Disallow: /*?search=
+
+# Запрет для поисковых ботов (кроме главного)
+Disallow: /catalog?page=
+
+# Карта сайта
+Sitemap: https://profittehnika.ru/sitemap.xml
+
+# Правила для разных ботов
+User-agent: Yandex
+Disallow: /admin/
+Disallow: /api/
+Disallow: /profile/
+Disallow: /cart/
+Disallow: /favorites/
+
+User-agent: Googlebot
+Disallow: /admin/
+Disallow: /api/
+Disallow: /profile/
+
+# Запрет медленным ботам
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+# Задержка между запросами (для медленных ботов)
+User-agent: *
+Crawl-delay: 1
