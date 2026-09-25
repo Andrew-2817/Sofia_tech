@@ -84,6 +84,34 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: 250px;        /* фиксированная максимальная высота */
+  overflow-y: auto;         /* вертикальная прокрутка при переполнении */
+  padding-right: 8px;       /* отступ для скролла */
+}
+
+/* Кастомизация скроллбара (опционально) */
+.checkboxGroup::-webkit-scrollbar {
+  width: 4px;
+}
+
+.checkboxGroup::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.checkboxGroup::-webkit-scrollbar-thumb {
+  background: #7bc6cf;
+  border-radius: 2px;
+}
+
+.checkboxGroup::-webkit-scrollbar-thumb:hover {
+  background: #5da5ae;
+}
+
+/* Для Firefox */
+.checkboxGroup {
+  scrollbar-width: thin;
+  scrollbar-color: #7bc6cf rgba(255, 255, 255, 0.05);
 }
 
 .checkboxLabel {

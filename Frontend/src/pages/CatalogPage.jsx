@@ -893,26 +893,6 @@ const handleBackToLevel1 = () => {
                   className={styles.tab}
                   onClick={() => handleLevel2Click(level2)}
                 >
-                  {/* <span className={styles.tabIcon}>
-                    {level2.id === 10 && '🧺'}
-                    {level2.id === 11 && '🌀'}
-                    {level2.id === 12 && '⚡'}
-                    {level2.id === 13 && '🧼'}
-                    {level2.id === 14 && '❄️'}
-                    {level2.id === 20 && '🔥'}
-                    {level2.id === 21 && '🍳'}
-                    {level2.id === 22 && '💨'}
-                    {level2.id === 23 && '☕'}
-                    {level2.id === 24 && '📡'}
-                    {level2.id === 25 && '💨'}
-                    {level2.id === 26 && '🍽️'}
-                    {level2.id === 27 && '🍷'}
-                    {level2.id === 30 && '☕'}
-                    {level2.id === 31 && '🔧'}
-                    {level2.id === 32 && '🥩'}
-                    {level2.id === 33 && '🧹'}
-                    {level2.id === 34 && '🥤'}
-                  </span> */}
                   {level2.name}
                 </button>
               ))}
@@ -954,9 +934,9 @@ const handleBackToLevel1 = () => {
                       {getCategoryIcon(category.name)}
                     </div> */}
                     <h3 className={styles.categoryCardName}>{category.name}</h3>
-                    <p className={styles.categoryCardCount}>
+                    {/* <p className={styles.categoryCardCount}>
                       {category.children?.reduce((total, child) => total + (child.children?.length || 0), 0) || 0} товаров
-                    </p>
+                    </p> */}
                   </div>
                 ))}
               </div>
