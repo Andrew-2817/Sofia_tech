@@ -104,6 +104,16 @@ import Img603 from "../assets/Img603.jpg"
 import Img650 from "../assets/Img650.png"
 import Img670 from "../assets/Img670.png"
 
+import Img360 from "../assets/Img360.jpg"
+import Img361 from "../assets/Img361.webp"
+import Img362 from "../assets/Img362.png"
+
+import Img700 from "../assets/Img700.jpg"
+import Img701 from "../assets/Img701.webp"
+import Img702 from "../assets/Img702.webp"
+import Img703 from "../assets/Img703.webp"
+import Img704 from "../assets/Img704.webp"
+import Img705 from "../assets/Img705.jpg"
 
 export const products = [
   // ========== КРУПНАЯ БЫТОВАЯ ТЕХНИКА ==========
@@ -1368,6 +1378,10 @@ export const categoryDefaultImages = {
   352:Img352,
   353:Img353,
   354:Img354,
+  360: Img360,
+  361: Img361,
+  362: Img362,
+  363: Img603,
   // 400-х
   401: Img401,
   402: Img402,
@@ -1414,6 +1428,12 @@ export const categoryDefaultImages = {
   603: Img603,
   650: Img650,
   670: Img670,      // Фены
+  700: Img700,
+  701: Img701,
+  702: Img702,
+  703: Img703,
+  704: Img704,
+  705: Img705,
   
   // Дефолтная фотка для неизвестных категорий
   default: '/uploads/default/product-default.jpg',
